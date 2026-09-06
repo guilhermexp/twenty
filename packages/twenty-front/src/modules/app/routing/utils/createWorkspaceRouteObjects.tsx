@@ -10,6 +10,7 @@ import {
 } from '@/app/components/SettingsRoutes';
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
+import { REACT_APP_PRIVATE_MODE } from '~/config';
 
 const WorkflowCoreIndexPage = lazy(() =>
   import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
@@ -56,6 +57,7 @@ const NotFound = lazy(() =>
 type CreateWorkspaceRouteObjectsArgs = {
   isAdminPageEnabled?: boolean;
   isWorkflowCoreIndexPageEnabled?: boolean;
+  isPrivateModeEnabled?: boolean;
 };
 
 const MAIN_AND_SIDE_PANEL = ['main', 'side-panel'] as const;
@@ -64,11 +66,12 @@ const SETTINGS_ROOT_PATH = AppPath.SettingsCatchAll.replace('/*', '');
 export const createWorkspaceRouteObjects = ({
   isAdminPageEnabled,
   isWorkflowCoreIndexPageEnabled,
+  isPrivateModeEnabled = REACT_APP_PRIVATE_MODE,
 }: CreateWorkspaceRouteObjectsArgs): WorkspaceRouteObject[] => {
   const settingsRouteObjects = createSettingsRouteObjects({
     isAdminPageEnabled,
+    isPrivateModeEnabled,
   });
-
   return [
     ...(isWorkflowCoreIndexPageEnabled
       ? [

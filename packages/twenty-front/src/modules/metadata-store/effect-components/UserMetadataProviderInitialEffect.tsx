@@ -18,7 +18,8 @@ import {
 import { enUS } from 'date-fns/locale';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { REACT_APP_PRIVATE_MODE } from '~/config';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useQuery } from '@apollo/client/react';
@@ -138,8 +139,10 @@ export const UserMetadataProviderInitialEffect = () => {
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'System',
         uiScale: (workspaceMember.uiScale as UiScale) ?? 'Default',
         openRecordIn: toOpenRecordInPreference(workspaceMember.openRecordIn),
-        locale:
-          (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
+        locale: REACT_APP_PRIVATE_MODE
+          ? APP_LOCALES['pt-BR']
+          : ((workspaceMember.locale as keyof typeof APP_LOCALES) ??
+            SOURCE_LOCALE),
       };
     };
 
@@ -152,9 +155,7 @@ export const UserMetadataProviderInitialEffect = () => {
 
       initializeFormatPreferences(updatedWorkspaceMember);
 
-      dynamicActivate(
-        (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
-      );
+      dynamicActivate(updatedWorkspaceMember.locale);
     }
 
     if (isDefined(workspaceMembers)) {

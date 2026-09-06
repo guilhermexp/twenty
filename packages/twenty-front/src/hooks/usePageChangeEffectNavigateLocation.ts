@@ -27,6 +27,7 @@ import {
   PageLayoutType,
 } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+import { REACT_APP_PRIVATE_MODE } from '~/config';
 
 const readReturnToPathFromUrlSearchParams = (): string | null => {
   const value = new URLSearchParams(window.location.search).get('returnToPath');
@@ -81,6 +82,9 @@ export const usePageChangeEffectNavigateLocation = () => {
   const resolvedReturnToPath = isNonEmptyString(returnToPath)
     ? returnToPath
     : readReturnToPathFromUrlSearchParams();
+  const fallbackSettingsPath = `${AppPath.SettingsCatchAll.replace('/*', '')}/${
+    SettingsPath.General
+  }`;
 
   const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
     shouldOpenAiChatAfterOnboardingState,
@@ -111,6 +115,10 @@ export const usePageChangeEffectNavigateLocation = () => {
       AppPath.BookCall,
     ])
   ) {
+    if (REACT_APP_PRIVATE_MODE) {
+      return defaultHomePagePath;
+    }
+
     if (
       isMatchingLocation(location, AppPath.VerifyEmail) &&
       isDefined(verifyEmailRedirectPath)
@@ -122,9 +130,11 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (isWorkspaceSuspended) {
     if (!isMatchingLocation(location, AppPath.SettingsCatchAll)) {
-      return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
-        SettingsPath.Billing
-      }`;
+      return REACT_APP_PRIVATE_MODE
+        ? fallbackSettingsPath
+        : `${AppPath.SettingsCatchAll.replace('/*', '')}/${
+            SettingsPath.Billing
+          }`;
     }
 
     return;
@@ -148,6 +158,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.SYNC_EMAIL &&
     !isMatchingLocation(location, AppPath.SyncEmails)
   ) {
+    if (REACT_APP_PRIVATE_MODE) {
+      return defaultHomePagePath;
+    }
+
     return AppPath.SyncEmails;
   }
 
@@ -155,6 +169,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.APPS_INSTALLATION &&
     !isMatchingLocation(location, AppPath.InstallApps)
   ) {
+    if (REACT_APP_PRIVATE_MODE) {
+      return defaultHomePagePath;
+    }
+
     return AppPath.InstallApps;
   }
 
@@ -162,6 +180,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.INVITE_TEAM &&
     !isMatchingLocation(location, AppPath.InviteTeam)
   ) {
+    if (REACT_APP_PRIVATE_MODE) {
+      return defaultHomePagePath;
+    }
+
     return AppPath.InviteTeam;
   }
 
@@ -169,10 +191,18 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.BOOK_CALL &&
     !isMatchingLocation(location, AppPath.BookCall)
   ) {
+    if (REACT_APP_PRIVATE_MODE) {
+      return defaultHomePagePath;
+    }
+
     return AppPath.BookCall;
   }
 
-  if (isBillingEnabled && onboardingStatus === OnboardingStatus.COMPLETED) {
+  if (
+    isBillingEnabled &&
+    onboardingStatus === OnboardingStatus.COMPLETED &&
+    !REACT_APP_PRIVATE_MODE
+  ) {
     if (isMatchingLocation(location, AppPath.InviteTeam)) {
       return AppPath.PlanRequired;
     }

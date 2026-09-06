@@ -2,8 +2,14 @@ import { fromNavigator, fromStorage, fromUrl } from '@lingui/detect-locale';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined, isValidLocale, normalizeLocale } from 'twenty-shared/utils';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { REACT_APP_PRIVATE_MODE } from '~/config';
 
 export const initialI18nActivate = () => {
+  if (REACT_APP_PRIVATE_MODE) {
+    dynamicActivate(APP_LOCALES['pt-BR']);
+    return;
+  }
+
   const urlLocale = fromUrl('locale');
   const storageLocale = fromStorage('locale');
   const navigatorLocale = fromNavigator();

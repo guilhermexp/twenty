@@ -36,6 +36,7 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
+import { REACT_APP_PRIVATE_MODE } from '~/config';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type SettingsNavigationSection = {
@@ -63,6 +64,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const supportChat = useAtomStateValue(supportChatState);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
+  const isPrivateModeEnabled = REACT_APP_PRIVATE_MODE;
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const currentUser = useAtomStateValue(currentUserState);
   const isAdminEnabled =
@@ -146,7 +148,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Billing,
           Icon: IconCreditCard,
           isHidden:
-            !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
+            isPrivateModeEnabled ||
+            !isBillingEnabled ||
+            !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`MCP & APIs`,
@@ -202,7 +206,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Support`,
           onClick: () => window.FrontChat?.('show'),
           Icon: IconMessage,
-          isHidden: !isSupportChatConfigured,
+          isHidden: isPrivateModeEnabled || !isSupportChatConfigured,
         },
         {
           label: t`Documentation`,
@@ -212,6 +216,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
               '_blank',
             ),
           Icon: IconHelpCircle,
+          isHidden: isPrivateModeEnabled,
         },
         {
           label: t`Logout`,

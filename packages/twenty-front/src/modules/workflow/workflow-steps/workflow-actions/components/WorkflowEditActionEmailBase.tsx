@@ -38,6 +38,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Button } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { REACT_APP_PRIVATE_MODE } from '~/config';
 
 type WorkflowEditActionEmailBaseProps = {
   action: WorkflowEmailAction;
@@ -226,14 +227,18 @@ export const WorkflowEditActionEmailBase = ({
             onChange={handleSenderChange}
             VariablePicker={WorkflowVariablePicker}
             readonly={actionOptions.readonly}
-            callToActionButton={{
-              onClick: () => {
-                closeSidePanelMenu();
-                navigate(SettingsPath.NewAccount);
-              },
-              Icon: IconPlus,
-              text: t`Add account`,
-            }}
+            callToActionButton={
+              REACT_APP_PRIVATE_MODE
+                ? undefined
+                : {
+                    onClick: () => {
+                      closeSidePanelMenu();
+                      navigate(SettingsPath.NewAccount);
+                    },
+                    Icon: IconPlus,
+                    text: t`Add account`,
+                  }
+            }
           />
           {isDefined(missingScopes) && (
             <>

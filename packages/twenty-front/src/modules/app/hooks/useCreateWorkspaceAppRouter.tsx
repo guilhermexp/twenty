@@ -1,6 +1,6 @@
 import { lazy, useMemo } from 'react';
 
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
 import { LazyRoute } from '@/app/components/LazyRoute';
@@ -21,6 +21,7 @@ import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
+import { REACT_APP_PRIVATE_MODE } from '~/config';
 
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
@@ -153,14 +154,18 @@ const createWorkspaceAppRouter = ({
                     </LazyRoute>
                   ),
                 },
-                {
-                  path: AppPath.PlanRequiredSuccess,
-                  element: (
-                    <LazyRoute fallback={<OnboardingPageLoader />}>
-                      <PaymentSuccess />
-                    </LazyRoute>
-                  ),
-                },
+                ...(REACT_APP_PRIVATE_MODE
+                  ? []
+                  : [
+                      {
+                        path: AppPath.PlanRequiredSuccess,
+                        element: (
+                          <LazyRoute fallback={<OnboardingPageLoader />}>
+                            <PaymentSuccess />
+                          </LazyRoute>
+                        ),
+                      },
+                    ]),
               ],
             },
             {
@@ -203,63 +208,81 @@ const createWorkspaceAppRouter = ({
                     },
                   ],
                 },
-                {
-                  element: <OnboardingStepLayout />,
-                  loader: preloadOnboardingPages,
-                  children: [
-                    {
-                      path: AppPath.CreateProfile,
-                      element: (
-                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                          <CreateProfile />
-                        </LazyRoute>
-                      ),
-                    },
-                    {
-                      path: AppPath.SyncEmails,
-                      element: (
-                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                          <SyncEmails />
-                        </LazyRoute>
-                      ),
-                    },
-                    {
-                      path: AppPath.InstallApps,
-                      element: (
-                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                          <InstallApps />
-                        </LazyRoute>
-                      ),
-                    },
-                    {
-                      path: AppPath.InviteTeam,
-                      element: (
-                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                          <InviteTeam />
-                        </LazyRoute>
-                      ),
-                    },
-                    {
-                      path: AppPath.BookCall,
-                      element: (
-                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                          <BookCall />
-                        </LazyRoute>
-                      ),
-                    },
-                    {
-                      path: AppPath.PlanRequired,
-                      element: (
-                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                          <ChooseYourPlan />
-                        </LazyRoute>
-                      ),
-                    },
-                  ],
-                },
+                ...(REACT_APP_PRIVATE_MODE
+                  ? []
+                  : [
+                      {
+                        element: <OnboardingStepLayout />,
+                        loader: preloadOnboardingPages,
+                        children: [
+                          {
+                            path: AppPath.CreateProfile,
+                            element: (
+                              <LazyRoute
+                                fallback={<OnboardingStepPageLoader />}
+                              >
+                                <CreateProfile />
+                              </LazyRoute>
+                            ),
+                          },
+                          {
+                            path: AppPath.SyncEmails,
+                            element: (
+                              <LazyRoute
+                                fallback={<OnboardingStepPageLoader />}
+                              >
+                                <SyncEmails />
+                              </LazyRoute>
+                            ),
+                          },
+                          {
+                            path: AppPath.InstallApps,
+                            element: (
+                              <LazyRoute
+                                fallback={<OnboardingStepPageLoader />}
+                              >
+                                <InstallApps />
+                              </LazyRoute>
+                            ),
+                          },
+                          {
+                            path: AppPath.InviteTeam,
+                            element: (
+                              <LazyRoute
+                                fallback={<OnboardingStepPageLoader />}
+                              >
+                                <InviteTeam />
+                              </LazyRoute>
+                            ),
+                          },
+                          {
+                            path: AppPath.BookCall,
+                            element: (
+                              <LazyRoute
+                                fallback={<OnboardingStepPageLoader />}
+                              >
+                                <BookCall />
+                              </LazyRoute>
+                            ),
+                          },
+                          {
+                            path: AppPath.PlanRequired,
+                            element: (
+                              <LazyRoute
+                                fallback={<OnboardingStepPageLoader />}
+                              >
+                                <ChooseYourPlan />
+                              </LazyRoute>
+                            ),
+                          },
+                        ],
+                      },
+                    ]),
                 {
                   path: AppPath.Authorize,
-                  element: (
+                  element: REACT_APP_PRIVATE_MODE ? (
+                    <Navigate to={AppPath.Index} replace />
+                  ) : (
                     <LazyRoute>
                       <Authorize />
                     </LazyRoute>

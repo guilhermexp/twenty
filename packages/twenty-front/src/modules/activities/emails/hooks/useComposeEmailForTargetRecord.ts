@@ -5,6 +5,7 @@ import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenCompos
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { REACT_APP_PRIVATE_MODE } from '~/config';
 
 export const useComposeEmailForTargetRecord = (
   targetRecord: ActivityTargetableObject,
@@ -21,6 +22,10 @@ export const useComposeEmailForTargetRecord = (
     });
 
   const openComposer = () => {
+    if (REACT_APP_PRIVATE_MODE) {
+      return;
+    }
+
     if (!isDefined(connectedAccountId)) {
       navigateSettings(SettingsPath.NewAccount);
 

@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-
+import { PrivateModeAutoLoginEffect } from '@/auth/components/PrivateModeAutoLoginEffect';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
 import { SignInUpStandardContent } from '@/auth/sign-in-up/components/SignInUpStandardContent';
@@ -24,7 +24,8 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { REACT_APP_DEV_AUTO_LOGIN, REACT_APP_PRIVATE_MODE } from '~/config';
 
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
 import { SignInUpSsoExchangeTokenEffect } from '@/auth/sign-in-up/components/internal/SignInUpSsoExchangeTokenEffect';
@@ -62,7 +63,13 @@ export const SignInUp = () => {
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
   const isCreatingWorkspace = useAtomStateValue(isCreatingWorkspaceState);
+  const [hasPrivateModeAutoLoginFailed, setHasPrivateModeAutoLoginFailed] =
+    useState(false);
 
+  const shouldAutoLoginInPrivateMode =
+    REACT_APP_PRIVATE_MODE &&
+    REACT_APP_DEV_AUTO_LOGIN &&
+    !hasPrivateModeAutoLoginFailed;
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
@@ -218,7 +225,20 @@ export const SignInUp = () => {
       ) : (
         <SignInUpStandardContent
           workspacePublicData={workspacePublicData}
-          signInUpForm={signInUpForm}
+          signInUpForm={
+            shouldAutoLoginInPrivateMode ? (
+              <>
+                <PrivateModeAutoLoginEffect
+                  onError={() => setHasPrivateModeAutoLoginFailed(true)}
+                />
+                <StyledLoaderContainer>
+                  <Loader color="gray" />
+                </StyledLoaderContainer>
+              </>
+            ) : (
+              signInUpForm
+            )
+          }
           signInUpStep={signInUpStep}
           title={title}
           onClickOnLogo={onClickOnLogo}

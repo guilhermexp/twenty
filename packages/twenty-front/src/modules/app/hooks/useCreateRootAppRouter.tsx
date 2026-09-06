@@ -15,6 +15,7 @@ import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoad
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
 import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
+import { REACT_APP_PRIVATE_MODE } from '~/config';
 
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
@@ -63,7 +64,16 @@ const createRootAppRouter = () =>
             }
           />
         </Route>
-        <Route path={AppPath.Authorize} element={<RootAuthorizeRedirect />} />
+        <Route
+          path={AppPath.Authorize}
+          element={
+            REACT_APP_PRIVATE_MODE ? (
+              <Navigate to={AppPath.Index} replace />
+            ) : (
+              <RootAuthorizeRedirect />
+            )
+          }
+        />
         <Route
           path={AppPath.NotFoundWildcard}
           element={<Navigate to={AppPath.SignInUp} replace />}

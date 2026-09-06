@@ -1,3 +1,4 @@
+import { REACT_APP_PRIVATE_MODE } from '~/config';
 import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConnectedAccount';
 import { useResolveDefaultEmailRecipient } from '@/activities/emails/hooks/useResolveDefaultEmailRecipient';
 import { getPrimaryEmailFromRecord } from '@/activities/emails/utils/getPrimaryEmailFromRecord';
@@ -57,6 +58,10 @@ export const ComposeEmailCommand = () => {
     : singleDefaultTo;
 
   const handleExecute = () => {
+    if (REACT_APP_PRIVATE_MODE) {
+      return;
+    }
+
     if (!isDefined(connectedAccountId)) {
       navigateSettings(SettingsPath.NewAccount);
 
