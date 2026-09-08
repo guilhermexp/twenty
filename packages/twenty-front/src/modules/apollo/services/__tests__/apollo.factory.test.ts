@@ -58,7 +58,6 @@ const mockWorkspace = {
   metadataVersion: 1,
   allowImpersonation: false,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
-  billingEntitlements: [],
   workspaceMembersCount: 0,
   isPublicInviteLinkEnabled: false,
   workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
@@ -69,8 +68,6 @@ const mockWorkspace = {
   isGoogleAuthBypassEnabled: false,
   isPasswordAuthBypassEnabled: false,
   isMicrosoftAuthBypassEnabled: false,
-  hasValidSignedEnterpriseKey: false,
-  hasValidEnterpriseValidityToken: false,
   subdomain: 'test',
   customDomain: 'test.com',
   workspaceUrls: {

@@ -587,7 +587,6 @@ enum PermissionFlagType {
   APPLICATIONS
   MARKETPLACE_APPS
   LAYOUTS
-  BILLING
   AI_SETTINGS
   AI
   VIEWS
@@ -851,9 +850,6 @@ type Workspace {
   workspaceCustomApplication: Application
   featureFlags: [FeatureFlag!]
   installedApplications: [Application!]!
-  billingEntitlements: [BillingEntitlement!]!
-  hasValidSignedEnterpriseKey: Boolean!
-  hasValidEnterpriseValidityToken: Boolean!
   workspaceUrls: WorkspaceUrls!
   workspaceCustomApplicationId: String!
 }
@@ -1417,22 +1413,6 @@ enum LogicFunctionExecutionStatus {
   ERROR
 }
 
-type EnterpriseLicenseInfoDTO {
-  isValid: Boolean!
-  licensee: String
-  expiresAt: DateTime
-  subscriptionId: String
-}
-
-type EnterpriseSubscriptionStatusDTO {
-  status: String!
-  licensee: String
-  expiresAt: DateTime
-  cancelAt: DateTime
-  currentPeriodEnd: DateTime
-  isCancellationScheduled: Boolean!
-}
-
 type FileWithSignedUrl {
   id: UUID!
   path: String!
@@ -1920,7 +1900,6 @@ type ClientConfig {
   isClickHouseConfigured: Boolean!
   isWorkspaceSchemaDDLLocked: Boolean!
   isOnboardingAiChatEnabled: Boolean!
-  enterpriseInstanceType: String!
   maintenance: ClientConfigMaintenanceMode
 }
 
@@ -2306,19 +2285,6 @@ type SearchField {
   position: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-type BillingEntitlement {
-  key: BillingEntitlementKey!
-  value: Boolean!
-}
-
-enum BillingEntitlementKey {
-  SSO
-  CUSTOM_DOMAIN
-  RLS
-  AUDIT_LOGS
-  USAGE_LIMIT
 }
 
 type DomainRecord {
@@ -3291,9 +3257,6 @@ type Query {
   navigationMenuItem(id: UUID!): NavigationMenuItem
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
   isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
-  enterprisePortalSession(returnUrlPath: String): String
-  enterpriseCheckoutSession(billingInterval: String): String
-  enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   usageLimits: [UsageLimit!]!
   getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
@@ -3539,9 +3502,6 @@ type Mutation {
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
   createFileUpload(filename: String!, size: Float!, fileFolder: FileFolder!, fieldMetadataId: String, fieldMetadataUniversalIdentifier: String): FileUploadTarget!
   completeFileUpload(fileId: String!): FileWithSignedUrl!
-  refreshEnterpriseValidityToken: Boolean!
-  releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
-  setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
   uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
