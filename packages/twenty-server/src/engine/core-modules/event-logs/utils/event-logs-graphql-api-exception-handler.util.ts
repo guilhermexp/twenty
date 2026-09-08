@@ -13,7 +13,6 @@ export const eventLogsGraphqlApiExceptionHandler = (
 ) => {
   switch (exception.code) {
     case EventLogsExceptionCode.CLICKHOUSE_NOT_CONFIGURED:
-    case EventLogsExceptionCode.NO_ENTITLEMENT:
       throw new ForbiddenError(exception);
     default: {
       assertUnreachable(exception.code);

@@ -9,7 +9,6 @@ import { Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
-import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 import {
@@ -33,7 +32,6 @@ const MAX_LIMIT = 10000;
 export class EventLogsService {
   constructor(
     private readonly clickHouseService: ClickHouseService,
-    private readonly enterprisePlanService: EnterprisePlanService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -123,28 +121,13 @@ export class EventLogsService {
   }
 
   async validateAccess(
-    workspaceId: string,
-    table: EventLogTable,
+    _workspaceId: string,
+    _table: EventLogTable,
   ): Promise<void> {
     if (!this.clickHouseService.getMainClient()) {
       throw new EventLogsException(
         'Audit logs require ClickHouse to be configured. Please set the CLICKHOUSE_URL environment variable.',
         EventLogsExceptionCode.CLICKHOUSE_NOT_CONFIGURED,
-      );
-    }
-
-    const requiredEntitlement = EVENT_LOG_TYPES[table].requiresEntitlement;
-
-    if (requiredEntitlement === null) {
-      return;
-    }
-
-    const hasAccess = this.enterprisePlanService.isValid();
-
-    if (!hasAccess) {
-      throw new EventLogsException(
-        'Audit logs require an Enterprise subscription.',
-        EventLogsExceptionCode.NO_ENTITLEMENT,
       );
     }
   }

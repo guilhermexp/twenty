@@ -33,7 +33,6 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-enterprise-key.constants';
 import { getSignUpWithoutWorkspaceDecision } from 'src/engine/core-modules/auth/utils/get-sign-up-without-workspace-decision.util';
 import { hasProvisionedSignUpDestination } from 'src/engine/core-modules/auth/utils/has-provisioned-sign-up-destination.util';
 import { DEFAULT_DPA_REGION } from 'src/engine/core-modules/dpa/config/dpa-region-config.constant';
@@ -48,7 +47,6 @@ import {
   type SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
-import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -90,7 +88,6 @@ export class SignInUpService {
     private readonly applicationService: ApplicationService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly enterprisePlanService: EnterprisePlanService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -507,8 +504,6 @@ export class SignInUpService {
       return;
     }
 
-    await this.assertWorkspaceCountWithinLimit(workspaceCount);
-
     if (
       !this.twentyConfigService.get(
         'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
@@ -530,26 +525,6 @@ export class SignInUpService {
       AuthExceptionCode.FORBIDDEN_EXCEPTION,
       {
         userFriendlyMessage: msg`Workspace creation is restricted to admins`,
-      },
-    );
-  }
-
-  private async assertWorkspaceCountWithinLimit(
-    workspaceCount: number,
-  ): Promise<void> {
-    if (this.enterprisePlanService.isValid()) {
-      return;
-    }
-
-    if (workspaceCount < MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY) {
-      return;
-    }
-
-    throw new AuthException(
-      `Cannot create more than ${MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY} workspaces without a valid enterprise key`,
-      AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      {
-        userFriendlyMessage: msg`Workspace limit reached. A valid enterprise key is required to create more workspaces.`,
       },
     );
   }

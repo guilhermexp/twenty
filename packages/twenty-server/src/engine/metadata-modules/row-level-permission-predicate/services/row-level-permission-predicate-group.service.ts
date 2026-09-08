@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
@@ -21,19 +20,11 @@ export class RowLevelPermissionPredicateGroupService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectWorkspaceScopedRepository(RowLevelPermissionPredicateGroupEntity)
     private readonly rowLevelPermissionPredicateGroupRepository: WorkspaceScopedRepository<RowLevelPermissionPredicateGroupEntity>,
-    private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
   async findByWorkspaceId(
     workspaceId: string,
   ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
-    const hasRowLevelPermissionFeature =
-      await this.hasRowLevelPermissionFeature(workspaceId);
-
-    if (!hasRowLevelPermissionFeature) {
-      return [];
-    }
-
     const { flatRowLevelPermissionPredicateGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -59,13 +50,6 @@ export class RowLevelPermissionPredicateGroupService {
     workspaceId: string,
     roleId: string,
   ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
-    const hasRowLevelPermissionFeature =
-      await this.hasRowLevelPermissionFeature(workspaceId);
-
-    if (!hasRowLevelPermissionFeature) {
-      return [];
-    }
-
     const { flatRowLevelPermissionPredicateGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -91,13 +75,6 @@ export class RowLevelPermissionPredicateGroupService {
     id: string,
     workspaceId: string,
   ): Promise<RowLevelPermissionPredicateGroupDTO | null> {
-    const hasRowLevelPermissionFeature =
-      await this.hasRowLevelPermissionFeature(workspaceId);
-
-    if (!hasRowLevelPermissionFeature) {
-      return null;
-    }
-
     const { flatRowLevelPermissionPredicateGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -129,11 +106,5 @@ export class RowLevelPermissionPredicateGroupService {
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
-  }
-
-  private async hasRowLevelPermissionFeature(
-    _workspaceId: string,
-  ): Promise<boolean> {
-    return this.enterprisePlanService.isValid();
   }
 }

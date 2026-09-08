@@ -2,11 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
-import {
-  EnterpriseException,
-  EnterpriseExceptionCode,
-} from 'src/engine/core-modules/enterprise/enterprise.exception';
 import {
   type CustomAiProviderAccess,
   CustomAiProviderAccessService,
@@ -35,19 +30,6 @@ export class AdminPanelAiProviderService {
   // exact, and refreshes what model resolution will use on its next read.
   async getCustomAiProviderAccess(): Promise<CustomAiProviderAccess> {
     return this.customAiProviderAccessService.computeAccess();
-  }
-
-  private async assertCustomAiProviderAccess(): Promise<void> {
-    const { hasAccess, seatCount } = await this.getCustomAiProviderAccess();
-
-    if (hasAccess) {
-      return;
-    }
-
-    throw new EnterpriseException(
-      `Custom AI providers require a valid enterprise key above ${MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats (this instance has ${seatCount})`,
-      EnterpriseExceptionCode.ENTERPRISE_SEAT_THRESHOLD_EXCEEDED,
-    );
   }
 
   getMaskedProviders(): Record<string, unknown> {
@@ -93,8 +75,6 @@ export class AdminPanelAiProviderService {
     providerName: string;
     providerConfig: unknown;
   }): Promise<boolean> {
-    await this.assertCustomAiProviderAccess();
-
     if (!PROVIDER_NAME_PATTERN.test(providerName)) {
       throw new UserInputError('Invalid provider name');
     }
@@ -143,8 +123,6 @@ export class AdminPanelAiProviderService {
     providerName: string;
     modelConfig: unknown;
   }): Promise<boolean> {
-    await this.assertCustomAiProviderAccess();
-
     const validatedModelConfig =
       aiProviderModelConfigSchema.safeParse(modelConfig);
 
