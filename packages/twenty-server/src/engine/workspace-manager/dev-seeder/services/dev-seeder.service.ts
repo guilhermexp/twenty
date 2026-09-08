@@ -24,8 +24,9 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
 import {
-  type SeededWorkspacesIds,
+  buildDevWorkspaceInput,
   SEEDER_CREATE_WORKSPACE_INPUT,
+  type SeededWorkspacesIds,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import {
@@ -41,8 +42,14 @@ import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/ut
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
 import { seedTwoFactorAuthenticationMethods } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-two-factor-authentication-methods.util';
 import { seedUnsubscribeTopics } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-unsubscribe-topics.util';
-import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
-import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import {
+  SEED_DEV_USER_WORKSPACE_ID,
+  seedUserWorkspaces,
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import {
+  SEED_DEV_USER_ID,
+  seedUsers,
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
@@ -53,6 +60,13 @@ import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } f
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+export type SeedDevOptions = {
+  light?: boolean;
+  workspaceName?: string;
+  adminEmail?: string;
+  adminPassword?: string;
+};
 
 @Injectable()
 export class DevSeederService {
@@ -81,8 +95,8 @@ export class DevSeederService {
   ) {}
 
   public async seedDev(
-    workspaceId: SeededWorkspacesIds,
-    options?: { light?: boolean },
+    workspaceId: string,
+    options?: SeedDevOptions,
   ): Promise<void> {
     const light = options?.light ?? false;
     const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
@@ -98,6 +112,9 @@ export class DevSeederService {
       workspaceId,
       appVersion,
       initialCursor,
+      workspaceName: options?.workspaceName,
+      adminEmail: options?.adminEmail,
+      adminPassword: options?.adminPassword,
     });
 
     await this.applicationRegistrationService.createCliRegistrationIfNotExists();
@@ -232,7 +249,7 @@ export class DevSeederService {
     workspaceId,
     chatReferenceIds,
   }: {
-    workspaceId: SeededWorkspacesIds;
+    workspaceId: string;
     chatReferenceIds: ChatReferenceIds;
   }) {
     const queryRunner = this.coreDataSource.createQueryRunner();
@@ -261,14 +278,25 @@ export class DevSeederService {
     workspaceId,
     appVersion,
     initialCursor,
+    workspaceName,
+    adminEmail,
+    adminPassword,
   }: {
-    workspaceId: SeededWorkspacesIds;
+    workspaceId: string;
     appVersion: string;
     initialCursor: { name: string; status: UpgradeMigrationStatus };
+    workspaceName?: string;
+    adminEmail?: string;
+    adminPassword?: string;
   }): Promise<void> {
     const schemaName = 'core';
-    const createWorkspaceStaticInput =
-      SEEDER_CREATE_WORKSPACE_INPUT[workspaceId];
+    const isParameterizedDevSeed = isDefined(adminPassword);
+    const createWorkspaceStaticInput = isParameterizedDevSeed
+      ? buildDevWorkspaceInput({
+          workspaceId,
+          displayName: workspaceName ?? workspaceId,
+        })
+      : SEEDER_CREATE_WORKSPACE_INPUT[workspaceId as SeededWorkspacesIds];
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -295,8 +323,34 @@ export class DevSeederService {
       );
 
       await seedServerId({ queryRunner, schemaName });
-      await seedUsers({ queryRunner, schemaName });
-      await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
+      await seedUsers({
+        queryRunner,
+        schemaName,
+        ...(isParameterizedDevSeed
+          ? {
+              adminUser: {
+                id: SEED_DEV_USER_ID,
+                email: adminEmail ?? '',
+                firstName: 'Guilherme',
+                lastName: '',
+                password: adminPassword,
+              },
+            }
+          : {}),
+      });
+      await seedUserWorkspaces({
+        queryRunner,
+        schemaName,
+        workspaceId,
+        ...(isParameterizedDevSeed
+          ? {
+              adminUserWorkspace: {
+                id: SEED_DEV_USER_WORKSPACE_ID,
+                userId: SEED_DEV_USER_ID,
+              },
+            }
+          : {}),
+      });
       await seedTwoFactorAuthenticationMethods({
         queryRunner,
         schemaName,

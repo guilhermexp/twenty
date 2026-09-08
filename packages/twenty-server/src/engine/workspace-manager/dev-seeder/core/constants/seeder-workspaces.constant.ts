@@ -31,6 +31,27 @@ export type SeededWorkspacesIds =
   | typeof SEED_APPLE_WORKSPACE_ID
   | typeof SEED_YCOMBINATOR_WORKSPACE_ID;
 
+export const DEFAULT_SEED_WORKSPACE_NAME = 'Cert Certificados';
+export const DEFAULT_SEED_ADMIN_EMAIL = 'guilherme@zeron.app';
+
+export const SEED_DEV_WORKSPACE_ID = 'c3e70000-1c25-4d02-bf25-6aeccf7ea419';
+
+export const buildDevWorkspaceInput = ({
+  workspaceId,
+  displayName,
+}: {
+  workspaceId: string;
+  displayName: string;
+}): Omit<CreateWorkspaceInput, 'workspaceCustomApplicationId'> => ({
+  id: workspaceId,
+  displayName,
+  subdomain: 'cert',
+  inviteHash: 'cert-dev-invite-hash',
+  logo: '',
+  activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+  isTwoFactorAuthenticationEnforced: false,
+});
+
 export const SEEDER_CREATE_WORKSPACE_INPUT = {
   [SEED_APPLE_WORKSPACE_ID]: {
     id: SEED_APPLE_WORKSPACE_ID,

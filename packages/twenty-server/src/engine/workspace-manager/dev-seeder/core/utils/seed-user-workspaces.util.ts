@@ -1,4 +1,5 @@
 import { type QueryRunner } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
@@ -22,6 +23,9 @@ export const USER_WORKSPACE_DATA_SEED_IDS = {
   SCOTT: '20202020-1111-4a01-8001-000000000002',
 };
 
+export const SEED_DEV_USER_WORKSPACE_ID =
+  'c3e70000-9e3b-46d4-a556-88b9ddc2b035';
+
 const {
   userWorkspaces: randomUserWorkspaces,
   userWorkspaceIds: randomUserWorkspaceIds,
@@ -33,13 +37,36 @@ type SeedUserWorkspacesArgs = {
   queryRunner: QueryRunner;
   schemaName: string;
   workspaceId: string;
+  adminUserWorkspace?: {
+    id: string;
+    userId: string;
+  };
 };
 
 export const seedUserWorkspaces = async ({
   queryRunner,
   schemaName,
   workspaceId,
+  adminUserWorkspace,
 }: SeedUserWorkspacesArgs) => {
+  if (isDefined(adminUserWorkspace)) {
+    await queryRunner.manager
+      .createQueryBuilder()
+      .insert()
+      .into(`${schemaName}.${tableName}`, ['id', 'userId', 'workspaceId'])
+      .orIgnore()
+      .values([
+        {
+          id: adminUserWorkspace.id,
+          userId: adminUserWorkspace.userId,
+          workspaceId,
+        },
+      ])
+      .execute();
+
+    return;
+  }
+
   let userWorkspaces: Pick<
     UserWorkspaceEntity,
     'id' | 'userId' | 'workspaceId'

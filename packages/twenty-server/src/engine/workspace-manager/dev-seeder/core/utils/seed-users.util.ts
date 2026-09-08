@@ -1,4 +1,7 @@
 import { type QueryRunner } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+
+import { hashPassword } from 'src/engine/core-modules/auth/auth.util';
 
 import { generateRandomUsers } from './generate-random-users.util';
 
@@ -12,16 +15,67 @@ export const USER_DATA_SEED_IDS = {
   SCOTT: '20202020-1111-4a01-8001-000000000001',
 };
 
+export const SEED_DEV_USER_ID = 'c3e70000-9e3b-46d4-a556-88b9ddc2b034';
+
 const { users: randomUsers, userIds: randomUserIds } = generateRandomUsers();
 
 export const RANDOM_USER_IDS = randomUserIds;
 
+export type SeedAdminUserInput = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+};
+
 type SeedUsersArgs = {
   queryRunner: QueryRunner;
   schemaName: string;
+  adminUser?: SeedAdminUserInput;
 };
 
-export const seedUsers = async ({ queryRunner, schemaName }: SeedUsersArgs) => {
+const USER_INSERT_COLUMNS = [
+  'id',
+  'firstName',
+  'lastName',
+  'email',
+  'passwordHash',
+  'canImpersonate',
+  'canAccessFullAdminPanel',
+  'isEmailVerified',
+] as const;
+
+export const seedUsers = async ({
+  queryRunner,
+  schemaName,
+  adminUser,
+}: SeedUsersArgs) => {
+  if (isDefined(adminUser)) {
+    const passwordHash = await hashPassword(adminUser.password);
+
+    await queryRunner.manager
+      .createQueryBuilder()
+      .insert()
+      .into(`${schemaName}.${tableName}`, [...USER_INSERT_COLUMNS])
+      .orIgnore()
+      .values([
+        {
+          id: adminUser.id,
+          firstName: adminUser.firstName,
+          lastName: adminUser.lastName,
+          email: adminUser.email,
+          passwordHash,
+          canImpersonate: true,
+          canAccessFullAdminPanel: true,
+          isEmailVerified: true,
+        },
+      ])
+      .execute();
+
+    return;
+  }
+
   const originalUsers = [
     {
       id: USER_DATA_SEED_IDS.TIM,
@@ -85,16 +139,7 @@ export const seedUsers = async ({ queryRunner, schemaName }: SeedUsersArgs) => {
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.${tableName}`, [
-      'id',
-      'firstName',
-      'lastName',
-      'email',
-      'passwordHash',
-      'canImpersonate',
-      'canAccessFullAdminPanel',
-      'isEmailVerified',
-    ])
+    .into(`${schemaName}.${tableName}`, [...USER_INSERT_COLUMNS])
     .orIgnore()
     .values(allUsers)
     .execute();
