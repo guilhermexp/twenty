@@ -14,8 +14,6 @@ export type Scalars = {
     Upload: File,
 }
 
-export type BillingProductDTO = (BillingLicensedProduct | BillingMeteredProduct) & { __isUnion?: true }
-
 export interface ApiKey {
     id: Scalars['UUID']
     name: Scalars['String']
@@ -598,10 +596,7 @@ export interface Workspace {
     routerModel: Scalars['String']
     workspaceCustomApplication?: Application
     featureFlags?: FeatureFlag[]
-    billingSubscriptions: BillingSubscription[]
     installedApplications: Application[]
-    currentBillingSubscription?: BillingSubscription
-    billingCustomer?: BillingCustomer
     billingEntitlements: BillingEntitlement[]
     hasValidSignedEnterpriseKey: Scalars['Boolean']
     hasValidEnterpriseValidityToken: Scalars['Boolean']
@@ -637,7 +632,6 @@ export interface User {
     workspaceMembers?: WorkspaceMember[]
     deletedWorkspaceMembers?: DeletedWorkspaceMember[]
     hasPassword: Scalars['Boolean']
-    supportUserHash?: Scalars['String']
     isWorkspaceCreator?: Scalars['Boolean']
     workspaces: UserWorkspace[]
     availableWorkspaces: AvailableWorkspaces
@@ -1070,117 +1064,6 @@ export interface ApplicationConnectionProvider {
     __typename: 'ApplicationConnectionProvider'
 }
 
-export interface BillingSubscriptionSchedulePhaseItem {
-    price: Scalars['String']
-    quantity?: Scalars['Float']
-    __typename: 'BillingSubscriptionSchedulePhaseItem'
-}
-
-export interface BillingSubscriptionSchedulePhase {
-    start_date: Scalars['Float']
-    end_date: Scalars['Float']
-    items: BillingSubscriptionSchedulePhaseItem[]
-    __typename: 'BillingSubscriptionSchedulePhase'
-}
-
-export interface BillingProductMetadata {
-    planKey: BillingPlanKey
-    priceUsageBased: BillingUsageType
-    productKey: BillingProductKey
-    __typename: 'BillingProductMetadata'
-}
-
-
-/** The different billing plans available */
-export type BillingPlanKey = 'PRO' | 'ENTERPRISE'
-
-export type BillingUsageType = 'METERED' | 'LICENSED'
-
-
-/** The different billing products available */
-export type BillingProductKey = 'BASE_PRODUCT' | 'RESOURCE_CREDIT'
-
-export interface BillingPriceLicensed {
-    recurringInterval: SubscriptionInterval
-    unitAmount: Scalars['Float']
-    stripePriceId: Scalars['String']
-    priceUsageType: BillingUsageType
-    creditAmount?: Scalars['Float']
-    __typename: 'BillingPriceLicensed'
-}
-
-export type SubscriptionInterval = 'Month' | 'Year'
-
-export interface BillingPriceTier {
-    upTo?: Scalars['Float']
-    flatAmount?: Scalars['Float']
-    unitAmount?: Scalars['Float']
-    __typename: 'BillingPriceTier'
-}
-
-export interface BillingPriceMetered {
-    tiers: BillingPriceTier[]
-    recurringInterval: SubscriptionInterval
-    stripePriceId: Scalars['String']
-    priceUsageType: BillingUsageType
-    __typename: 'BillingPriceMetered'
-}
-
-export interface BillingProduct {
-    name: Scalars['String']
-    description: Scalars['String']
-    images?: Scalars['String'][]
-    metadata: BillingProductMetadata
-    __typename: 'BillingProduct'
-}
-
-export interface BillingLicensedProduct {
-    name: Scalars['String']
-    description: Scalars['String']
-    images?: Scalars['String'][]
-    metadata: BillingProductMetadata
-    prices?: BillingPriceLicensed[]
-    __typename: 'BillingLicensedProduct'
-}
-
-export interface BillingMeteredProduct {
-    name: Scalars['String']
-    description: Scalars['String']
-    images?: Scalars['String'][]
-    metadata: BillingProductMetadata
-    prices?: BillingPriceMetered[]
-    __typename: 'BillingMeteredProduct'
-}
-
-export interface BillingSubscriptionItem {
-    id: Scalars['UUID']
-    hasReachedCurrentPeriodCap: Scalars['Boolean']
-    quantity?: Scalars['Float']
-    stripePriceId: Scalars['String']
-    billingProduct: BillingProductDTO
-    __typename: 'BillingSubscriptionItem'
-}
-
-export interface BillingCustomer {
-    id: Scalars['UUID']
-    hasPaymentMethod?: Scalars['Boolean']
-    __typename: 'BillingCustomer'
-}
-
-export interface BillingSubscription {
-    id: Scalars['UUID']
-    status: SubscriptionStatus
-    interval?: SubscriptionInterval
-    billingSubscriptionItems?: BillingSubscriptionItem[]
-    currentPeriodEnd?: Scalars['DateTime']
-    metadata: Scalars['JSON']
-    phases: BillingSubscriptionSchedulePhase[]
-    cancelAt?: Scalars['DateTime']
-    __typename: 'BillingSubscription'
-}
-
-export type SubscriptionStatus = 'Active' | 'Canceled' | 'Incomplete' | 'IncompleteExpired' | 'PastDue' | 'Paused' | 'Trialing' | 'Unpaid'
-
 export interface LogicFunctionExecutionResult {
     /** Execution result in JSON format */
     data?: Scalars['JSON']
@@ -1342,59 +1225,6 @@ export interface UserSession {
     __typename: 'UserSession'
 }
 
-export interface BillingEndTrialPeriod {
-    /** Updated subscription status */
-    status?: SubscriptionStatus
-    /** Boolean that confirms if a payment method was found */
-    hasPaymentMethod: Scalars['Boolean']
-    /** Billing portal URL for payment method update (returned when no payment method exists) */
-    billingPortalUrl?: Scalars['String']
-    /** Updated current billing subscription */
-    currentBillingSubscription?: BillingSubscription
-    /** All billing subscriptions */
-    billingSubscriptions?: BillingSubscription[]
-    __typename: 'BillingEndTrialPeriod'
-}
-
-export interface BillingResourceCreditUsage {
-    productKey: BillingProductKey
-    periodStart: Scalars['DateTime']
-    periodEnd: Scalars['DateTime']
-    usedCredits: Scalars['Float']
-    grantedCredits: Scalars['Float']
-    rolloverCredits: Scalars['Float']
-    totalGrantedCredits: Scalars['Float']
-    unitPriceCents: Scalars['Float']
-    __typename: 'BillingResourceCreditUsage'
-}
-
-export interface BillingPlan {
-    planKey: BillingPlanKey
-    baseProducts: BillingLicensedProduct[]
-    resourceCreditProducts: BillingLicensedProduct[]
-    meteredProducts: BillingMeteredProduct[]
-    __typename: 'BillingPlan'
-}
-
-export interface BillingPaymentIntent {
-    clientSecret: Scalars['String']
-    paymentIntentType: Scalars['String']
-    __typename: 'BillingPaymentIntent'
-}
-
-export interface BillingSession {
-    url?: Scalars['String']
-    __typename: 'BillingSession'
-}
-
-export interface BillingUpdate {
-    /** Current billing subscription */
-    currentBillingSubscription: BillingSubscription
-    /** All billing subscriptions */
-    billingSubscriptions: BillingSubscription[]
-    __typename: 'BillingUpdate'
-}
-
 export interface UsageBreakdownItem {
     key: Scalars['String']
     label?: Scalars['String']
@@ -1535,7 +1365,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1571,12 +1401,6 @@ export interface ApplicationRegistrationStats {
     mostInstalledVersion?: Scalars['String']
     versionDistribution: VersionDistributionEntry[]
     __typename: 'ApplicationRegistrationStats'
-}
-
-export interface BillingTrialPeriod {
-    duration: Scalars['Float']
-    isCreditCardRequired: Scalars['Boolean']
-    __typename: 'BillingTrialPeriod'
 }
 
 export interface SSOIdentityProvider {
@@ -1652,22 +1476,6 @@ export interface ClientAiModelConfig {
 
 export type ModelFamily = 'GPT' | 'CLAUDE' | 'GEMINI' | 'MISTRAL' | 'GROK'
 
-export interface Billing {
-    isBillingEnabled: Scalars['Boolean']
-    billingUrl?: Scalars['String']
-    stripePublishableKey?: Scalars['String']
-    trialPeriods: BillingTrialPeriod[]
-    __typename: 'Billing'
-}
-
-export interface Support {
-    supportDriver: SupportDriver
-    supportFrontChatId?: Scalars['String']
-    __typename: 'Support'
-}
-
-export type SupportDriver = 'NONE' | 'FRONT'
-
 export interface Sentry {
     environment?: Scalars['String']
     release?: Scalars['String']
@@ -1713,7 +1521,6 @@ export interface ClientConfigMaintenanceMode {
 export interface ClientConfig {
     appVersion?: Scalars['String']
     authProviders: AuthProviders
-    billing: Billing
     aiModels: ClientAiModelConfig[]
     signInPrefilled: Scalars['Boolean']
     isMultiWorkspaceEnabled: Scalars['Boolean']
@@ -1722,7 +1529,6 @@ export interface ClientConfig {
     frontDomain: Scalars['String']
     publicFunctionDomain?: Scalars['String']
     analyticsEnabled: Scalars['Boolean']
-    support: Support
     isAttachmentPreviewEnabled: Scalars['Boolean']
     sentry: Sentry
     captcha: Captcha
@@ -3081,9 +2887,6 @@ export interface Query {
     currentUserSessions: UserSession[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     applicationConnectionProviders: ApplicationConnectionProvider[]
-    billingPortalSession: BillingSession
-    listPlans: BillingPlan[]
-    getResourceCreditUsage: BillingResourceCreditUsage[]
     getInviteSuggestions: InviteSuggestion[]
     findWorkspaceInvitations: WorkspaceInvitation[]
     getApprovedAccessDomains: ApprovedAccessDomain[]
@@ -3157,6 +2960,10 @@ export interface Query {
     agentTurns: AgentTurn[]
     timelineActivityTypes: TimelineActivityType[]
     metadataTranslations: MetadataTranslation[]
+    eventLogs: EventLogQueryResult
+    pieChartData: PieChartData
+    lineChartData: LineChartData
+    barChartData: BarChartData
     checkUserExists: CheckUserExist
     checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid
     findWorkspaceFromInviteHash: Workspace
@@ -3165,10 +2972,6 @@ export interface Query {
     validatePasswordResetToken: ValidatePasswordResetToken
     currentUser: User
     getSSOIdentityProviders: FindAvailableSSOIDP[]
-    eventLogs: EventLogQueryResult
-    pieChartData: PieChartData
-    lineChartData: LineChartData
-    barChartData: BarChartData
     callRecordingIdForCalendarEvent?: Scalars['UUID']
     getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount
     getAutoCompleteAddress: AutocompleteResult[]
@@ -3179,7 +2982,7 @@ export interface Query {
     __typename: 'Query'
 }
 
-export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG'
+export type EventLogTable = 'WORKSPACE_EVENT' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG'
 
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
@@ -3236,16 +3039,6 @@ export interface Mutation {
     revokeAllOtherUserSessions: Scalars['Int']
     deleteConnectedAccount: ConnectedAccountPublicDTO
     updateOneApplicationVariable: Scalars['Boolean']
-    checkoutSession: BillingSession
-    createSubscriptionPaymentIntent: BillingPaymentIntent
-    createBillingPaymentMethodSetupIntent: BillingPaymentIntent
-    switchSubscriptionInterval: BillingUpdate
-    switchBillingPlan: BillingUpdate
-    cancelSwitchBillingPlan: BillingUpdate
-    cancelSwitchBillingInterval: BillingUpdate
-    setResourceCreditSubscriptionPrice: BillingUpdate
-    endSubscriptionTrialPeriod: BillingEndTrialPeriod
-    cancelSwitchResourceCreditPrice: BillingUpdate
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     completeBookCallOnboardingStep: OnboardingStepSuccess
     triggerInstallAppsOnboardingStep: OnboardingStepSuccess
@@ -3377,6 +3170,8 @@ export interface Mutation {
     runEvaluationInput: AgentTurn
     updateTimelineActivityType: TimelineActivityType
     resetTimelineActivityType: TimelineActivityType
+    createObjectEvent: Analytics
+    duplicateDashboard: DuplicatedDashboard
     getAuthorizationUrlForSSO: GetAuthorizationUrlForSSO
     getLoginTokenFromCredentials: LoginToken
     signIn: AvailableWorkspacesAndAccessTokens
@@ -3410,9 +3205,6 @@ export interface Mutation {
     createSAMLIdentityProvider: SetupSso
     deleteSSOIdentityProvider: DeleteSso
     editSSOIdentityProvider: EditSso
-    createObjectEvent: Analytics
-    trackAnalytics: Analytics
-    duplicateDashboard: DuplicatedDashboard
     impersonate: Impersonate
     stopImpersonation: StopImpersonation
     createCalendarEvent: CreateCalendarEventOutput
@@ -3436,25 +3228,12 @@ export interface Mutation {
 
 export type RunAgentMessageRole = 'user' | 'assistant'
 
-export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
-
 export interface Subscription {
     onEventSubscription?: EventSubscription
     logicFunctionLogs: LogicFunctionLogs
     onAgentChatEvent: AgentChatEvent
     eventLogsLive?: EventLogRecord[]
     __typename: 'Subscription'
-}
-
-export interface BillingProductDTOGenqlSelection{
-    name?: boolean | number
-    description?: boolean | number
-    images?: boolean | number
-    metadata?: BillingProductMetadataGenqlSelection
-    on_BillingLicensedProduct?: BillingLicensedProductGenqlSelection
-    on_BillingMeteredProduct?: BillingMeteredProductGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
 }
 
 export interface ApiKeyGenqlSelection{
@@ -4046,10 +3825,7 @@ export interface WorkspaceGenqlSelection{
     routerModel?: boolean | number
     workspaceCustomApplication?: ApplicationGenqlSelection
     featureFlags?: FeatureFlagGenqlSelection
-    billingSubscriptions?: BillingSubscriptionGenqlSelection
     installedApplications?: ApplicationGenqlSelection
-    currentBillingSubscription?: BillingSubscriptionGenqlSelection
-    billingCustomer?: BillingCustomerGenqlSelection
     billingEntitlements?: BillingEntitlementGenqlSelection
     hasValidSignedEnterpriseKey?: boolean | number
     hasValidEnterpriseValidityToken?: boolean | number
@@ -4082,7 +3858,6 @@ export interface UserGenqlSelection{
     workspaceMembers?: WorkspaceMemberGenqlSelection
     deletedWorkspaceMembers?: DeletedWorkspaceMemberGenqlSelection
     hasPassword?: boolean | number
-    supportUserHash?: boolean | number
     isWorkspaceCreator?: boolean | number
     workspaces?: UserWorkspaceGenqlSelection
     availableWorkspaces?: AvailableWorkspacesGenqlSelection
@@ -4550,115 +4325,6 @@ export interface ApplicationConnectionProviderGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface BillingSubscriptionSchedulePhaseItemGenqlSelection{
-    price?: boolean | number
-    quantity?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingSubscriptionSchedulePhaseGenqlSelection{
-    start_date?: boolean | number
-    end_date?: boolean | number
-    items?: BillingSubscriptionSchedulePhaseItemGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingProductMetadataGenqlSelection{
-    planKey?: boolean | number
-    priceUsageBased?: boolean | number
-    productKey?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingPriceLicensedGenqlSelection{
-    recurringInterval?: boolean | number
-    unitAmount?: boolean | number
-    stripePriceId?: boolean | number
-    priceUsageType?: boolean | number
-    creditAmount?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingPriceTierGenqlSelection{
-    upTo?: boolean | number
-    flatAmount?: boolean | number
-    unitAmount?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingPriceMeteredGenqlSelection{
-    tiers?: BillingPriceTierGenqlSelection
-    recurringInterval?: boolean | number
-    stripePriceId?: boolean | number
-    priceUsageType?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingProductGenqlSelection{
-    name?: boolean | number
-    description?: boolean | number
-    images?: boolean | number
-    metadata?: BillingProductMetadataGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingLicensedProductGenqlSelection{
-    name?: boolean | number
-    description?: boolean | number
-    images?: boolean | number
-    metadata?: BillingProductMetadataGenqlSelection
-    prices?: BillingPriceLicensedGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingMeteredProductGenqlSelection{
-    name?: boolean | number
-    description?: boolean | number
-    images?: boolean | number
-    metadata?: BillingProductMetadataGenqlSelection
-    prices?: BillingPriceMeteredGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingSubscriptionItemGenqlSelection{
-    id?: boolean | number
-    hasReachedCurrentPeriodCap?: boolean | number
-    quantity?: boolean | number
-    stripePriceId?: boolean | number
-    billingProduct?: BillingProductDTOGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingCustomerGenqlSelection{
-    id?: boolean | number
-    hasPaymentMethod?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingSubscriptionGenqlSelection{
-    id?: boolean | number
-    status?: boolean | number
-    interval?: boolean | number
-    billingSubscriptionItems?: BillingSubscriptionItemGenqlSelection
-    currentPeriodEnd?: boolean | number
-    metadata?: boolean | number
-    phases?: BillingSubscriptionSchedulePhaseGenqlSelection
-    cancelAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface LogicFunctionExecutionResultGenqlSelection{
     /** Execution result in JSON format */
     data?: boolean | number
@@ -4812,65 +4478,6 @@ export interface UserSessionGenqlSelection{
     lastActiveAt?: boolean | number
     expiresAt?: boolean | number
     isCurrent?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingEndTrialPeriodGenqlSelection{
-    /** Updated subscription status */
-    status?: boolean | number
-    /** Boolean that confirms if a payment method was found */
-    hasPaymentMethod?: boolean | number
-    /** Billing portal URL for payment method update (returned when no payment method exists) */
-    billingPortalUrl?: boolean | number
-    /** Updated current billing subscription */
-    currentBillingSubscription?: BillingSubscriptionGenqlSelection
-    /** All billing subscriptions */
-    billingSubscriptions?: BillingSubscriptionGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingResourceCreditUsageGenqlSelection{
-    productKey?: boolean | number
-    periodStart?: boolean | number
-    periodEnd?: boolean | number
-    usedCredits?: boolean | number
-    grantedCredits?: boolean | number
-    rolloverCredits?: boolean | number
-    totalGrantedCredits?: boolean | number
-    unitPriceCents?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingPlanGenqlSelection{
-    planKey?: boolean | number
-    baseProducts?: BillingLicensedProductGenqlSelection
-    resourceCreditProducts?: BillingLicensedProductGenqlSelection
-    meteredProducts?: BillingMeteredProductGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingPaymentIntentGenqlSelection{
-    clientSecret?: boolean | number
-    paymentIntentType?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingSessionGenqlSelection{
-    url?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingUpdateGenqlSelection{
-    /** Current billing subscription */
-    currentBillingSubscription?: BillingSubscriptionGenqlSelection
-    /** All billing subscriptions */
-    billingSubscriptions?: BillingSubscriptionGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5064,13 +4671,6 @@ export interface ApplicationRegistrationStatsGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface BillingTrialPeriodGenqlSelection{
-    duration?: boolean | number
-    isCreditCardRequired?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface SSOIdentityProviderGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -5145,22 +4745,6 @@ export interface ClientAiModelConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface BillingGenqlSelection{
-    isBillingEnabled?: boolean | number
-    billingUrl?: boolean | number
-    stripePublishableKey?: boolean | number
-    trialPeriods?: BillingTrialPeriodGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface SupportGenqlSelection{
-    supportDriver?: boolean | number
-    supportFrontChatId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface SentryGenqlSelection{
     environment?: boolean | number
     release?: boolean | number
@@ -5210,7 +4794,6 @@ export interface ClientConfigMaintenanceModeGenqlSelection{
 export interface ClientConfigGenqlSelection{
     appVersion?: boolean | number
     authProviders?: AuthProvidersGenqlSelection
-    billing?: BillingGenqlSelection
     aiModels?: ClientAiModelConfigGenqlSelection
     signInPrefilled?: boolean | number
     isMultiWorkspaceEnabled?: boolean | number
@@ -5219,7 +4802,6 @@ export interface ClientConfigGenqlSelection{
     frontDomain?: boolean | number
     publicFunctionDomain?: boolean | number
     analyticsEnabled?: boolean | number
-    support?: SupportGenqlSelection
     isAttachmentPreviewEnabled?: boolean | number
     sentry?: SentryGenqlSelection
     captcha?: CaptchaGenqlSelection
@@ -6649,9 +6231,6 @@ export interface QueryGenqlSelection{
     currentUserSessions?: UserSessionGenqlSelection
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null), forPaymentMethodUpdate?: (Scalars['Boolean'] | null)} })
-    listPlans?: BillingPlanGenqlSelection
-    getResourceCreditUsage?: BillingResourceCreditUsageGenqlSelection
     getInviteSuggestions?: InviteSuggestionGenqlSelection
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
     getApprovedAccessDomains?: ApprovedAccessDomainGenqlSelection
@@ -6737,6 +6316,10 @@ export interface QueryGenqlSelection{
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
+    eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
+    pieChartData?: (PieChartDataGenqlSelection & { __args: {input: PieChartDataInput} })
+    lineChartData?: (LineChartDataGenqlSelection & { __args: {input: LineChartDataInput} })
+    barChartData?: (BarChartDataGenqlSelection & { __args: {input: BarChartDataInput} })
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     checkWorkspaceInviteHashIsValid?: (WorkspaceInviteHashValidGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
@@ -6745,10 +6328,6 @@ export interface QueryGenqlSelection{
     validatePasswordResetToken?: (ValidatePasswordResetTokenGenqlSelection & { __args: {passwordResetToken: Scalars['String']} })
     currentUser?: UserGenqlSelection
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
-    eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
-    pieChartData?: (PieChartDataGenqlSelection & { __args: {input: PieChartDataInput} })
-    lineChartData?: (LineChartDataGenqlSelection & { __args: {input: LineChartDataInput} })
-    barChartData?: (BarChartDataGenqlSelection & { __args: {input: BarChartDataInput} })
     callRecordingIdForCalendarEvent?: { __args: {calendarEventId: Scalars['UUID']} }
     getConnectedImapSmtpCaldavAccount?: (ConnectedImapSmtpCaldavAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAutoCompleteAddress?: (AutocompleteResultGenqlSelection & { __args: {address: Scalars['String'], token: Scalars['String'], country?: (Scalars['String'] | null), isFieldCity?: (Scalars['Boolean'] | null)} })
@@ -6849,16 +6428,6 @@ export interface MutationGenqlSelection{
     revokeAllOtherUserSessions?: boolean | number
     deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
-    checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
-    createSubscriptionPaymentIntent?: (BillingPaymentIntentGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null), idempotencyKey: Scalars['String']} })
-    createBillingPaymentMethodSetupIntent?: BillingPaymentIntentGenqlSelection
-    switchSubscriptionInterval?: BillingUpdateGenqlSelection
-    switchBillingPlan?: BillingUpdateGenqlSelection
-    cancelSwitchBillingPlan?: BillingUpdateGenqlSelection
-    cancelSwitchBillingInterval?: BillingUpdateGenqlSelection
-    setResourceCreditSubscriptionPrice?: (BillingUpdateGenqlSelection & { __args: {priceId: Scalars['String']} })
-    endSubscriptionTrialPeriod?: BillingEndTrialPeriodGenqlSelection
-    cancelSwitchResourceCreditPrice?: BillingUpdateGenqlSelection
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
     completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
     triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][], isAutoSkipped: Scalars['Boolean']} })
@@ -6990,6 +6559,8 @@ export interface MutationGenqlSelection{
     runEvaluationInput?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID'], input: Scalars['String']} })
     updateTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {input: UpdateTimelineActivityTypeInput} })
     resetTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createObjectEvent?: (AnalyticsGenqlSelection & { __args: {event: Scalars['String'], recordId: Scalars['UUID'], objectMetadataId: Scalars['UUID'], properties?: (Scalars['JSON'] | null)} })
+    duplicateDashboard?: (DuplicatedDashboardGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAuthorizationUrlForSSO?: (GetAuthorizationUrlForSSOGenqlSelection & { __args: {input: GetAuthorizationUrlForSSOInput} })
     getLoginTokenFromCredentials?: (LoginTokenGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null), origin: Scalars['String']} })
     signIn?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
@@ -7023,9 +6594,6 @@ export interface MutationGenqlSelection{
     createSAMLIdentityProvider?: (SetupSsoGenqlSelection & { __args: {input: SetupSAMLSsoInput} })
     deleteSSOIdentityProvider?: (DeleteSsoGenqlSelection & { __args: {input: DeleteSsoInput} })
     editSSOIdentityProvider?: (EditSsoGenqlSelection & { __args: {input: EditSsoInput} })
-    createObjectEvent?: (AnalyticsGenqlSelection & { __args: {event: Scalars['String'], recordId: Scalars['UUID'], objectMetadataId: Scalars['UUID'], properties?: (Scalars['JSON'] | null)} })
-    trackAnalytics?: (AnalyticsGenqlSelection & { __args: {type: AnalyticsType, name?: (Scalars['String'] | null), event?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null)} })
-    duplicateDashboard?: (DuplicatedDashboardGenqlSelection & { __args: {id: Scalars['UUID']} })
     impersonate?: (ImpersonateGenqlSelection & { __args: {userId: Scalars['UUID'], workspaceId: Scalars['UUID']} })
     stopImpersonation?: StopImpersonationGenqlSelection
     createCalendarEvent?: (CreateCalendarEventOutputGenqlSelection & { __args: {input: CreateCalendarEventInput} })
@@ -7474,14 +7042,6 @@ export interface SubscriptionGenqlSelection{
 }
 
 export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null),applicationUniversalIdentifier?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null)}
-
-
-    const BillingProductDTO_possibleTypes: string[] = ['BillingLicensedProduct','BillingMeteredProduct']
-    export const isBillingProductDTO = (obj?: { __typename?: any } | null): obj is BillingProductDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProductDTO"')
-      return BillingProductDTO_possibleTypes.includes(obj.__typename)
-    }
-    
 
 
     const ApiKey_possibleTypes: string[] = ['ApiKey']
@@ -8092,102 +7652,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const BillingSubscriptionSchedulePhaseItem_possibleTypes: string[] = ['BillingSubscriptionSchedulePhaseItem']
-    export const isBillingSubscriptionSchedulePhaseItem = (obj?: { __typename?: any } | null): obj is BillingSubscriptionSchedulePhaseItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionSchedulePhaseItem"')
-      return BillingSubscriptionSchedulePhaseItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingSubscriptionSchedulePhase_possibleTypes: string[] = ['BillingSubscriptionSchedulePhase']
-    export const isBillingSubscriptionSchedulePhase = (obj?: { __typename?: any } | null): obj is BillingSubscriptionSchedulePhase => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionSchedulePhase"')
-      return BillingSubscriptionSchedulePhase_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingProductMetadata_possibleTypes: string[] = ['BillingProductMetadata']
-    export const isBillingProductMetadata = (obj?: { __typename?: any } | null): obj is BillingProductMetadata => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProductMetadata"')
-      return BillingProductMetadata_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingPriceLicensed_possibleTypes: string[] = ['BillingPriceLicensed']
-    export const isBillingPriceLicensed = (obj?: { __typename?: any } | null): obj is BillingPriceLicensed => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPriceLicensed"')
-      return BillingPriceLicensed_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingPriceTier_possibleTypes: string[] = ['BillingPriceTier']
-    export const isBillingPriceTier = (obj?: { __typename?: any } | null): obj is BillingPriceTier => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPriceTier"')
-      return BillingPriceTier_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingPriceMetered_possibleTypes: string[] = ['BillingPriceMetered']
-    export const isBillingPriceMetered = (obj?: { __typename?: any } | null): obj is BillingPriceMetered => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPriceMetered"')
-      return BillingPriceMetered_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingProduct_possibleTypes: string[] = ['BillingProduct']
-    export const isBillingProduct = (obj?: { __typename?: any } | null): obj is BillingProduct => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProduct"')
-      return BillingProduct_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingLicensedProduct_possibleTypes: string[] = ['BillingLicensedProduct']
-    export const isBillingLicensedProduct = (obj?: { __typename?: any } | null): obj is BillingLicensedProduct => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingLicensedProduct"')
-      return BillingLicensedProduct_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingMeteredProduct_possibleTypes: string[] = ['BillingMeteredProduct']
-    export const isBillingMeteredProduct = (obj?: { __typename?: any } | null): obj is BillingMeteredProduct => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingMeteredProduct"')
-      return BillingMeteredProduct_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingSubscriptionItem_possibleTypes: string[] = ['BillingSubscriptionItem']
-    export const isBillingSubscriptionItem = (obj?: { __typename?: any } | null): obj is BillingSubscriptionItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionItem"')
-      return BillingSubscriptionItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingCustomer_possibleTypes: string[] = ['BillingCustomer']
-    export const isBillingCustomer = (obj?: { __typename?: any } | null): obj is BillingCustomer => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingCustomer"')
-      return BillingCustomer_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingSubscription_possibleTypes: string[] = ['BillingSubscription']
-    export const isBillingSubscription = (obj?: { __typename?: any } | null): obj is BillingSubscription => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscription"')
-      return BillingSubscription_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const LogicFunctionExecutionResult_possibleTypes: string[] = ['LogicFunctionExecutionResult']
     export const isLogicFunctionExecutionResult = (obj?: { __typename?: any } | null): obj is LogicFunctionExecutionResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionExecutionResult"')
@@ -8296,54 +7760,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isUserSession = (obj?: { __typename?: any } | null): obj is UserSession => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUserSession"')
       return UserSession_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingEndTrialPeriod_possibleTypes: string[] = ['BillingEndTrialPeriod']
-    export const isBillingEndTrialPeriod = (obj?: { __typename?: any } | null): obj is BillingEndTrialPeriod => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEndTrialPeriod"')
-      return BillingEndTrialPeriod_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingResourceCreditUsage_possibleTypes: string[] = ['BillingResourceCreditUsage']
-    export const isBillingResourceCreditUsage = (obj?: { __typename?: any } | null): obj is BillingResourceCreditUsage => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingResourceCreditUsage"')
-      return BillingResourceCreditUsage_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingPlan_possibleTypes: string[] = ['BillingPlan']
-    export const isBillingPlan = (obj?: { __typename?: any } | null): obj is BillingPlan => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPlan"')
-      return BillingPlan_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingPaymentIntent_possibleTypes: string[] = ['BillingPaymentIntent']
-    export const isBillingPaymentIntent = (obj?: { __typename?: any } | null): obj is BillingPaymentIntent => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPaymentIntent"')
-      return BillingPaymentIntent_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingSession_possibleTypes: string[] = ['BillingSession']
-    export const isBillingSession = (obj?: { __typename?: any } | null): obj is BillingSession => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSession"')
-      return BillingSession_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingUpdate_possibleTypes: string[] = ['BillingUpdate']
-    export const isBillingUpdate = (obj?: { __typename?: any } | null): obj is BillingUpdate => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingUpdate"')
-      return BillingUpdate_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8500,14 +7916,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const BillingTrialPeriod_possibleTypes: string[] = ['BillingTrialPeriod']
-    export const isBillingTrialPeriod = (obj?: { __typename?: any } | null): obj is BillingTrialPeriod => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingTrialPeriod"')
-      return BillingTrialPeriod_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const SSOIdentityProvider_possibleTypes: string[] = ['SSOIdentityProvider']
     export const isSSOIdentityProvider = (obj?: { __typename?: any } | null): obj is SSOIdentityProvider => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSSOIdentityProvider"')
@@ -8560,22 +7968,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isClientAiModelConfig = (obj?: { __typename?: any } | null): obj is ClientAiModelConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiModelConfig"')
       return ClientAiModelConfig_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const Billing_possibleTypes: string[] = ['Billing']
-    export const isBilling = (obj?: { __typename?: any } | null): obj is Billing => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBilling"')
-      return Billing_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const Support_possibleTypes: string[] = ['Support']
-    export const isSupport = (obj?: { __typename?: any } | null): obj is Support => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSupport"')
-      return Support_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10204,37 +9596,6 @@ export const enumPageLayoutType = {
    RECORD_FORM: 'RECORD_FORM' as const
 }
 
-export const enumBillingPlanKey = {
-   PRO: 'PRO' as const,
-   ENTERPRISE: 'ENTERPRISE' as const
-}
-
-export const enumBillingUsageType = {
-   METERED: 'METERED' as const,
-   LICENSED: 'LICENSED' as const
-}
-
-export const enumBillingProductKey = {
-   BASE_PRODUCT: 'BASE_PRODUCT' as const,
-   RESOURCE_CREDIT: 'RESOURCE_CREDIT' as const
-}
-
-export const enumSubscriptionInterval = {
-   Month: 'Month' as const,
-   Year: 'Year' as const
-}
-
-export const enumSubscriptionStatus = {
-   Active: 'Active' as const,
-   Canceled: 'Canceled' as const,
-   Incomplete: 'Incomplete' as const,
-   IncompleteExpired: 'IncompleteExpired' as const,
-   PastDue: 'PastDue' as const,
-   Paused: 'Paused' as const,
-   Trialing: 'Trialing' as const,
-   Unpaid: 'Unpaid' as const
-}
-
 export const enumLogicFunctionExecutionStatus = {
    IDLE: 'IDLE' as const,
    SUCCESS: 'SUCCESS' as const,
@@ -10306,7 +9667,6 @@ export const enumEmailConnectionSecurity = {
 
 export const enumFeatureFlagKey = {
    IS_APP_CLAIMING_ENABLED: 'IS_APP_CLAIMING_ENABLED' as const,
-   IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
    IS_EMAIL_GROUP_ENABLED: 'IS_EMAIL_GROUP_ENABLED' as const,
    IS_JUNCTION_RELATIONS_ENABLED: 'IS_JUNCTION_RELATIONS_ENABLED' as const,
@@ -10335,11 +9695,6 @@ export const enumModelFamily = {
    GEMINI: 'GEMINI' as const,
    MISTRAL: 'MISTRAL' as const,
    GROK: 'GROK' as const
-}
-
-export const enumSupportDriver = {
-   NONE: 'NONE' as const,
-   FRONT: 'FRONT' as const
 }
 
 export const enumCaptchaDriverType = {
@@ -10604,7 +9959,6 @@ export const enumAllMetadataName = {
 
 export const enumEventLogTable = {
    WORKSPACE_EVENT: 'WORKSPACE_EVENT' as const,
-   PAGEVIEW: 'PAGEVIEW' as const,
    OBJECT_EVENT: 'OBJECT_EVENT' as const,
    USAGE_EVENT: 'USAGE_EVENT' as const,
    APPLICATION_LOG: 'APPLICATION_LOG' as const
@@ -10613,9 +9967,4 @@ export const enumEventLogTable = {
 export const enumRunAgentMessageRole = {
    user: 'user' as const,
    assistant: 'assistant' as const
-}
-
-export const enumAnalyticsType = {
-   PAGEVIEW: 'PAGEVIEW' as const,
-   TRACK: 'TRACK' as const
 }

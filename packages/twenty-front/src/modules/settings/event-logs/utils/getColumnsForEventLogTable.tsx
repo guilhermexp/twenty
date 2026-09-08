@@ -110,9 +110,7 @@ const APPLICATION_LOG_COLUMNS: ColumnConfig[] = [
   },
 ];
 
-// Partial: the generated schema enum can still carry a table the server no
-// longer serves; unknown tables fall back to DEFAULT_COLUMNS below.
-const COLUMNS_BY_TABLE: Partial<Record<EventLogTable, ColumnConfig[]>> = {
+const COLUMNS_BY_TABLE: Record<EventLogTable, ColumnConfig[]> = {
   [EventLogTable.OBJECT_EVENT]: OBJECT_EVENT_COLUMNS,
   [EventLogTable.USAGE_EVENT]: USAGE_EVENT_COLUMNS,
   [EventLogTable.APPLICATION_LOG]: APPLICATION_LOG_COLUMNS,
@@ -122,5 +120,5 @@ const COLUMNS_BY_TABLE: Partial<Record<EventLogTable, ColumnConfig[]>> = {
 export const getColumnsForEventLogTable = (
   table: EventLogTable,
 ): ColumnConfig[] => {
-  return COLUMNS_BY_TABLE[table] ?? DEFAULT_COLUMNS;
+  return COLUMNS_BY_TABLE[table];
 };

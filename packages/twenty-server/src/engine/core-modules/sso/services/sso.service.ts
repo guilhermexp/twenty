@@ -32,10 +32,6 @@ export class SsoService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
-  private async isSsoEnabled(_workspaceId: string) {
-    return;
-  }
-
   private async getIssuerForOidc(issuerUrl: string) {
     try {
       return await Issuer.discover(issuerUrl);
@@ -55,8 +51,6 @@ export class SsoService {
     workspaceId: string,
   ) {
     try {
-      await this.isSsoEnabled(workspaceId);
-
       const issuer = await this.getIssuerForOidc(data.issuer);
 
       const identityProvider =
@@ -97,8 +91,6 @@ export class SsoService {
     >,
     workspaceId: string,
   ) {
-    await this.isSsoEnabled(workspaceId);
-
     const identityProvider =
       await this.workspaceSsoIdentityProviderRepository.save({
         ...data,
