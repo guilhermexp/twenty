@@ -1,4 +1,3 @@
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '@/ui/utilities/scroll/hooks/useScrollRestoration';
@@ -8,6 +7,7 @@ import { matchPath, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const SETTINGS_CONTENT_MAX_WIDTH = 760;
 const SETTINGS_PATHS_BY_LENGTH = Object.values(SettingsPath).sort(

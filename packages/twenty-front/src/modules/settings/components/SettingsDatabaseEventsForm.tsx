@@ -1,12 +1,12 @@
 import { WebhookEntitySelect } from '@/settings/developers/components/WebhookEntitySelect';
 import { Select } from '@/ui/input/components/Select';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBox, IconNorthStar, IconPlus, IconTrash } from 'twenty-ui/icon';
 import { IconButton, type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const OBJECT_DROPDOWN_WIDTH = 240;
 const ACTION_DROPDOWN_WIDTH = 240;

@@ -20,7 +20,6 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -53,6 +52,7 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledNodeDimension = styled(NodeDimension)`
   min-width: 0;

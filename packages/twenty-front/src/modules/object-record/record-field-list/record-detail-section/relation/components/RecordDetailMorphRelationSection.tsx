@@ -11,7 +11,6 @@ import {
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
@@ -19,6 +18,7 @@ import { RecordDetailRelationRecordsList } from '@/object-record/record-field-li
 import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
 import { useMorphPersistManyToOne } from '@/object-record/record-field/ui/meta-types/input/hooks/useMorphPersistManyToOne';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 type RecordDetailMorphRelationSectionProps = {
   loading: boolean;

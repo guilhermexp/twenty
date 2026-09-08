@@ -5,11 +5,11 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { Navigate } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;

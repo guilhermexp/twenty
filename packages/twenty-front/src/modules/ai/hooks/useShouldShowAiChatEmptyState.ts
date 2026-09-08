@@ -9,10 +9,10 @@ import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadin
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const useShouldShowAiChatEmptyState = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);

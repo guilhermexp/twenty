@@ -8,8 +8,8 @@ import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenR
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div<{ isExpanded: boolean }>`
   align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};

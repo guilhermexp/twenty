@@ -11,7 +11,6 @@ import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -21,6 +20,7 @@ import { TabButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;

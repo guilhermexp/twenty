@@ -4,7 +4,6 @@ import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNav
 import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { useLingui } from '@lingui/react/macro';
@@ -12,6 +11,7 @@ import { useContext } from 'react';
 import { IconCopy } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const useCommandMenuAppActions = () => {
   const { t } = useLingui();

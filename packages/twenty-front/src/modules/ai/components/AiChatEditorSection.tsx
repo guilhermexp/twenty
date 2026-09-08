@@ -31,10 +31,10 @@ import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelA
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
 import { Select } from '@/ui/input/components/Select';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type SelectOption } from 'twenty-ui/input';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;

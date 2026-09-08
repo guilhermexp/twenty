@@ -8,7 +8,6 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -17,6 +16,7 @@ import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const useDefaultHomePagePath = () => {
   const currentUser = useAtomStateValue(currentUserState);

@@ -14,12 +14,12 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledSelectsContainer = styled.div<{ isMobile: boolean }>`
   display: grid;

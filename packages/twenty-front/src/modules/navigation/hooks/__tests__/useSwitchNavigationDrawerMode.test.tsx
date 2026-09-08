@@ -8,16 +8,19 @@ import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigatio
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 jest.mock('@/ai/hooks/useReturnFromExpandedAiChat');
 jest.mock('@/ai/hooks/useSwitchToNewAiChat');
 jest.mock('@/navigation/hooks/useDefaultHomePagePath');
-jest.mock('@/ui/utilities/responsive/hooks/useIsMobile');
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
+  useIsMobile: jest.fn(),
+}));
 
 const DEFAULT_HOME_PAGE_PATH = '/objects/companies';
 const AI_CHAT_PATH = '/chat/20202020-0687-4c41-b707-ed1bfca972a7';

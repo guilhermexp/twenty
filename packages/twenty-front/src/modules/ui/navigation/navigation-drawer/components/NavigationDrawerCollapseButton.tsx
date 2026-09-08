@@ -1,12 +1,12 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
 import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 import { LightIconButton } from 'twenty-ui/input';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledCollapseButton = styled.div`
   align-items: center;

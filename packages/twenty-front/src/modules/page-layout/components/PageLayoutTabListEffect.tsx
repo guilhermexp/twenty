@@ -3,11 +3,11 @@ import { getPageLayoutTabListInitialActiveTabId } from '@/page-layout/utils/getP
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 type PageLayoutTabListEffectProps = Pick<
   TabListProps,

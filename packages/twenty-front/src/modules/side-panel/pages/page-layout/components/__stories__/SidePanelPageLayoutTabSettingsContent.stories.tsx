@@ -23,12 +23,12 @@ import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const PAGE_LAYOUT_ID = 'tab-settings-story';
 const RECORD_ID = 'record-id';

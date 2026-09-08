@@ -7,7 +7,6 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatePresence } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
@@ -18,6 +17,7 @@ import {
   ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;

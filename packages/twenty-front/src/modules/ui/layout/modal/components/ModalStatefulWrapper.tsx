@@ -9,11 +9,11 @@ import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpe
 import { type ModalStatefulWrapperProps } from '@/ui/layout/modal/types/ModalStatefulWrapperProps';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Modal } from 'twenty-ui/surfaces';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 export const ModalStatefulWrapper = ({
   modalInstanceId,

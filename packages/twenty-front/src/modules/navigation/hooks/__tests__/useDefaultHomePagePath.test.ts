@@ -25,7 +25,8 @@ import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetad
 
 let mockIsMobile = false;
 
-jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
   useIsMobile: () => mockIsMobile,
 }));
 

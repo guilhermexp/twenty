@@ -4,10 +4,10 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledAnimatedContainer = styled(motion.div)`
   box-sizing: border-box;

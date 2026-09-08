@@ -5,7 +5,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -15,6 +14,7 @@ import {
   type AppNavigationDrawerProps,
 } from '@/navigation/components/AppNavigationDrawer';
 import { AppPath } from 'twenty-shared/types';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const MobileNavigationDrawerStateSetterEffect = ({
   mobileNavigationDrawer = 'main',

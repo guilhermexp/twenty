@@ -11,7 +11,6 @@ import { SettingsDataModelFieldRelationJunctionForm } from '@/settings/data-mode
 import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewContent';
 import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewImageCard';
 import { SettingsDataModelRelationFieldPreviewSubWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewSubWidget';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -20,6 +19,7 @@ import {
   FeatureFlagKey,
 } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 type SettingsDataModelFieldRelationFormCardProps = {
   existingFieldMetadataId: string;

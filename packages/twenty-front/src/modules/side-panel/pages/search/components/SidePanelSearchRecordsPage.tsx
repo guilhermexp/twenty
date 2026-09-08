@@ -9,7 +9,6 @@ import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/h
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
 import { getSidePanelSearchResultAnchorId } from '@/side-panel/pages/search/utils/getSidePanelSearchResultAnchorId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { css } from '@linaria/core';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
@@ -20,6 +19,7 @@ import { Avatar } from 'twenty-ui/data-display';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 // The card brings its own surface, so the tooltip only contributes the shadow.
 // Tooltips render at 0.9 opacity, which would make the card translucent.

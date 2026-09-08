@@ -11,7 +11,6 @@ import McpCoverDark from '@/settings/mcp-and-apis/assets/mcp-cover-dark.png';
 import McpCoverLight from '@/settings/mcp-and-apis/assets/mcp-cover-light.png';
 import { PlaygroundSetupForm } from '@/settings/mcp-and-apis/components/PlaygroundSetupForm';
 import { SettingsMcpSetup } from '@/settings/mcp-and-apis/components/SettingsMcpSetup';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -28,6 +27,7 @@ import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 type TabKey =
   (typeof SETTINGS_API_WEBHOOKS_TABS.TABS_IDS)[keyof typeof SETTINGS_API_WEBHOOKS_TABS.TABS_IDS];

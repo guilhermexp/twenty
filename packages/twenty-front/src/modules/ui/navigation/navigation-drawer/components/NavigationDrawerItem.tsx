@@ -5,7 +5,6 @@ import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawe
 import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTooltip';
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -30,6 +29,7 @@ import {
 import {
   type TriggerEventType,
   useMouseDownNavigation,
+  useIsMobile,
 } from 'twenty-ui/utilities';
 const DEFAULT_INDENTATION_LEVEL = 1;
 

@@ -127,7 +127,8 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentState', () => ({
   useAtomComponentState: () => [mockActiveTabId, mockSetActiveTabId],
 }));
 
-jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
   useIsMobile: () => false,
 }));
 

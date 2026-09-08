@@ -1,6 +1,5 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import React, { useContext } from 'react';
@@ -8,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Label } from 'twenty-ui/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTitle = styled.div`
   align-items: center;

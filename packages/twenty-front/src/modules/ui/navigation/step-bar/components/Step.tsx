@@ -2,13 +2,13 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
 
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatedCheckmark } from 'twenty-ui/data-display';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div<{ isLast: boolean }>`
   align-items: center;
