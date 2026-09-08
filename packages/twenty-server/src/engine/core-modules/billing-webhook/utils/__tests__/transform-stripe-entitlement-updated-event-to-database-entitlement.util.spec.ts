@@ -3,7 +3,7 @@
 import type Stripe from 'stripe';
 
 import { transformStripeEntitlementUpdatedEventToDatabaseEntitlement } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-entitlement-updated-event-to-database-entitlement.util';
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/enterprise/enums/billing-entitlement-key.enum';
 
 describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
   it('should return the SSO key with true value', () => {

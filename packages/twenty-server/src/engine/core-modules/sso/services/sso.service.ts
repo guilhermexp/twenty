@@ -11,7 +11,7 @@ import {
   IdentityProviderType,
   OidcResponseType,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/enterprise/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {

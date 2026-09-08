@@ -20,7 +20,8 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
+import { BillingEntitlementDTO } from 'src/engine/core-modules/enterprise/dtos/billing-entitlement.dto';
+import { BillingEntitlementKey } from 'src/engine/core-modules/enterprise/enums/billing-entitlement-key.enum';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -318,10 +319,13 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => [BillingEntitlementDTO])
-  billingEntitlements(@Parent() workspace: WorkspaceEntity) {
-    return this.billingSubscriptionService.getWorkspaceEntitlements(
-      workspace.id,
-    );
+  billingEntitlements(): BillingEntitlementDTO[] {
+    const value = this.enterprisePlanService.isValid();
+
+    return Object.values(BillingEntitlementKey).map((key) => ({
+      key,
+      value,
+    }));
   }
 
   @ResolveField(() => Boolean)

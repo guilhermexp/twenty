@@ -3,7 +3,7 @@
 import type Stripe from 'stripe';
 
 import { isEntitlementGrantedByStripeEvent } from 'src/engine/core-modules/billing-webhook/utils/is-entitlement-granted-by-stripe-event.util';
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/enterprise/enums/billing-entitlement-key.enum';
 
 const buildEntitlement = (
   lookupKey: string,

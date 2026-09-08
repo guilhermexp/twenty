@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
-import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { type BillingEntitlementKey } from 'src/engine/core-modules/enterprise/enums/billing-entitlement-key.enum';
 
 const hasEntitlementKey = (
   entitlements: { lookup_key: string }[] | undefined,

@@ -2,7 +2,7 @@
 
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/enterprise/enums/billing-entitlement-key.enum';
 
 registerEnumType(BillingEntitlementKey, {
   name: 'BillingEntitlementKey',
