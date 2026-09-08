@@ -17,7 +17,6 @@
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-typescript": "^7.24.6",
-    "@lingui/core": "^5.9.5",
     "@prettier/sync": "^0.5.2",
     "@swc/core": "^1.15.11",
     "@swc/jest": "^0.2.39",
@@ -44,6 +43,7 @@
   },
   "dependencies": {
     "@dagrejs/dagre": "^1.1.8",
+    "@lingui/core": "^5.9.5",
     "@noble/hashes": "^1.8.0",
     "@sniptt/guards": "^0.2.0",
     "addressparser": "1.0.1",

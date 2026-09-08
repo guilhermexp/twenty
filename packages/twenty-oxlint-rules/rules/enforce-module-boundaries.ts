@@ -10,7 +10,6 @@ const PACKAGE_TAG_MAP: Record<string, string[]> = {
   'twenty-emails': ['scope:backend'],
   'twenty-sdk': ['scope:sdk', 'scope:shared'],
   'twenty-oxlint-rules': ['scope:shared'],
-  'twenty-docs': ['scope:docs'],
 };
 
 const WORKSPACE_PACKAGES = Object.keys(PACKAGE_TAG_MAP);
