@@ -59,7 +59,6 @@ jest.mock('@/ui/utilities/pointer-event/hooks/useClickOutsideListener', () => ({
 }));
 
 jest.mock('twenty-ui/utilities', () => ({
-  ...jest.requireActual('twenty-ui/utilities'),
   useIsMobile: () => false,
 }));
 
@@ -94,6 +93,30 @@ jest.mock(
     TabListFromUrlOptionalEffect: () => null,
   }),
 );
+
+jest.mock('@/ui/layout/tab-list/components/TabListDropdown', () => ({
+  TabListDropdown: ({
+    hiddenTabs,
+    activeTabId,
+    onTabSelect,
+  }: {
+    hiddenTabs: SingleTabProps[];
+    activeTabId: string | null;
+    onTabSelect: (tabId: string) => void;
+  }) => (
+    <div aria-label="More tabs">
+      {hiddenTabs.map((tab) => (
+        <button
+          key={tab.id}
+          aria-pressed={activeTabId === tab.id}
+          onClick={() => onTabSelect(tab.id)}
+        >
+          {tab.title}
+        </button>
+      ))}
+    </div>
+  ),
+}));
 
 jest.mock('@/page-layout/components/PageLayoutTabListVisibleTabs', () => ({
   PageLayoutTabListVisibleTabs: ({
