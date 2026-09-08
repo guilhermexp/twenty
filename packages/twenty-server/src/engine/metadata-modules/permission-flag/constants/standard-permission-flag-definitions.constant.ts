@@ -84,11 +84,6 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     description: 'Customize page layouts and UI structure',
     icon: 'IconAppWindow',
   },
-  [PermissionFlagType.BILLING]: {
-    label: 'Billing',
-    description: 'Manage billing and subscriptions',
-    icon: 'IconCreditCard',
-  },
   [PermissionFlagType.AI_SETTINGS]: {
     label: 'AI',
     description: 'Create and configure AI agents',

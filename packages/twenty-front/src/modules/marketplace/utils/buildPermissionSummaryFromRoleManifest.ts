@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconAddressBook,
-  IconCreditCard,
   IconHierarchy,
   IconKey,
   IconPlug,
@@ -106,10 +105,6 @@ export const buildPermissionSummaryFromRoleManifest = (
     [SystemPermissionFlag.WORKSPACE_MEMBERS]: {
       label: 'Manage workspace members',
       Icon: IconUsers,
-    },
-    [SystemPermissionFlag.BILLING]: {
-      label: 'Manage billing',
-      Icon: IconCreditCard,
     },
     [SystemPermissionFlag.API_KEYS_AND_WEBHOOKS]: {
       label: 'Manage MCP, API keys, and webhooks',

@@ -208,18 +208,6 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       expect(result[0].label).toBe('Manage workspace members');
     });
 
-    it('should add BILLING flag', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        permissionFlagUniversalIdentifiers: [SystemPermissionFlag.BILLING],
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage billing');
-    });
-
     it('should add API_KEYS_AND_WEBHOOKS flag', () => {
       const role: RoleManifest = {
         ...baseRole,
