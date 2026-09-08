@@ -266,7 +266,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsOnboardingAiChatEnabled,
     setLabPublicFeatureFlags,
     setMaintenanceMode,
-    setEnterpriseInstanceType,
     setIsMicrosoftCalendarEnabled,
     setIsMicrosoftMessagingEnabled,
     setSentryConfig,

@@ -1121,11 +1121,6 @@ msgstr "Ações que os usuários podem realizar neste objeto"
 msgid "Activate"
 msgstr "Ativar"
 
-#. js-lingui-id: eqeFkF
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Activate Enterprise Key"
-msgstr "Ativar chave Enterprise"
-
 #. js-lingui-id: i7ur8L
 #: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Activating subscription..."
@@ -1938,16 +1933,6 @@ msgstr "Ferramenta de IA"
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "AI Usage"
 msgstr "Uso de IA"
-
-#. js-lingui-id: Ad11E9
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "AI usage analytics across workspaces is available with an Enterprise key."
-msgstr "A análise de uso de IA entre espaços de trabalho está disponível com uma chave do plano Enterprise."
-
-#. js-lingui-id: zkptxb
-#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
-msgid "AI usage analytics is available with an Enterprise key."
-msgstr "A análise de uso de IA está disponível com uma chave do plano Enterprise."
 
 #. js-lingui-id: U2F/HK
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -3247,11 +3232,6 @@ msgstr "Intervalo de cobrança"
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billing period"
 msgstr "Período de cobrança"
-
-#. js-lingui-id: xF/NXI
-#: src/modules/settings/billing/hooks/useBillingPortalSession.ts
-msgid "Billing portal session error. Please retry or contact Twenty team"
-msgstr "Erro na sessão do portal de cobrança. Tente novamente ou entre em contato com a equipe Twenty"
 
 #. js-lingui-id: 8kIU+G
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5178,11 +5158,6 @@ msgstr "Não foi possível gerar o DPA assinado. Tente novamente."
 msgid "Could not load versions."
 msgstr "Não foi possível carregar as versões."
 
-#. js-lingui-id: KqYYBp
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Could not open billing portal. Please check your enterprise key is present, or contact support."
-msgstr "Não foi possível abrir o portal de faturamento. Verifique se sua chave Enterprise está presente ou contate o suporte."
-
 #. js-lingui-id: ZuI4Sl
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Could not open Stripe. Please contact support."
@@ -5228,11 +5203,6 @@ msgstr "Não foi possível iniciar a reivindicação do GitHub"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Could not sync the catalog"
 msgstr "Não foi possível sincronizar o catálogo"
-
-#. js-lingui-id: dIvwQK
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Could not transfer the enterprise key. Please contact support."
-msgstr "Não foi possível transferir a chave corporativa. Entre em contato com o suporte."
 
 #. js-lingui-id: xsKD3e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6792,11 +6762,6 @@ msgstr "Desenvolvedores"
 msgid "Developers links"
 msgstr "Links para desenvolvedores"
 
-#. js-lingui-id: b9bH06
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Development instance"
-msgstr "Instância de desenvolvimento"
-
 #. js-lingui-id: le4Hch
 #: src/modules/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu.tsx
 msgid "Device logged out"
@@ -7985,34 +7950,6 @@ msgstr "Insira seu código de autenticação em duas etapas para confirmar."
 msgid "Enterprise"
 msgstr "Enterprise"
 
-#. js-lingui-id: rmZVdg
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
-#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
-msgid "Enterprise feature"
-msgstr "Recurso do plano Enterprise"
-
-#. js-lingui-id: qKfd/C
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Enterprise key transferred to this server"
-msgstr "Chave Enterprise transferida para este servidor"
-
-#. js-lingui-id: S5c4pl
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Enterprise License"
-msgstr "Licença Enterprise"
-
-#. js-lingui-id: KGE5g0
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Enterprise license activated successfully"
-msgstr "Licença Enterprise ativada com sucesso"
-
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "Entity ID"
@@ -8055,11 +7992,6 @@ msgstr "Apagamento de registros excluídos suavemente"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
 msgid "Error"
 msgstr "Erro"
-
-#. js-lingui-id: VouTsQ
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Error activating enterprise license"
-msgstr "Erro ao ativar a licença Enterprise"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -8106,11 +8038,6 @@ msgstr "Erro ao carregar mensagem"
 msgid "Error Message"
 msgstr "Mensagem de Erro"
 
-#. js-lingui-id: Mox63G
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Error opening billing portal"
-msgstr "Erro ao abrir o portal de faturamento"
-
 #. js-lingui-id: e/eieW
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Error opening Stripe"
@@ -8146,11 +8073,6 @@ msgstr "Erro ao redefinir variável"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Error rotating client secret"
 msgstr "Erro ao rotacionar o segredo do cliente"
-
-#. js-lingui-id: ZeIlj6
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Error transferring the enterprise key"
-msgstr "Erro ao transferir a chave Enterprise"
 
 #. js-lingui-id: 5Vy8D1
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -8569,11 +8491,6 @@ msgstr "Falha ao {translatedOperationType} {translatedMetadataName}. Por favor, 
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "Failed to {translatedOperationType} {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
 msgstr "Falha ao {translatedOperationType} {translatedMetadataName}. A validação de {relatedEntityNames} relacionado(s) falhou. Por favor, verifique sua configuração e tente novamente."
-
-#. js-lingui-id: R1XJV1
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Failed to activate enterprise license. Please check your key or contact support."
-msgstr "Falha ao ativar a licença Enterprise. Verifique sua chave ou entre em contato com o suporte."
 
 #. js-lingui-id: vJiM7T
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -9608,14 +9525,6 @@ msgstr "Alemão"
 msgid "Get Enterprise"
 msgstr "Assinar o Enterprise"
 
-#. js-lingui-id: o2kSwB
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Get Enterprise Key"
-msgstr "Obter chave Enterprise"
-
 #. js-lingui-id: gRFvyL
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
 msgid "Get last contact date with relations"
@@ -9661,12 +9570,6 @@ msgstr "Voltar"
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
 msgid "Go to billing"
 msgstr ""
-
-#. js-lingui-id: Hb4Cgz
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Go to billing portal"
-msgstr "Ir para o portal de faturamento"
 
 #. js-lingui-id: dHvI9O
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
@@ -12040,19 +11943,6 @@ msgstr "Tornar privado"
 msgid "Manage"
 msgstr "Gerenciar"
 
-#. js-lingui-id: +nqVyF
-#: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
-#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
-#: src/modules/settings/billing/hooks/useBillingPlanActions.ts
-#: src/modules/settings/billing/hooks/useBillingPlanActions.ts
-msgid "Manage billing"
-msgstr "Gerenciar faturamento"
-
-#. js-lingui-id: IT5nsa
-#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
-msgid "Manage billing and subscriptions"
-msgstr "Gerenciar cobrança e assinaturas"
-
 #. js-lingui-id: nvgUPq
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -14417,16 +14307,6 @@ msgstr "Recompensa de onboarding"
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "Um ou mais filtros fazem referência a campos desativados ou excluídos e serão removidos automaticamente ao salvar."
 
-#. js-lingui-id: 2l4SGU
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
-msgstr "Uma assinatura fornece uma chave enterprise que alimenta uma instância de produção e uma possível instância de homologação ou teste. Para executar um ambiente de homologação ou teste, instale o Twenty em um segundo servidor, ative-o com essa mesma chave enterprise e registre esse servidor como uma instância de desenvolvimento. Instâncias de desenvolvimento desbloqueiam recursos enterprise sem cobrança extra e não contam para seus assentos de produção."
-
-#. js-lingui-id: oFTo3P
-#: src/modules/settings/event-logs/components/SettingsLogs.tsx
-msgid "Only application logs are available on your current plan. Other log types require an Enterprise subscription."
-msgstr "Somente logs de aplicativo estão disponíveis no seu plano atual. Outros tipos de log exigem uma assinatura Enterprise."
-
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
@@ -14668,17 +14548,6 @@ msgstr "Lista ordenada"
 #: src/pages/settings/enterprise/components/OrganizationAdornment.tsx
 msgid "Organization"
 msgstr "Organização"
-
-#. js-lingui-id: 0Ogq/s
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Organization feature"
-msgstr "Recurso da organização"
-
-#. js-lingui-id: cyDPQQ
-#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner.tsx
-msgid "organization plan"
-msgstr "plano da Organização"
 
 #. js-lingui-id: zi/p7n
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -14966,16 +14835,6 @@ msgstr "Cole um link para uma imagem hospedada"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Paste the code below"
 msgstr "Cole o código abaixo"
-
-#. js-lingui-id: CCNkDk
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Paste your enterprise key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server."
-msgstr "Cole sua chave enterprise abaixo para ativar. Guarde uma cópia dessa chave em um local seguro: a mesma chave é reutilizada para configurar uma instância de desenvolvimento ou para mover sua licença para um servidor de substituição."
-
-#. js-lingui-id: dNdgvF
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Paste your enterprise key here"
-msgstr "Cole sua chave Enterprise aqui"
 
 #. js-lingui-id: I6gXOa
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -16055,16 +15914,6 @@ msgstr "A região é obrigatória para o Bedrock"
 msgid "Region where inference data is processed (optional)"
 msgstr "Região onde os dados de inferência são processados (opcional)"
 
-#. js-lingui-id: E1qk3l
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Register as development instance"
-msgstr "Registrar como instância de desenvolvimento"
-
-#. js-lingui-id: ARGZDy
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Registered as a development instance. This instance will not be billed."
-msgstr "Registrado como instância de desenvolvimento. Esta instância não será cobrada."
-
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
 msgid "Relation"
@@ -16100,11 +15949,6 @@ msgstr "Relativo"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Release & transfer"
 msgstr "Liberar e transferir"
-
-#. js-lingui-id: nTAq7c
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Release & transfer enterprise key"
-msgstr "Liberar e transferir chave enterprise"
 
 #. js-lingui-id: PYZeGT
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -19569,21 +19413,6 @@ msgstr "Este valor do banco de dados substitui as configurações do ambiente."
 msgid "This device"
 msgstr "Este dispositivo"
 
-#. js-lingui-id: VQvoBA
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "This enterprise key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one."
-msgstr "Esta chave enterprise já está vinculada a uma instância de servidor diferente. Liberá-la aqui transferirá a licença para este servidor e fará com que as licenças deixem de ser contadas no servidor anterior."
-
-#. js-lingui-id: kPBk2h
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "This enterprise key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
-msgstr "Esta chave enterprise está atualmente vinculada a uma instância de servidor diferente. Transferi-la para cá irá liberá-la do servidor anterior e fará com que as licenças deixem de ser contadas nele. Tem certeza de que deseja continuar?"
-
-#. js-lingui-id: 8IRnd6
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "This feature is part of the Enterprise Plan"
-msgstr "Este recurso faz parte do plano Enterprise"
-
 #. js-lingui-id: own57K
 #: src/modules/activities/files/components/DocumentViewer.tsx
 msgid "This file cannot be previewed because it is hosted locally."
@@ -19678,16 +19507,6 @@ msgstr "Este papel está atribuído a estes {roleTargetDisplayName}."
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 msgid "This role is shared with other users or agents and cannot be edited here."
 msgstr "Este papel é compartilhado com outros usuários ou agentes e não pode ser editado aqui."
-
-#. js-lingui-id: 2iQQGR
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "This server has an enterprise key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support."
-msgstr "Este servidor tem uma chave enterprise configurada. Certifique-se de manter uma cópia dela em um local seguro: você precisa da mesma chave para ativar uma instância de desenvolvimento ou para mover sua licença para um servidor de substituição. Se você não tiver mais acesso à sua chave, entre em contato com o suporte."
-
-#. js-lingui-id: Gzd97S
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "This server is registered as a development instance and is not billed additionally. A subscription can have a single development instance in addition to its production one. Switching it back to a production instance will make its seats count toward billing."
-msgstr "Este servidor está registrado como uma instância de desenvolvimento e não é faturado adicionalmente. Uma assinatura pode ter uma única instância de desenvolvimento além da de produção. Alterá-lo de volta para uma instância de produção fará com que suas licenças sejam contabilizadas para faturamento."
 
 #. js-lingui-id: C/wr0z
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -20943,21 +20762,6 @@ msgstr "Atualizar para {0}"
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Upgrade to {0} credits for ${1}/{2}."
 msgstr "Atualize para {0} créditos por ${1}/{2}."
-
-#. js-lingui-id: ggd+Ee
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Upgrade to access"
-msgstr "Atualize para acessar"
-
-#. js-lingui-id: bihQKI
-#: src/modules/settings/event-logs/components/SettingsLogs.tsx
-msgid "Upgrade to access audit logs"
-msgstr "Atualize para acessar os logs de auditoria"
-
-#. js-lingui-id: Wurpq2
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
-msgid "Upgrade to Enterprise to access audit logs."
-msgstr "Atualize para o plano Enterprise para acessar os logs de auditoria."
 
 #. js-lingui-id: yV3xLN
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -22438,11 +22242,6 @@ msgstr "Você não tem acesso a este objeto."
 msgid "You don't have access to this settings page."
 msgstr "Você não tem acesso a esta página de configurações."
 
-#. js-lingui-id: /K45m9
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later or contact support."
-msgstr "Você atingiu o número máximo de transferências de servidor permitido nos últimos 30 dias para esta chave Enterprise. Tente novamente mais tarde ou entre em contato com o suporte."
-
 #. js-lingui-id: RDAH2t
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
 msgid "You have scheduled a credit pack change. Do you want to cancel it?"
@@ -22544,11 +22343,6 @@ msgstr "Seus dados"
 msgid "Your enterprise features are active"
 msgstr "Seus recursos Enterprise estão ativos"
 
-#. js-lingui-id: XMZLU/
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise features are active but your enterprise key is missing or invalid. This may be expected, but if not, please set a valid signed enterprise key to manage your subscription, or contact support."
-msgstr "Seus recursos Enterprise estão ativos, mas sua chave Enterprise está ausente ou inválida. Isso pode ser esperado, mas, caso não, defina uma chave Enterprise assinada válida para gerenciar sua assinatura ou entre em contato com o suporte."
-
 #. js-lingui-id: AxcwNj
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your enterprise features will be disabled"
@@ -22558,11 +22352,6 @@ msgstr "Seus recursos Enterprise serão desativados"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your enterprise features will remain active until {cancelAtDate}."
 msgstr "Seus recursos Enterprise permanecerão ativos até {cancelAtDate}."
-
-#. js-lingui-id: krHgj1
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise key"
-msgstr "Sua chave Enterprise"
 
 #. js-lingui-id: NTpA4U
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
