@@ -51,15 +51,15 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
-import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
-import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
+import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-usage-quota/constants/native-web-search-cost-per-call-dollars';
+import { AiUsageQuotaService } from 'src/engine/metadata-modules/ai/ai-usage-quota/services/ai-usage-quota.service';
+import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/convert-dollars-to-credits-micro.util';
+import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/count-native-web-search-calls-from-steps.util';
 import {
   extractCacheCreationTokens,
   extractCacheCreationTokensFromSteps,
-} from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
-import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
+} from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/extract-cache-creation-tokens.util';
+import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/merge-language-model-usage.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
@@ -102,7 +102,7 @@ export class AgentAsyncExecutorService {
     private readonly aiModelConfigService: AiModelConfigService,
     private readonly toolRegistry: ToolRegistryService,
     private readonly nativeToolBinder: NativeToolBinderService,
-    private readonly aiBillingService: AiBillingService,
+    private readonly aiUsageQuotaService: AiUsageQuotaService,
     private readonly metricsService: MetricsService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
@@ -277,7 +277,7 @@ export class AgentAsyncExecutorService {
       );
     }
 
-    await this.aiBillingService.assertAiExecutionAllowed({
+    await this.aiUsageQuotaService.assertAiExecutionAllowed({
       workspaceId,
       operationType,
       spenders: { userWorkspaceId, agentId: agent?.id },
@@ -410,7 +410,7 @@ export class AgentAsyncExecutorService {
         },
         onStepFinish: async (step) => {
           const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-            await this.aiBillingService.decrementAndCheckAvailableCredits({
+            await this.aiUsageQuotaService.decrementAndCheckAvailableCredits({
               modelId: registeredModel.modelId,
               billingInput: {
                 usage: step.usage,
@@ -515,7 +515,7 @@ export class AgentAsyncExecutorService {
           }),
           onStepFinish: async (step) => {
             const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-              await this.aiBillingService.decrementAndCheckAvailableCredits({
+              await this.aiUsageQuotaService.decrementAndCheckAvailableCredits({
                 modelId: registeredModel.modelId,
                 billingInput: {
                   usage: step.usage,
@@ -551,7 +551,7 @@ export class AgentAsyncExecutorService {
       }
 
       const resolvedModelId = registeredModel.modelId;
-      const tokenCostInDollars = this.aiBillingService.calculateCost(
+      const tokenCostInDollars = this.aiUsageQuotaService.calculateCost(
         resolvedModelId,
         { usage: accumulatedUsage, cacheCreationTokens },
       );
@@ -581,7 +581,7 @@ export class AgentAsyncExecutorService {
       );
     } finally {
       const modelId = agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID;
-      const costInDollars = this.aiBillingService.calculateCost(modelId, {
+      const costInDollars = this.aiUsageQuotaService.calculateCost(modelId, {
         usage: accumulatedUsage,
         cacheCreationTokens,
       });
@@ -590,7 +590,7 @@ export class AgentAsyncExecutorService {
         (accumulatedUsage.inputTokens ?? 0) +
         (accumulatedUsage.outputTokens ?? 0);
 
-      void this.aiBillingService.emitAiTokenUsageEvent(
+      void this.aiUsageQuotaService.emitAiTokenUsageEvent(
         workspaceId,
         creditsUsedMicro,
         totalTokens,
@@ -600,7 +600,7 @@ export class AgentAsyncExecutorService {
         userWorkspaceId,
       );
 
-      void this.aiBillingService.billNativeWebSearchUsage(
+      void this.aiUsageQuotaService.billNativeWebSearchUsage(
         nativeWebSearchCallCount,
         workspaceId,
         userWorkspaceId,

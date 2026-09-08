@@ -30,7 +30,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
-import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import { EmailUsageQuotaService } from 'src/modules/emailing/services/email-usage-quota.service';
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -68,7 +68,7 @@ export class MessageCampaignDeliveryService {
     private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
-    private readonly emailBillingService: EmailBillingService,
+    private readonly emailUsageQuotaService: EmailUsageQuotaService,
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly usageLimitSpeedService: UsageLimitSpeedService,
@@ -104,7 +104,7 @@ export class MessageCampaignDeliveryService {
       }
 
       const creditContext =
-        await this.emailBillingService.getEmailCreditContext(workspaceId);
+        await this.emailUsageQuotaService.getEmailCreditContext(workspaceId);
 
       if (creditContext.hasCredits) {
         const refusal = await this.findSendSlotRefusal(workspaceId);
@@ -420,7 +420,7 @@ export class MessageCampaignDeliveryService {
       text: plainText,
     });
 
-    await this.emailBillingService
+    await this.emailUsageQuotaService
       .billSentEmails({
         workspaceId,
         sentEmailCount: 1,

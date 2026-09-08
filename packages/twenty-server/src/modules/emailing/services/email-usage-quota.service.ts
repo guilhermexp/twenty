@@ -1,24 +1,24 @@
 import { Injectable } from '@nestjs/common';
 
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageQuotaGateService } from 'src/engine/core-modules/usage-limit/services/usage-quota-gate.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
-import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
+import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/convert-dollars-to-credits-micro.util';
 import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
 import { EMAIL_MARGIN_MULTIPLIER } from 'src/modules/emailing/constants/email-margin-multiplier';
 import { SES_EMAIL_COST_PER_THOUSAND_DOLLARS } from 'src/modules/emailing/constants/ses-email-cost-per-thousand-dollars';
 
 @Injectable()
-export class EmailBillingService {
+export class EmailUsageQuotaService {
   constructor(
     private readonly usageRecorderService: UsageRecorderService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageQuotaGateService: UsageQuotaGateService,
   ) {}
 
   async validateEmailCreditsOrThrow(workspaceId: string): Promise<void> {
-    await this.billingUsageService.assertUsageAllowed({
+    await this.usageQuotaGateService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.EMAIL,
       operationType: UsageOperationType.EMAIL_SEND,
@@ -29,8 +29,8 @@ export class EmailBillingService {
   async getEmailCreditContext(
     workspaceId: string,
   ): Promise<EmailCreditContext> {
-    const { hasAvailableCredits } =
-      await this.billingUsageService.getCreditAvailability(workspaceId);
+    const hasAvailableCredits =
+      await this.usageQuotaGateService.hasAvailableCredits(workspaceId);
 
     return { hasCredits: hasAvailableCredits };
   }
@@ -53,7 +53,7 @@ export class EmailBillingService {
     const chargedInDollars = providerCostInDollars * EMAIL_MARGIN_MULTIPLIER;
     const creditsUsedMicro = convertDollarsToCreditsMicro(chargedInDollars);
 
-    await this.billingUsageService.consumeUsageQuota({
+    await this.usageQuotaGateService.consumeUsageQuota({
       workspaceId,
       resourceType: UsageResourceType.EMAIL,
       operationType: UsageOperationType.EMAIL_SEND,

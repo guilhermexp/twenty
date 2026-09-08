@@ -11,7 +11,7 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
+import { AiUsageQuotaModule } from 'src/engine/metadata-modules/ai/ai-usage-quota/ai-usage-quota.module';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -31,7 +31,7 @@ import { AgentRunService } from './services/agent-run.service';
 
 @Module({
   imports: [
-    AiBillingModule,
+    AiUsageQuotaModule,
     AiModelsModule,
     AiAgentModule,
     ApplicationModule,

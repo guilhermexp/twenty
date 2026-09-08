@@ -8,8 +8,8 @@ import {
 } from 'ai';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { AiUsageQuotaService } from 'src/engine/metadata-modules/ai/ai-usage-quota/services/ai-usage-quota.service';
+import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/extract-cache-creation-tokens.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -19,7 +19,7 @@ export class AgentTitleGenerationService {
 
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly aiBillingService: AiBillingService,
+    private readonly aiUsageQuotaService: AiUsageQuotaService,
   ) {}
 
   async generateThreadTitle(
@@ -27,7 +27,7 @@ export class AgentTitleGenerationService {
     workspaceId: string,
     userWorkspaceId: string | null,
   ): Promise<string> {
-    await this.aiBillingService.assertAiExecutionAllowed({
+    await this.aiUsageQuotaService.assertAiExecutionAllowed({
       workspaceId,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId },
@@ -69,7 +69,7 @@ export class AgentTitleGenerationService {
           ? extractCacheCreationTokensFromSteps(steps)
           : 0;
 
-        void this.aiBillingService.calculateAndBillUsage(
+        void this.aiUsageQuotaService.calculateAndBillUsage(
           defaultModel.modelId,
           { usage, cacheCreationTokens },
           workspaceId,

@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import { EmailUsageQuotaService } from 'src/modules/emailing/services/email-usage-quota.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
@@ -28,7 +28,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
-    private readonly emailBillingService: EmailBillingService,
+    private readonly emailUsageQuotaService: EmailUsageQuotaService,
   ) {}
 
   async sendMessage(
@@ -44,7 +44,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       );
     }
 
-    await this.emailBillingService.validateEmailCreditsOrThrow(
+    await this.emailUsageQuotaService.validateEmailCreditsOrThrow(
       connectedAccount.workspaceId,
     );
 
@@ -69,7 +69,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
 
     // The provider has already accepted the mail, so surfacing a billing
     // failure would invite a retry that sends it a second time.
-    await this.emailBillingService
+    await this.emailUsageQuotaService
       .billSentEmails({
         workspaceId: connectedAccount.workspaceId,
         sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),

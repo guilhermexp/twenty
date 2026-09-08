@@ -37,7 +37,7 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { AiUsageQuotaService } from 'src/engine/metadata-modules/ai/ai-usage-quota/services/ai-usage-quota.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import {
   AiException,
@@ -62,7 +62,7 @@ export class AgentChatResolver {
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
-    private readonly aiBillingService: AiBillingService,
+    private readonly aiUsageQuotaService: AiUsageQuotaService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly redisClientService: RedisClientService,
     @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
@@ -186,7 +186,7 @@ export class AgentChatResolver {
       workspace,
     );
 
-    await this.aiBillingService.assertAiExecutionAllowed({
+    await this.aiUsageQuotaService.assertAiExecutionAllowed({
       workspaceId: workspace.id,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId },
@@ -301,7 +301,7 @@ export class AgentChatResolver {
       workspace,
     );
 
-    await this.aiBillingService.assertAiExecutionAllowed({
+    await this.aiUsageQuotaService.assertAiExecutionAllowed({
       workspaceId: workspace.id,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId },
@@ -358,7 +358,7 @@ export class AgentChatResolver {
       workspace,
     );
 
-    await this.aiBillingService.assertAiExecutionAllowed({
+    await this.aiUsageQuotaService.assertAiExecutionAllowed({
       workspaceId: workspace.id,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId },

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
@@ -29,7 +28,7 @@ import { MessageSuppressionResolver } from 'src/modules/emailing/resolvers/messa
 import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubscribe-topic.resolver';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
-import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import { EmailUsageQuotaService } from 'src/modules/emailing/services/email-usage-quota.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignDraftService } from 'src/modules/emailing/services/message-campaign-draft.service';
 import { MessageCampaignRecoveryService } from 'src/modules/emailing/services/message-campaign-recovery.service';
@@ -52,7 +51,6 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     FeatureFlagModule,
     PermissionsModule,
     UserRoleModule,
-    BillingModule,
     UsageModule,
     WorkspaceEventEmitterModule,
     WorkspaceCacheModule,
@@ -70,7 +68,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
   controllers: [UnsubscribeController],
   providers: [
     CampaignVariableService,
-    EmailBillingService,
+    EmailUsageQuotaService,
     MessageCampaignService,
     MessageCampaignAudienceService,
     MessageCampaignDeliveryService,
@@ -98,7 +96,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
   ],
   exports: [
     EmailingDomainSenderService,
-    EmailBillingService,
+    EmailUsageQuotaService,
     MessageCampaignService,
     MessageCampaignDeliveryService,
     MessageCampaignDeliveryFeedbackService,

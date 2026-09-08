@@ -28,7 +28,7 @@ import {
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
-import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import { EmailUsageQuotaService } from 'src/modules/emailing/services/email-usage-quota.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -57,7 +57,7 @@ export class EmailingSendResolver {
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly emailGroupAccessService: EmailGroupAccessService,
-    private readonly emailBillingService: EmailBillingService,
+    private readonly emailUsageQuotaService: EmailUsageQuotaService,
   ) {}
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
@@ -69,7 +69,7 @@ export class EmailingSendResolver {
     userWorkspaceId: string | undefined,
   ): Promise<SendEmailViaDomainOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailBillingService.validateEmailCreditsOrThrow(
+    await this.emailUsageQuotaService.validateEmailCreditsOrThrow(
       currentWorkspace.id,
     );
 
@@ -97,7 +97,7 @@ export class EmailingSendResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<SendMessageCampaignOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailBillingService.validateEmailCreditsOrThrow(
+    await this.emailUsageQuotaService.validateEmailCreditsOrThrow(
       currentWorkspace.id,
     );
 
@@ -131,7 +131,7 @@ export class EmailingSendResolver {
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<SendEmailViaDomainOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailBillingService.validateEmailCreditsOrThrow(
+    await this.emailUsageQuotaService.validateEmailCreditsOrThrow(
       currentWorkspace.id,
     );
 
@@ -177,7 +177,7 @@ export class EmailingSendResolver {
     userWorkspaceId?: string;
     result: EmailingDomainSendEmailResult;
   }): Promise<void> {
-    await this.emailBillingService
+    await this.emailUsageQuotaService
       .billSentEmails({
         workspaceId,
         userWorkspaceId,

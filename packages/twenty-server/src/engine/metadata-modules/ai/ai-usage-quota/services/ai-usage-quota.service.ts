@@ -2,16 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModelUsage } from 'ai';
 
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageQuotaGateService } from 'src/engine/core-modules/usage-limit/services/usage-quota-gate.service';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
-import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
-import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
-import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
+import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-usage-quota/constants/native-web-search-cost-per-call-dollars';
+import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/compute-cost-breakdown.util';
+import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/convert-dollars-to-credits-micro.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 
@@ -21,13 +21,13 @@ export type BillingUsageInput = {
 };
 
 @Injectable()
-export class AiBillingService {
-  private readonly logger = new Logger(AiBillingService.name);
+export class AiUsageQuotaService {
+  private readonly logger = new Logger(AiUsageQuotaService.name);
 
   constructor(
     private readonly usageRecorderService: UsageRecorderService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageQuotaGateService: UsageQuotaGateService,
   ) {}
 
   async assertAiExecutionAllowed({
@@ -39,7 +39,7 @@ export class AiBillingService {
     operationType: UsageOperationType;
     spenders: UsageSpenders;
   }): Promise<void> {
-    await this.billingUsageService.assertUsageAllowed({
+    await this.usageQuotaGateService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,
@@ -58,7 +58,7 @@ export class AiBillingService {
     spenders: UsageSpenders;
     cost: QuotaCost;
   }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
-    return this.billingUsageService.consumeUsageQuota({
+    return this.usageQuotaGateService.consumeUsageQuota({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,

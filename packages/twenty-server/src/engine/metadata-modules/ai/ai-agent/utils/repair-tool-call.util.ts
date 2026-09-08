@@ -10,8 +10,8 @@ import {
 import { type z } from 'zod';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { AiUsageQuotaService } from 'src/engine/metadata-modules/ai/ai-usage-quota/services/ai-usage-quota.service';
+import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/extract-cache-creation-tokens.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 
 type ToolCall = {
@@ -22,7 +22,7 @@ type ToolCall = {
 };
 
 type RepairToolCallBillingContext = {
-  aiBillingService: AiBillingService;
+  aiUsageQuotaService: AiUsageQuotaService;
   modelId: string;
   workspaceId: string;
   userWorkspaceId: string | null;
@@ -113,7 +113,7 @@ export const repairToolCall = async ({
         ? extractCacheCreationTokensFromSteps(steps)
         : 0;
 
-      void billingContext.aiBillingService.calculateAndBillUsage(
+      void billingContext.aiUsageQuotaService.calculateAndBillUsage(
         billingContext.modelId,
         { usage, cacheCreationTokens },
         billingContext.workspaceId,

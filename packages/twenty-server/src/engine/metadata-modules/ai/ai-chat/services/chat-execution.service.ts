@@ -48,13 +48,13 @@ import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
-import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
+import { AiUsageQuotaService } from 'src/engine/metadata-modules/ai/ai-usage-quota/services/ai-usage-quota.service';
+import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/convert-dollars-to-credits-micro.util';
+import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/count-native-web-search-calls-from-steps.util';
 import {
   extractCacheCreationTokens,
   extractCacheCreationTokensFromSteps,
-} from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+} from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/extract-cache-creation-tokens.util';
 import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-stream-function-id.constant';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
@@ -122,7 +122,7 @@ export class ChatExecutionService {
     private readonly toolRegistry: ToolRegistryService,
     private readonly skillService: SkillService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly aiBillingService: AiBillingService,
+    private readonly aiUsageQuotaService: AiUsageQuotaService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly codeInterpreterService: CodeInterpreterService,
@@ -420,13 +420,13 @@ export class ChatExecutionService {
       const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
       const totalTokens = (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0);
 
-      const costInDollars = this.aiBillingService.calculateCost(
+      const costInDollars = this.aiUsageQuotaService.calculateCost(
         registeredModel.modelId,
         { usage, cacheCreationTokens },
       );
       const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
-      await this.aiBillingService.emitAiTokenUsageEvent(
+      await this.aiUsageQuotaService.emitAiTokenUsageEvent(
         workspace.id,
         creditsUsedMicro,
         totalTokens,
@@ -438,7 +438,7 @@ export class ChatExecutionService {
 
       // billNativeWebSearchUsage short-circuits when count <= 0, so calling
       // unconditionally is safe regardless of whether native search fired.
-      void this.aiBillingService.billNativeWebSearchUsage(
+      void this.aiUsageQuotaService.billNativeWebSearchUsage(
         countNativeWebSearchCallsFromSteps(steps),
         workspace.id,
         userWorkspaceId,
@@ -552,7 +552,7 @@ export class ChatExecutionService {
         });
 
         const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-          await this.aiBillingService.decrementAndCheckAvailableCredits({
+          await this.aiUsageQuotaService.decrementAndCheckAvailableCredits({
             modelId: registeredModel.modelId,
             billingInput: {
               usage: step.usage,
@@ -631,7 +631,7 @@ export class ChatExecutionService {
           error,
           model: registeredModel.model,
           billingContext: {
-            aiBillingService: this.aiBillingService,
+            aiUsageQuotaService: this.aiUsageQuotaService,
             modelId: registeredModel.modelId,
             workspaceId: workspace.id,
             userWorkspaceId,

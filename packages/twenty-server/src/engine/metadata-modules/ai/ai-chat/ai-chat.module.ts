@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -16,7 +17,7 @@ import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
+import { AiUsageQuotaModule } from 'src/engine/metadata-modules/ai/ai-usage-quota/ai-usage-quota.module';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
@@ -52,6 +53,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     ]),
     AiAgentExecutionModule,
     BillingModule,
+    UsageLimitModule,
     ThrottlerModule,
     FileModule,
     PermissionsModule,
@@ -61,7 +63,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     WorkspaceDomainsModule,
     TokenModule,
     UserWorkspaceModule,
-    AiBillingModule,
+    AiUsageQuotaModule,
     MetricsModule,
     ToolProviderModule,
     DashboardToolsModule,

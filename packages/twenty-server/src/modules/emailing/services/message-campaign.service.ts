@@ -26,7 +26,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
-import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import { EmailUsageQuotaService } from 'src/modules/emailing/services/email-usage-quota.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -63,7 +63,7 @@ export class MessageCampaignService {
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly throttlerService: ThrottlerService,
-    private readonly emailBillingService: EmailBillingService,
+    private readonly emailUsageQuotaService: EmailUsageQuotaService,
   ) {}
 
   async send({
@@ -110,7 +110,7 @@ export class MessageCampaignService {
       });
 
     const { hasCredits } =
-      await this.emailBillingService.getEmailCreditContext(workspaceId);
+      await this.emailUsageQuotaService.getEmailCreditContext(workspaceId);
 
     if (sendableRecipients.length > 0 && !hasCredits) {
       throw new EmailingDomainException(

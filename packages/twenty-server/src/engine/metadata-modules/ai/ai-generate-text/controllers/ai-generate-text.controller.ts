@@ -17,7 +17,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { AiUsageQuotaService } from 'src/engine/metadata-modules/ai/ai-usage-quota/services/ai-usage-quota.service';
 import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-api-exception.filter';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
@@ -38,7 +38,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
 export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly aiBillingService: AiBillingService,
+    private readonly aiUsageQuotaService: AiUsageQuotaService,
   ) {}
 
   @Post('generate-text')
@@ -55,7 +55,7 @@ export class AiGenerateTextController {
       );
     }
 
-    await this.aiBillingService.assertAiExecutionAllowed({
+    await this.aiUsageQuotaService.assertAiExecutionAllowed({
       workspaceId: workspace.id,
       operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       spenders: { userWorkspaceId },
@@ -98,7 +98,7 @@ export class AiGenerateTextController {
       };
     } finally {
       if (result) {
-        void this.aiBillingService.calculateAndBillUsage(
+        void this.aiUsageQuotaService.calculateAndBillUsage(
           resolvedModelId,
           {
             usage: result.usage,
