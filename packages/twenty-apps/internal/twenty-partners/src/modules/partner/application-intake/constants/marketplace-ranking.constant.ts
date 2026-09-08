@@ -1,4 +1,4 @@
-// Copied from packages/twenty-website/src/partners-marketplace/completeness-score.ts
+// Copied from former website completeness-score
 // and is-ghost-partner.ts. Update both in the same change (see AGENTS.md).
 export const MARKETPLACE_RANKING = {
   pointsPerCaseStudy: 4,

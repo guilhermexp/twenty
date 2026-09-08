@@ -45,10 +45,6 @@
       "path": "../packages/twenty-e2e-testing"
     },
     {
-      "name": "packages/twenty-docs",
-      "path": "../packages/twenty-docs"
-    },
-    {
       "name": "packages/create-twenty-app",
       "path": "../packages/create-twenty-app"
     },
@@ -76,10 +72,6 @@
       "name": "packages/twenty-sdk",
       "path": "../packages/twenty-sdk"
     },
-    {
-      "name": "packages/twenty-website",
-      "path": "../packages/twenty-website"
-    }
   ],
   "settings": {
     "editor.formatOnSave": false,

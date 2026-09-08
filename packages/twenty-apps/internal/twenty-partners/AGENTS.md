@@ -111,7 +111,7 @@ of the following, update the playbook in the same change:
   welcome email on `VALIDATED`, linked from
   `WELCOME_EMAIL_WORKFLOW_URL`)
 - Marketplace ranking bonuses in
-  `packages/twenty-website/src/partners-marketplace/completeness-score.ts`
+  `completeness-score` (copied into this package)
   (case study, cover, introduction, service, picture, calendar, rate,
   category, ghost rule)
 

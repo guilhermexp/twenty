@@ -2,7 +2,7 @@ import { getDictationLanguage } from '@/ai/dictation/utils/getDictationLanguage'
 
 describe('getDictationLanguage', () => {
   it('uses the workspace member locale', () => {
-    expect(getDictationLanguage('fr-FR')).toBe('fr-FR');
+    expect(getDictationLanguage('pt-BR')).toBe('pt-BR');
   });
 
   it.each([undefined, null, ''])(

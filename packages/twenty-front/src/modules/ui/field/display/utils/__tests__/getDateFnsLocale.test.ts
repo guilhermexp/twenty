@@ -9,11 +9,11 @@ describe('getDateFnsLocale', () => {
     expect(typeof locale?.formatDistance).toBe('function');
   });
 
-  it('should load a non-default locale (fr-FR)', async () => {
-    const locale = await getDateFnsLocale('fr-FR');
+  it('should load a non-default locale (pt-BR)', async () => {
+    const locale = await getDateFnsLocale('pt-BR');
 
     expect(locale).toBeDefined();
-    expect(locale?.code).toBe('fr');
+    expect(locale?.code).toBe('pt-BR');
   });
 
   it('should fall back to en-US for an unknown locale', async () => {
