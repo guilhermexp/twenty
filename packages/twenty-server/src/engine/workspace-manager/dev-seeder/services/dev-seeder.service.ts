@@ -44,6 +44,7 @@ import { seedTwoFactorAuthenticationMethods } from 'src/engine/workspace-manager
 import { seedUnsubscribeTopics } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-unsubscribe-topics.util';
 import {
   SEED_DEV_USER_WORKSPACE_ID,
+  SEED_DEV_WORKSPACE_MEMBER_ID,
   seedUserWorkspaces,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import {
@@ -151,6 +152,29 @@ export class DevSeederService {
         twentyStandardFlatApplication.universalIdentifier,
       trigger: 'dev-seeder',
     });
+
+    const isParameterizedDevSeed = isDefined(options?.adminPassword);
+
+    if (isParameterizedDevSeed) {
+      await this.devSeederPermissionsService.initPermissions({
+        workspaceId,
+        twentyStandardFlatApplication,
+        workspaceCustomFlatApplication,
+        adminUserWorkspaceId: SEED_DEV_USER_WORKSPACE_ID,
+      });
+
+      await this.seedLeanWorkspaceMember({
+        schemaName,
+        email: options?.adminEmail ?? '',
+      });
+      await this.seedOnboardingCompleted({
+        workspaceId,
+        userId: SEED_DEV_USER_ID,
+      });
+      await this.workspaceCacheStorageService.flush(workspaceId);
+
+      return;
+    }
 
     await this.devSeederMetadataService.seed({
       workspaceId,
@@ -351,15 +375,18 @@ export class DevSeederService {
             }
           : {}),
       });
-      await seedTwoFactorAuthenticationMethods({
-        queryRunner,
-        schemaName,
-        workspaceId,
-        encryptedSecret: this.secretEncryptionService.encryptVersioned(
-          'seed-totp-secret-test-fixture' as PlaintextString,
-          { workspaceId },
-        ),
-      });
+
+      if (!isParameterizedDevSeed) {
+        await seedTwoFactorAuthenticationMethods({
+          queryRunner,
+          schemaName,
+          workspaceId,
+          encryptedSecret: this.secretEncryptionService.encryptVersioned(
+            'seed-totp-secret-test-fixture' as PlaintextString,
+            { workspaceId },
+          ),
+        });
+      }
 
       await this.applicationService.createTwentyStandardApplication(
         {
@@ -369,19 +396,23 @@ export class DevSeederService {
         queryRunner,
       );
 
-      await seedApiKeys({ queryRunner, schemaName, workspaceId });
-      if (
-        this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
-        EmailingDomainDriver.LOG
-      ) {
-        await seedEmailingDomains({ queryRunner, schemaName, workspaceId });
+      if (!isParameterizedDevSeed) {
+        await seedApiKeys({ queryRunner, schemaName, workspaceId });
+        if (
+          this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+          EmailingDomainDriver.LOG
+        ) {
+          await seedEmailingDomains({ queryRunner, schemaName, workspaceId });
+        }
+        await seedUnsubscribeTopics({ queryRunner, schemaName, workspaceId });
+        await seedMessageSuppressions({ queryRunner, schemaName, workspaceId });
       }
-      await seedUnsubscribeTopics({ queryRunner, schemaName, workspaceId });
-      await seedMessageSuppressions({ queryRunner, schemaName, workspaceId });
+
       await seedFeatureFlags({ queryRunner, schemaName, workspaceId });
 
-
-      await seedMetadataEntities({ queryRunner, schemaName, workspaceId });
+      if (!isParameterizedDevSeed) {
+        await seedMetadataEntities({ queryRunner, schemaName, workspaceId });
+      }
 
       await this.upgradeMigrationService.markAsWorkspaceInitial({
         name: initialCursor.name,
@@ -399,4 +430,77 @@ export class DevSeederService {
       await queryRunner.release();
     }
   }
+
+  private async seedLeanWorkspaceMember({
+    schemaName,
+    email,
+  }: {
+    schemaName: string;
+    email: string;
+  }): Promise<void> {
+    await this.coreDataSource
+      .createQueryBuilder()
+      .insert()
+      .into(`${schemaName}.workspaceMember`, [
+        'id',
+        'nameFirstName',
+        'nameLastName',
+        'locale',
+        'colorScheme',
+        'userEmail',
+        'userId',
+      ])
+      .orIgnore()
+      .values([
+        {
+          id: SEED_DEV_WORKSPACE_MEMBER_ID,
+          nameFirstName: 'Guilherme',
+          nameLastName: '',
+          locale: 'en',
+          colorScheme: 'System',
+          userEmail: email,
+          userId: SEED_DEV_USER_ID,
+        },
+      ])
+      .execute();
+  }
+
+  private async seedOnboardingCompleted({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }): Promise<void> {
+    const pendingKeys = [
+      'ONBOARDING_CONNECT_ACCOUNT_PENDING',
+      'ONBOARDING_INVITE_TEAM_PENDING',
+      'ONBOARDING_CREATE_PROFILE_PENDING',
+      'ONBOARDING_INSTALL_APPS_PENDING',
+      'ONBOARDING_BOOK_CALL_PENDING',
+    ];
+
+    await this.coreDataSource
+      .createQueryBuilder()
+      .insert()
+      .into('core.keyValuePair', [
+        'key',
+        'value',
+        'type',
+        'userId',
+        'workspaceId',
+      ])
+      .orIgnore()
+      .values(
+        pendingKeys.map((key) => ({
+          key,
+          value: false,
+          type: 'USER_VARIABLE',
+          userId,
+          workspaceId,
+        })),
+      )
+      .execute();
+  }
+
 }

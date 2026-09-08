@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, Repository } from 'typeorm';
 
@@ -53,11 +54,13 @@ export class DevSeederPermissionsService {
     workspaceCustomFlatApplication,
     workspaceId,
     light = false,
+    adminUserWorkspaceId: seededAdminUserWorkspaceId,
   }: {
     workspaceId: string;
     twentyStandardFlatApplication: FlatApplication;
     workspaceCustomFlatApplication: FlatApplication;
     light?: boolean;
+    adminUserWorkspaceId?: string;
   }) {
     const adminRole = await this.roleRepository.findOne(workspaceId, {
       where: {
@@ -69,6 +72,21 @@ export class DevSeederPermissionsService {
       throw new Error(
         'Required roles not found. Make sure the permission sync has run.',
       );
+    }
+
+    if (isDefined(seededAdminUserWorkspaceId)) {
+      await this.userRoleService.assignRoleToManyUserWorkspace({
+        workspaceId,
+        userWorkspaceIds: [seededAdminUserWorkspaceId],
+        roleId: adminRole.id,
+      });
+
+      await this.initMinimalPermissionsAndActivateWorkspace({
+        workspaceId,
+        workspaceCustomFlatApplication,
+      });
+
+      return;
     }
 
     await this.roleTargetService.create({

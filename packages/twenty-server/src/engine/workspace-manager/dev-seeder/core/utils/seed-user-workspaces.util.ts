@@ -25,6 +25,8 @@ export const USER_WORKSPACE_DATA_SEED_IDS = {
 
 export const SEED_DEV_USER_WORKSPACE_ID =
   'c3e70000-9e3b-46d4-a556-88b9ddc2b035';
+export const SEED_DEV_WORKSPACE_MEMBER_ID =
+  'c3e70000-0687-4c41-b707-ed1bfca972a7';
 
 const {
   userWorkspaces: randomUserWorkspaces,
