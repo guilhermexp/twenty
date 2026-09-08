@@ -9,11 +9,8 @@ const PACKAGE_TAG_MAP: Record<string, string[]> = {
   'twenty-shared': ['scope:shared'],
   'twenty-emails': ['scope:backend'],
   'twenty-sdk': ['scope:sdk', 'scope:shared'],
-  'twenty-zapier': ['scope:zapier'],
   'twenty-oxlint-rules': ['scope:shared'],
   'twenty-docs': ['scope:docs'],
-  'twenty-e2e-testing': ['scope:testing'],
-  'create-twenty-app': ['scope:create-app'],
 };
 
 const WORKSPACE_PACKAGES = Object.keys(PACKAGE_TAG_MAP);

@@ -13,7 +13,7 @@ import { ApplicationUpgradeService } from 'src/engine/core-modules/application/a
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 
-// packages/twenty-apps/public/people-data-labs APPLICATION_UNIVERSAL_IDENTIFIER
+// people-data-labs APPLICATION_UNIVERSAL_IDENTIFIER
 const PEOPLE_DATA_LABS_APPLICATION_UNIVERSAL_IDENTIFIER =
   '4a1178c1-3535-4a47-b592-231d3216b36f';
 

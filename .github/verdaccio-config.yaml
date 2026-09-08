@@ -13,9 +13,6 @@ packages:
   'twenty-client-sdk':
     access: $all
     publish: $all
-  'create-twenty-app':
-    access: $all
-    publish: $all
   '**':
     access: $all
     proxy: npmjs
