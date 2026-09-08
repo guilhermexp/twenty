@@ -20,13 +20,10 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { BillingEntitlementDTO } from 'src/engine/core-modules/enterprise/dtos/billing-entitlement.dto';
-import { BillingEntitlementKey } from 'src/engine/core-modules/enterprise/enums/billing-entitlement-key.enum';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag.dto';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -96,7 +93,6 @@ export class WorkspaceResolver {
     private readonly dnsManagerService: DnsManagerService,
     private readonly customDomainManagerService: CustomDomainManagerService,
     private readonly applicationService: ApplicationService,
-    private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
   @Query(() => WorkspaceEntity)
@@ -273,26 +269,6 @@ export class WorkspaceResolver {
       workspaceId: workspace.id,
       fileFolder: FileFolder.CorePicture,
     });
-  }
-
-  @ResolveField(() => [BillingEntitlementDTO])
-  billingEntitlements(): BillingEntitlementDTO[] {
-    const value = this.enterprisePlanService.isValid();
-
-    return Object.values(BillingEntitlementKey).map((key) => ({
-      key,
-      value,
-    }));
-  }
-
-  @ResolveField(() => Boolean)
-  hasValidSignedEnterpriseKey(): boolean {
-    return this.enterprisePlanService.hasValidSignedEnterpriseKey();
-  }
-
-  @ResolveField(() => Boolean)
-  hasValidEnterpriseValidityToken(): boolean {
-    return this.enterprisePlanService.hasValidEnterpriseValidityToken();
   }
 
   @ResolveField(() => WorkspaceUrlsDTO)

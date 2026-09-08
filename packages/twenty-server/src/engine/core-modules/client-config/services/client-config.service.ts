@@ -18,7 +18,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
-  ENTERPRISE_INSTANCE_TYPE,
 } from 'twenty-shared/constants';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
@@ -247,9 +246,6 @@ export class ClientConfigService {
       isOnboardingAiChatEnabled: this.twentyConfigService.get(
         'IS_ONBOARDING_AI_CHAT_ENABLED',
       ),
-      enterpriseInstanceType:
-        this.twentyConfigService.get('ENTERPRISE_INSTANCE_TYPE') ??
-        ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
     };
 
     const maintenanceMode =

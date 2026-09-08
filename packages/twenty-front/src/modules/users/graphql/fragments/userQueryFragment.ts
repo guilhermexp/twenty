@@ -61,8 +61,6 @@ export const USER_QUERY_FRAGMENT = gql`
       isPasswordAuthBypassEnabled
       subdomain
       customDomain
-      hasValidSignedEnterpriseKey
-      hasValidEnterpriseValidityToken
       workspaceCustomApplication {
         id
       }
@@ -77,10 +75,6 @@ export const USER_QUERY_FRAGMENT = gql`
         ...WorkspaceUrlsFragment
       }
       featureFlags {
-        key
-        value
-      }
-      billingEntitlements {
         key
         value
       }

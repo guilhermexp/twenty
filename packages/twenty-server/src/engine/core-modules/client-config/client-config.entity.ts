@@ -333,9 +333,6 @@ export class ClientConfig {
   @Field(() => Boolean)
   isOnboardingAiChatEnabled: boolean;
 
-  @Field(() => String)
-  enterpriseInstanceType: string;
-
   @Field(() => ClientConfigMaintenanceMode, { nullable: true })
   maintenance?: ClientConfigMaintenanceMode;
 }

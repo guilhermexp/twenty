@@ -2,10 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import {
-  type CustomAiProviderAccess,
-  CustomAiProviderAccessService,
-} from 'src/engine/core-modules/enterprise/services/custom-ai-provider-access.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -21,16 +17,9 @@ const PROVIDER_NAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
 export class AdminPanelAiProviderService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly customAiProviderAccessService: CustomAiProviderAccessService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly defaultAiCatalogService: DefaultAiCatalogService,
   ) {}
-
-  // Counting here rather than reading the cached verdict keeps the admin panel
-  // exact, and refreshes what model resolution will use on its next read.
-  async getCustomAiProviderAccess(): Promise<CustomAiProviderAccess> {
-    return this.customAiProviderAccessService.computeAccess();
-  }
 
   getMaskedProviders(): Record<string, unknown> {
     const providers =

@@ -7,10 +7,8 @@ import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
-import { CustomAiProviderAccessDTO } from 'src/engine/core-modules/admin-panel/dtos/custom-ai-provider-access.dto';
 import { AdminPanelAiProviderService } from 'src/engine/core-modules/admin-panel/services/admin-panel-ai-provider.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { EnterpriseExceptionFilter } from 'src/engine/core-modules/enterprise/enterprise-exception.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
@@ -26,7 +24,6 @@ import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-model
 @AdminResolver()
 @UseFilters(
   AuthGraphqlApiExceptionFilter,
-  EnterpriseExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   ConfigVariableGraphqlApiExceptionFilter,
 )
@@ -40,12 +37,6 @@ export class AdminPanelAiProviderResolver {
     private readonly adminPanelAiProviderService: AdminPanelAiProviderService,
     private readonly modelsDevCatalogService: ModelsDevCatalogService,
   ) {}
-
-  @UseGuards(AdminPanelGuard)
-  @Query(() => CustomAiProviderAccessDTO)
-  async getCustomAiProviderAccess(): Promise<CustomAiProviderAccessDTO> {
-    return this.adminPanelAiProviderService.getCustomAiProviderAccess();
-  }
 
   @UseGuards(AdminPanelGuard)
   @Query(() => GraphQLJSON)
