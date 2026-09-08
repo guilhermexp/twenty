@@ -41,7 +41,6 @@ import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-v
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
-import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { TwoFactorAuthenticationModule } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.module';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -74,7 +73,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     TerminusModule,
     MetricsModule,
     FeatureFlagModule,
-    TelemetryModule,
     ImpersonationModule,
     PermissionsModule,
     SecureHttpClientModule,

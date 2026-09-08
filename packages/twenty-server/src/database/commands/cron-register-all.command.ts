@@ -9,7 +9,6 @@ import { ApplicationVersionCheckCronCommand } from 'src/engine/core-modules/appl
 import { ApplicationRecurringChargeCronCommand } from 'src/engine/core-modules/billing/app-billing/crons/commands/application-recurring-charge.cron.command';
 import { BillingReminderCronCommand } from 'src/engine/core-modules/billing/reminders/crons/commands/billing-reminder.cron.command';
 import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modules/emailing-domain/crons/commands/check-emailing-domain-verification.cron.command';
-import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/enterprise-key-validation.cron.command';
 import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/cleanup/commands/event-log-cleanup.cron.command';
 import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file-upload/crons/commands/pending-file-cleanup.cron.command';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
@@ -75,7 +74,6 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly cleanOnboardingWorkspacesCronCommand: CleanOnboardingWorkspacesCronCommand,
     private readonly trashCleanupCronCommand: TrashCleanupCronCommand,
     private readonly eventLogCleanupCronCommand: EventLogCleanupCronCommand,
-    private readonly enterpriseKeyValidationCronCommand: EnterpriseKeyValidationCronCommand,
     private readonly rotateSigningKeysCronCommand: RotateSigningKeysCronCommand,
     private readonly marketplaceCatalogSyncCronCommand: MarketplaceCatalogSyncCronCommand,
     private readonly applicationVersionCheckCronCommand: ApplicationVersionCheckCronCommand,
@@ -207,10 +205,6 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'ApplicationVersionCheck',
         command: this.applicationVersionCheckCronCommand,
-      },
-      {
-        name: 'EnterpriseKeyValidation',
-        command: this.enterpriseKeyValidationCronCommand,
       },
       {
         name: 'RotateSigningKeys',

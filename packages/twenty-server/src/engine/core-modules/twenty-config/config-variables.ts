@@ -880,14 +880,6 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
-    description: 'Enable or disable telemetry logging',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  TELEMETRY_ENABLED = true;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGGING,
     description:
       'TypeORM logging options for development mode. Accepts comma-separated values: query, schema, error, warn, info, log, migration',
     type: ConfigVariableType.ARRAY,
@@ -2066,15 +2058,6 @@ export class ConfigVariables {
   })
   @IsOptional()
   ENTERPRISE_VALIDITY_TOKEN: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
-    description: 'Base URL for the Enterprise API on twenty.com',
-    isHiddenInAdminPanel: true,
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  ENTERPRISE_API_URL: string = 'https://twenty.com/api/enterprise';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,

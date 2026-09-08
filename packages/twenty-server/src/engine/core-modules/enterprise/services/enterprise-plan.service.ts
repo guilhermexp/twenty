@@ -5,11 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import * as crypto from 'crypto';
 
-import { isNonEmptyString } from '@sniptt/guards';
-import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import {
   AppTokenEntity,
@@ -20,11 +17,6 @@ import {
   ENTERPRISE_JWT_PUBLIC_KEY,
 } from 'src/engine/core-modules/enterprise/constants/enterprise-public-key.constant';
 import {
-  EnterpriseException,
-  EnterpriseExceptionCode,
-} from 'src/engine/core-modules/enterprise/enterprise.exception';
-import {
-  type EnterpriseInstanceMetadata,
   type EnterpriseKeyPayload,
   type EnterpriseLicenseInfo,
   type EnterpriseValidityPayload,
@@ -36,8 +28,6 @@ import {
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class EnterprisePlanService implements OnModuleInit {
@@ -58,10 +48,6 @@ export class EnterprisePlanService implements OnModuleInit {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async onModuleInit() {
@@ -242,99 +228,9 @@ export class EnterprisePlanService implements OnModuleInit {
 
   async refreshValidityToken(): Promise<boolean> {
     this.lastRefreshRejectionCode = null;
+    await this.loadValidityToken();
 
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
-
-    if (!enterpriseKey) {
-      this.logger.warn('No ENTERPRISE_KEY configured, skipping refresh');
-
-      return false;
-    }
-
-    this.refreshKeyPayload();
-
-    if (!isDefined(this.cachedKeyPayload)) {
-      this.logger.warn(
-        'ENTERPRISE_KEY is not a valid signed JWT, skipping refresh',
-      );
-
-      return false;
-    }
-
-    const apiUrl = this.twentyConfigService.get('ENTERPRISE_API_URL');
-    const validateUrl = `${apiUrl}/validate`;
-
-    try {
-      const instanceMetadata = await this.gatherInstanceMetadata();
-
-      const response = await fetch(validateUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enterpriseKey, instanceMetadata }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-
-        this.logger.warn(
-          `Enterprise refresh failed with status ${response.status}: ${errorData.error ?? 'Unknown error'}`,
-        );
-
-        if (
-          errorData.code ===
-          EnterprisePlanService.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED_CODE
-        ) {
-          // Rate limited: the existing token stays valid, surface the reason so
-          // callers (e.g. the manual refresh button) can tell the user.
-          throw new EnterpriseException(
-            'Validity token refresh rate limit exceeded',
-            EnterpriseExceptionCode.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED,
-          );
-        }
-
-        if (isNonEmptyString(errorData.code)) {
-          this.lastRefreshRejectionCode = errorData.code;
-        }
-
-        // Only a key claimed by a different server means this instance is
-        // definitively displaced, so revoke its stored license. Other
-        // rejections (missing SERVER_ID, dev-needs-prod, dev-slot-taken) are
-        // recoverable: the existing token simply expires without reissue.
-        if (
-          errorData.code ===
-          EnterprisePlanService.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE
-        ) {
-          await this.revokeStoredValidityToken();
-        }
-
-        return false;
-      }
-
-      const data = await response.json();
-
-      if (!data.validityToken) {
-        this.logger.warn('Enterprise refresh response missing validityToken');
-
-        return false;
-      }
-
-      await this.saveNewValidityTokenToDb(data.validityToken);
-      await this.loadValidityToken();
-
-      this.logger.log('Enterprise validity token refreshed successfully');
-
-      return true;
-    } catch (error) {
-      if (error instanceof EnterpriseException) {
-        throw error;
-      }
-
-      this.logger.warn(
-        `Enterprise refresh failed: ${error instanceof Error ? error.message : 'Network error'}. Current validity token will continue to work until expiration.`,
-      );
-
-      return false;
-    }
+    return this.hasValidEnterpriseValidityToken();
   }
 
   // Self-hosted pricing is per user: a user who belongs to several workspaces
@@ -349,108 +245,14 @@ export class EnterprisePlanService implements OnModuleInit {
     return Math.max(1, Number(result?.distinctUserCount ?? 0));
   }
 
-  async reportSeats(seatCount: number): Promise<boolean> {
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
-
-    if (!enterpriseKey) {
-      return false;
-    }
-
-    if (!isDefined(this.cachedKeyPayload)) {
-      return false;
-    }
-
-    const apiUrl = this.twentyConfigService.get('ENTERPRISE_API_URL');
-    const seatsUrl = `${apiUrl}/seats`;
-
-    try {
-      const instanceMetadata = await this.gatherInstanceMetadata();
-
-      const response = await fetch(seatsUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enterpriseKey, seatCount, instanceMetadata }),
-      });
-
-      if (!response.ok) {
-        this.logger.warn(
-          `Seat reporting failed with status ${response.status}`,
-        );
-
-        return false;
-      }
-
-      this.logger.log(`Reported ${seatCount} seats to enterprise API`);
-
-      return true;
-    } catch (error) {
-      this.logger.warn(
-        `Seat reporting failed: ${error instanceof Error ? error.message : 'Network error'}`,
-      );
-
-      return false;
-    }
+  async reportSeats(_seatCount: number): Promise<boolean> {
+    return false;
   }
 
   async releaseServerBinding(): Promise<boolean> {
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
+    await this.revokeStoredValidityToken();
 
-    if (!enterpriseKey) {
-      return false;
-    }
-
-    this.refreshKeyPayload();
-
-    if (!isDefined(this.cachedKeyPayload)) {
-      return false;
-    }
-
-    const apiUrl = this.twentyConfigService.get('ENTERPRISE_API_URL');
-    const releaseUrl = `${apiUrl}/release`;
-
-    try {
-      const instanceMetadata = await this.gatherInstanceMetadata();
-
-      const response = await fetch(releaseUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enterpriseKey, instanceMetadata }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-
-        this.logger.warn(
-          `Enterprise binding release failed with status ${response.status}: ${errorData.error ?? 'Unknown error'}`,
-        );
-
-        if (
-          errorData.code ===
-          EnterpriseExceptionCode.ENTERPRISE_RELEASE_RATE_LIMITED
-        ) {
-          throw new EnterpriseException(
-            'Enterprise server binding release rate limit reached',
-            EnterpriseExceptionCode.ENTERPRISE_RELEASE_RATE_LIMITED,
-          );
-        }
-
-        return false;
-      }
-
-      this.logger.log('Enterprise server binding released successfully');
-
-      return true;
-    } catch (error) {
-      if (error instanceof EnterpriseException) {
-        throw error;
-      }
-
-      this.logger.warn(
-        `Enterprise binding release failed: ${error instanceof Error ? error.message : 'Network error'}`,
-      );
-
-      return false;
-    }
+    return true;
   }
 
   async getSubscriptionStatus(): Promise<{
@@ -463,211 +265,31 @@ export class EnterprisePlanService implements OnModuleInit {
   } | null> {
     this.refreshKeyPayload();
 
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
-
-    if (!enterpriseKey || !isDefined(this.cachedKeyPayload)) {
-      return null;
-    }
-
     const licenseInfo = await this.getLicenseInfo();
-    const apiUrl = this.twentyConfigService.get('ENTERPRISE_API_URL');
-    const statusUrl = `${apiUrl}/status`;
 
-    try {
-      const response = await fetch(statusUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enterpriseKey }),
-      });
-
-      if (!response.ok) {
-        this.logger.warn(
-          `Enterprise status request failed with status ${response.status}`,
-        );
-
-        return null;
-      }
-
-      const data = await response.json();
-
-      return {
-        status: data.status,
-        licensee: licenseInfo.licensee,
-        expiresAt: licenseInfo.expiresAt,
-        cancelAt: data.cancelAt ? new Date(data.cancelAt * 1000) : null,
-        currentPeriodEnd: data.currentPeriodEnd
-          ? new Date(data.currentPeriodEnd * 1000)
-          : null,
-        isCancellationScheduled: data.isCancellationScheduled ?? false,
-      };
-    } catch (error) {
-      this.logger.warn(
-        `Enterprise status request failed: ${error instanceof Error ? error.message : 'Network error'}`,
-      );
-
-      return null;
-    }
-  }
-
-  async getPortalUrl(returnUrl?: string): Promise<string | null> {
-    const apiUrl = this.twentyConfigService.get('ENTERPRISE_API_URL');
-
-    if (!apiUrl) {
+    if (!this.hasValidSignedEnterpriseKey() && licenseInfo.isValid !== true) {
       return null;
     }
 
-    this.refreshKeyPayload();
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
-
-    if (enterpriseKey && isDefined(this.cachedKeyPayload)) {
-      return this.requestPortalUrlWithKey(apiUrl, enterpriseKey, returnUrl);
-    }
-
-    return null;
-  }
-
-  private async requestPortalUrlWithKey(
-    apiUrl: string,
-    enterpriseKey: string,
-    returnUrl?: string,
-  ): Promise<string | null> {
-    const portalUrl = `${apiUrl}/portal`;
-
-    try {
-      const response = await fetch(portalUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enterpriseKey, returnUrl }),
-      });
-
-      if (!response.ok) {
-        this.logger.warn(
-          `Enterprise portal request failed with status ${response.status}`,
-        );
-
-        return null;
-      }
-
-      const data = await response.json();
-
-      return data.url ?? null;
-    } catch (error) {
-      this.logger.warn(
-        `Enterprise portal request failed: ${error instanceof Error ? error.message : 'Network error'}`,
-      );
-
-      return null;
-    }
-  }
-
-  async getCheckoutUrl(
-    billingInterval: 'monthly' | 'yearly' = 'monthly',
-    seatCount: number,
-  ): Promise<string | null> {
-    const apiUrl = this.twentyConfigService.get('ENTERPRISE_API_URL');
-
-    if (!apiUrl) {
-      return null;
-    }
-
-    const checkoutUrl = `${apiUrl}/checkout`;
-
-    try {
-      const response = await fetch(checkoutUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ billingInterval, seatCount }),
-      });
-
-      if (!response.ok) {
-        this.logger.warn(
-          `Enterprise checkout request failed with status ${response.status}`,
-        );
-
-        return null;
-      }
-
-      const data = await response.json();
-
-      return data.url ?? null;
-    } catch (error) {
-      this.logger.warn(
-        `Enterprise checkout request failed: ${error instanceof Error ? error.message : 'Network error'}`,
-      );
-
-      return null;
-    }
-  }
-
-  async getOrCreateServerId(): Promise<string | null> {
-    const existingServerId = this.twentyConfigService.get('SERVER_ID');
-
-    if (isNonEmptyString(existingServerId)) {
-      return existingServerId;
-    }
-
-    const newServerId = v4();
-
-    try {
-      await this.twentyConfigService.set('SERVER_ID', newServerId);
-
-      return newServerId;
-    } catch (error) {
-      this.logger.warn(
-        `Could not persist a generated SERVER_ID: ${error instanceof Error ? error.message : 'Unknown error'}. Set SERVER_ID in your .env file.`,
-      );
-
-      return null;
-    }
-  }
-
-  private async gatherInstanceMetadata(): Promise<EnterpriseInstanceMetadata> {
     return {
-      serverId: await this.getOrCreateServerId(),
-      instanceType:
-        this.twentyConfigService.get('ENTERPRISE_INSTANCE_TYPE') ??
-        ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
-      serverUrl: this.twentyConfigService.get('SERVER_URL') ?? null,
-      appVersion: this.twentyConfigService.get('APP_VERSION') ?? null,
-      nodeEnv: this.twentyConfigService.get('NODE_ENV') ?? null,
-      telemetryEnabled:
-        this.twentyConfigService.get('TELEMETRY_ENABLED') ?? null,
-      workspaceCount: await this.safeCount(() =>
-        this.workspaceRepository.count(),
-      ),
-      activeUserWorkspaceCount: await this.safeCount(() =>
-        this.userWorkspaceRepository.count({ where: { deletedAt: IsNull() } }),
-      ),
-      distinctUserCount: await this.safeCount(() =>
-        this.userRepository.count({ where: { deletedAt: IsNull() } }),
-      ),
-      adminContactEmail: await this.getAdminContactEmail(),
-      sentAt: new Date().toISOString(),
+      status: licenseInfo.isValid ? 'active' : 'inactive',
+      licensee: licenseInfo.licensee,
+      expiresAt: licenseInfo.expiresAt,
+      cancelAt: null,
+      currentPeriodEnd: licenseInfo.expiresAt,
+      isCancellationScheduled: false,
     };
   }
 
-  private async safeCount(
-    countFn: () => Promise<number>,
-  ): Promise<number | null> {
-    try {
-      return await countFn();
-    } catch {
-      return null;
-    }
+  async getPortalUrl(_returnUrl?: string): Promise<string | null> {
+    return null;
   }
 
-  private async getAdminContactEmail(): Promise<string | null> {
-    try {
-      const user = await this.userRepository.findOne({
-        where: { deletedAt: IsNull() },
-        order: { createdAt: 'ASC' },
-        select: { email: true },
-      });
-
-      return user?.email ?? null;
-    } catch {
-      return null;
-    }
+  async getCheckoutUrl(
+    _billingInterval: 'monthly' | 'yearly' = 'monthly',
+    _seatCount: number,
+  ): Promise<string | null> {
+    return null;
   }
 
   // In development and Jest integration tests, tries both keys so production keys

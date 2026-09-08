@@ -15,7 +15,6 @@ import {
 import { v4 } from 'uuid';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
-import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/user/user-signup';
@@ -58,7 +57,6 @@ import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-p
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { TelemetryEventType } from 'src/engine/core-modules/telemetry/telemetry-event.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -71,7 +69,6 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
@@ -88,7 +85,6 @@ export class SignInUpService {
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly userService: UserService,
@@ -435,24 +431,6 @@ export class SignInUpService {
     const savedUser = queryRunner
       ? await queryRunner.manager.save(UserEntity, userCreated)
       : await this.userRepository.save(userCreated);
-
-    this.workspaceEventEmitter.emitCustomBatchEvent<TelemetryEventType>(
-      USER_SIGNUP_EVENT_NAME,
-      [
-        {
-          workspaceId: savedUser.currentWorkspace?.id,
-          userWorkspaceId: savedUser.currentUserWorkspace?.id,
-          userId: savedUser.id,
-          userEmail: newUserWithPicture.email,
-          userFirstName: newUserWithPicture.firstName,
-          userLastName: newUserWithPicture.lastName,
-          locale: newUserWithPicture.locale,
-          serverUrl: this.twentyConfigService.get('SERVER_URL'),
-          serverId: this.twentyConfigService.get('SERVER_ID'),
-        },
-      ],
-      undefined,
-    );
 
     void this.eventLogEmitterService
       .createContext({
