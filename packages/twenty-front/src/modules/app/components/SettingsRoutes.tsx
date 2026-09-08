@@ -440,18 +440,6 @@ const SettingsAccountsCalendars = lazy(() =>
   ),
 );
 
-const SettingsBilling = lazy(() =>
-  import('~/pages/settings/billing/SettingsBilling').then((module) => ({
-    default: module.SettingsBilling,
-  })),
-);
-
-const SettingsBillingPlans = lazy(() =>
-  import('~/pages/settings/billing/SettingsBillingPlans').then((module) => ({
-    default: module.SettingsBillingPlans,
-  })),
-);
-
 const SettingsUsage = lazy(() =>
   import('~/pages/settings/billing/SettingsUsage').then((module) => ({
     default: module.SettingsUsage,
@@ -708,7 +696,6 @@ const MEMBERS_LIST_SETTINGS_ROUTE_HANDLE: SettingsRouteHandle = {
 
 const createSettingsRouteElements = ({
   isAdminPageEnabled,
-  isPrivateModeEnabled = false,
 }: CreateSettingsRouteObjectsArgs) => (
   <>
     <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
@@ -779,15 +766,6 @@ const createSettingsRouteElements = ({
         path={SettingsPath.Unsubscribe}
         element={<SettingsWorkspaceUnsubscribe />}
       />
-      {isPrivateModeEnabled ? null : (
-        <>
-          <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-          <Route
-            path={SettingsPath.BillingPlans}
-            element={<SettingsBillingPlans />}
-          />
-        </>
-      )}
       <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
       <Route
         path={SettingsPath.UsageUserDetail}

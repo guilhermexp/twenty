@@ -16,10 +16,6 @@ export const SettingsUsage = () => {
           children: <Trans>Workspace</Trans>,
           href: getSettingsPath(SettingsPath.General),
         },
-        {
-          children: <Trans>Billing</Trans>,
-          href: getSettingsPath(SettingsPath.Billing),
-        },
         { children: <Trans>Usage</Trans> },
       ]}
     >

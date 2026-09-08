@@ -23,7 +23,6 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
-import { REACT_APP_PRIVATE_MODE } from '~/config';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -170,7 +169,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         }
 
         const verifyEmailRedirectPath = buildAppPathWithQueryParams(
-          REACT_APP_PRIVATE_MODE ? AppPath.Index : AppPath.PlanRequired,
+          AppPath.Index,
           await buildSearchParamsFromUrlSyncedStates(),
         );
 

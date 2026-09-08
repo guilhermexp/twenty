@@ -3,7 +3,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { billingState } from '@/client-config/states/billingState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -15,15 +14,13 @@ import { useEventLogsLiveStream } from '@/settings/event-logs/hooks/useEventLogs
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { type EventLogFiltersState } from '@/settings/event-logs/types/EventLogFiltersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconArrowUp,
   IconLock,
   IconPlayerPause,
   IconPlayerPlay,
 } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -31,7 +28,6 @@ import {
   BillingEntitlementKey,
   EventLogTable,
 } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const StyledRoot = styled.div`
@@ -94,10 +90,6 @@ export const SettingsLogs = () => {
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
-  const billing = useAtomStateValue(billingState);
-  const navigateSettings = useNavigateSettings();
-
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const hasAuditLogsEntitlement =
     currentWorkspace?.billingEntitlements?.some(
       (entitlement) =>
@@ -169,22 +161,6 @@ export const SettingsLogs = () => {
         Icon={IconLock}
         title={t`Upgrade to access audit logs`}
         description={t`Only application logs are available on your current plan. Other log types require an Enterprise subscription.`}
-        Button={
-          <Button
-            title={t`Upgrade`}
-            variant="primary"
-            accent="blue"
-            size="small"
-            Icon={IconArrowUp}
-            onClick={() =>
-              navigateSettings(
-                isBillingEnabled
-                  ? SettingsPath.BillingPlans
-                  : SettingsPath.AdminPanelEnterprise,
-              )
-            }
-          />
-        }
       />
     </Card>
   );

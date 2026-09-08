@@ -56,7 +56,7 @@ export const BookCall = () => {
   // Never redirect out of the step itself: the page-change effect routes
   // BOOK_CALL back here, so the two would bounce off each other.
   if (!hasBookingPage && !isOnboardingStep) {
-    return <Navigate to={AppPath.PlanRequired} replace />;
+    return <Navigate to={AppPath.Index} replace />;
   }
 
   return (
@@ -83,7 +83,7 @@ export const BookCall = () => {
           {isOnboardingStep ? (
             <BookCallOnboardingStepActions />
           ) : (
-            <Link to={AppPath.PlanRequired}>
+            <Link to={AppPath.Index}>
               <LightButton Icon={IconChevronLeft} title={t`Back`} />
             </Link>
           )}

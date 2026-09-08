@@ -71,18 +71,6 @@ const InviteTeam = lazyWithPreload(() =>
   })),
 );
 
-const ChooseYourPlan = lazyWithPreload(() =>
-  import('~/pages/onboarding/ChooseYourPlan').then((module) => ({
-    default: module.ChooseYourPlan,
-  })),
-);
-
-const PaymentSuccess = lazy(() =>
-  import('~/pages/onboarding/PaymentSuccess').then((module) => ({
-    default: module.PaymentSuccess,
-  })),
-);
-
 const BookCall = lazyWithPreload(() =>
   import('~/pages/onboarding/BookCall').then((module) => ({
     default: module.BookCall,
@@ -96,7 +84,6 @@ const preloadOnboardingPages = () => {
   InstallApps.preload();
   InviteTeam.preload();
   BookCall.preload();
-  ChooseYourPlan.preload();
 
   return null;
 };
@@ -154,18 +141,6 @@ const createWorkspaceAppRouter = ({
                     </LazyRoute>
                   ),
                 },
-                ...(REACT_APP_PRIVATE_MODE
-                  ? []
-                  : [
-                      {
-                        path: AppPath.PlanRequiredSuccess,
-                        element: (
-                          <LazyRoute fallback={<OnboardingPageLoader />}>
-                            <PaymentSuccess />
-                          </LazyRoute>
-                        ),
-                      },
-                    ]),
               ],
             },
             {
@@ -262,16 +237,6 @@ const createWorkspaceAppRouter = ({
                                 fallback={<OnboardingStepPageLoader />}
                               >
                                 <BookCall />
-                              </LazyRoute>
-                            ),
-                          },
-                          {
-                            path: AppPath.PlanRequired,
-                            element: (
-                              <LazyRoute
-                                fallback={<OnboardingStepPageLoader />}
-                              >
-                                <ChooseYourPlan />
                               </LazyRoute>
                             ),
                           },

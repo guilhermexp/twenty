@@ -77,10 +77,6 @@ export const SettingsUsageUserDetail = () => {
       href: getSettingsPath(SettingsPath.General),
     },
     {
-      children: <Trans>Billing</Trans>,
-      href: getSettingsPath(SettingsPath.Billing),
-    },
-    {
       children: <Trans>Usage</Trans>,
       href: getSettingsPath(SettingsPath.Usage),
     },

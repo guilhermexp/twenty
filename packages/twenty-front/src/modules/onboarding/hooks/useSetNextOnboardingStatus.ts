@@ -8,7 +8,6 @@ import {
   type CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
-import { billingState } from '@/client-config/states/billingState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
@@ -16,7 +15,6 @@ import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardi
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
 import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
-import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
 import { getNextPreviousOnboardingStatus } from '@/onboarding/utils/getNextPreviousOnboardingStatus';
 import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -28,30 +26,17 @@ import { OnboardingStatus } from '~/generated-metadata/graphql';
 type GetNextOnboardingStatusArgs = {
   currentUser: CurrentUser | null;
   currentWorkspace: CurrentWorkspace | null;
-  isBillingEnabled: boolean;
   isBookCallRequired: boolean;
 };
 
 const getNextOnboardingStatus = ({
   currentUser,
   currentWorkspace,
-  isBillingEnabled,
   isBookCallRequired,
 }: GetNextOnboardingStatusArgs) => {
-  const isPlanRequired = getIsPlanRequired({
-    isBillingEnabled,
-    currentWorkspace,
-  });
-
-  const statusAfterBookCall = isPlanRequired
-    ? OnboardingStatus.PLAN_REQUIRED
+  const statusAfterInviteTeam = isBookCallRequired
+    ? OnboardingStatus.BOOK_CALL
     : OnboardingStatus.COMPLETED;
-
-  const statusAfterInviteTeam =
-    isBookCallRequired && isPlanRequired
-      ? OnboardingStatus.BOOK_CALL
-      : statusAfterBookCall;
-
   if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
     return OnboardingStatus.SYNC_EMAIL;
   }
@@ -80,7 +65,7 @@ const getNextOnboardingStatus = ({
     currentUser?.onboardingStatus === OnboardingStatus.BOOK_CALL ||
     currentUser?.onboardingStatus === OnboardingStatus.PLAN_REQUIRED
   ) {
-    return statusAfterBookCall;
+    return OnboardingStatus.COMPLETED;
   }
   return OnboardingStatus.COMPLETED;
 };
@@ -89,8 +74,6 @@ export const useSetNextOnboardingStatus = () => {
   const store = useStore();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const billing = useAtomStateValue(billingState);
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const isOnboardingAiChatEnabled = useAtomStateValue(
     isOnboardingAiChatEnabledState,
   );
@@ -104,7 +87,6 @@ export const useSetNextOnboardingStatus = () => {
       const nextOnboardingStatus = getNextOnboardingStatus({
         currentUser,
         currentWorkspace,
-        isBillingEnabled,
         isBookCallRequired:
           store.get(isBookCallOnboardingStepEnabledState.atom) &&
           getIsBookCallOnboardingStepPending(store.get(currentUserState.atom)),
@@ -142,7 +124,6 @@ export const useSetNextOnboardingStatus = () => {
     [
       currentUser,
       currentWorkspace,
-      isBillingEnabled,
       isOnboardingAiChatEnabled,
       store,
     ],

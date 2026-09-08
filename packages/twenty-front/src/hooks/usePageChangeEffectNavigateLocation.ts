@@ -1,16 +1,13 @@
-import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
-import { billingState } from '@/client-config/states/billingState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
-import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
@@ -45,8 +42,6 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const location = useLocation();
-  const billing = useAtomStateValue(billingState);
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
 
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
@@ -74,9 +69,6 @@ export const usePageChangeEffectNavigateLocation = () => {
       skip: !isOnPageLayoutPage || !isDefined(pageLayoutId),
     },
   );
-  const verifyEmailRedirectPath = useAtomStateValue(
-    verifyEmailRedirectPathState,
-  );
 
   const returnToPath = useAtomStateValue(returnToPathState);
   const resolvedReturnToPath = isNonEmptyString(returnToPath)
@@ -93,9 +85,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     ? getAppPath(AppPath.AiChat, { threadId: null })
     : defaultHomePagePath;
 
-  const isOnboardingCheckoutPending = useAtomStateValue(
-    isOnboardingCheckoutPendingState,
-  );
 
   if (
     (!isLogged || !isOnAWorkspace || !isDefined(currentWorkspace)) &&
@@ -107,34 +96,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.SignInUp;
   }
 
-  if (
-    onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
-    !someMatchingLocationOf([
-      AppPath.PlanRequired,
-      AppPath.PlanRequiredSuccess,
-      AppPath.BookCall,
-    ])
-  ) {
-    if (REACT_APP_PRIVATE_MODE) {
-      return defaultHomePagePath;
-    }
-
-    if (
-      isMatchingLocation(location, AppPath.VerifyEmail) &&
-      isDefined(verifyEmailRedirectPath)
-    ) {
-      return verifyEmailRedirectPath;
-    }
-    return AppPath.PlanRequired;
-  }
 
   if (isWorkspaceSuspended) {
     if (!isMatchingLocation(location, AppPath.SettingsCatchAll)) {
-      return REACT_APP_PRIVATE_MODE
-        ? fallbackSettingsPath
-        : `${AppPath.SettingsCatchAll.replace('/*', '')}/${
-            SettingsPath.Billing
-          }`;
+      return fallbackSettingsPath;
     }
 
     return;
@@ -198,18 +163,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.BookCall;
   }
 
-  if (
-    isBillingEnabled &&
-    onboardingStatus === OnboardingStatus.COMPLETED &&
-    !REACT_APP_PRIVATE_MODE
-  ) {
-    if (isMatchingLocation(location, AppPath.InviteTeam)) {
-      return AppPath.PlanRequired;
-    }
-    if (isMatchingLocation(location, AppPath.PlanRequired)) {
-      return;
-    }
-  }
 
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&
@@ -221,12 +174,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     isLogged &&
     isOnAWorkspace
   ) {
-    if (
-      isMatchingLocation(location, AppPath.PlanRequiredSuccess) &&
-      isOnboardingCheckoutPending
-    ) {
-      return;
-    }
 
     return resolvedReturnToPath ?? onboardingCompletedPath;
   }

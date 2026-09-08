@@ -3,8 +3,6 @@ import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { billingState } from '@/client-config/states/billingState';
-import { supportChatState } from '@/client-config/states/supportChatState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import {
@@ -14,7 +12,6 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   IconAppWindow,
   IconApps,
@@ -22,12 +19,10 @@ import {
   IconCalendarEvent,
   IconColorSwatch,
   type IconComponent,
-  IconCreditCard,
   IconDoorEnter,
   IconHelpCircle,
   IconHierarchy,
   IconMail,
-  IconMessage,
   IconMessageCircle,
   IconPlug,
   IconServer,
@@ -59,20 +54,14 @@ export type SettingsNavigationItem = {
 };
 
 const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
-  const billing = useAtomStateValue(billingState);
   const { signOut } = useAuth();
-  const supportChat = useAtomStateValue(supportChatState);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const isPrivateModeEnabled = REACT_APP_PRIVATE_MODE;
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const currentUser = useAtomStateValue(currentUserState);
   const isAdminEnabled =
     (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
     false;
-  const isSupportChatConfigured =
-    supportChat?.supportDriver === 'FRONT' &&
-    isNonEmptyString(supportChat.supportFrontChatId);
 
   const permissionMap = usePermissionFlagMap();
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
@@ -144,15 +133,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE_MEMBERS],
         },
         {
-          label: t`Billing`,
-          path: SettingsPath.Billing,
-          Icon: IconCreditCard,
-          isHidden:
-            isPrivateModeEnabled ||
-            !isBillingEnabled ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
-        },
-        {
           label: t`MCP & APIs`,
           path: SettingsPath.ApiWebhooks,
           Icon: IconPlug,
@@ -201,12 +181,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Community,
           Icon: IconUsers,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
-        },
-        {
-          label: t`Support`,
-          onClick: () => window.FrontChat?.('show'),
-          Icon: IconMessage,
-          isHidden: isPrivateModeEnabled || !isSupportChatConfigured,
         },
         {
           label: t`Documentation`,
