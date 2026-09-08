@@ -9,6 +9,11 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider as JotaiProvider } from 'jotai';
 
+jest.mock('~/config', () => ({
+  REACT_APP_DEV_AUTO_LOGIN_EMAIL: 'admin@example.dev',
+  REACT_APP_DEV_AUTO_LOGIN_PASSWORD: 'dev-auto-login-password',
+}));
+
 const TestWrapper = ({
   children,
   initialEntry = '/',
@@ -74,7 +79,7 @@ describe('useSignInUpForm', () => {
     expect(result.current.form.getValues()).toEqual({
       exist: false,
       email: 'test@test.com',
-      password: '',
+      password: 'dev-auto-login-password',
       captchaToken: '',
     });
   });
