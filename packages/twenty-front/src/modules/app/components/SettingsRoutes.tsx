@@ -441,13 +441,13 @@ const SettingsAccountsCalendars = lazy(() =>
 );
 
 const SettingsUsage = lazy(() =>
-  import('~/pages/settings/billing/SettingsUsage').then((module) => ({
+  import('~/pages/settings/usage/SettingsUsage').then((module) => ({
     default: module.SettingsUsage,
   })),
 );
 
 const SettingsUsageUserDetail = lazy(() =>
-  import('~/pages/settings/billing/SettingsUsageUserDetail').then((module) => ({
+  import('~/pages/settings/usage/SettingsUsageUserDetail').then((module) => ({
     default: module.SettingsUsageUserDetail,
   })),
 );
