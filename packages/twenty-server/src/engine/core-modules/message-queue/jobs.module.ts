@@ -21,7 +21,6 @@ import { MaterializeCampaignJob } from 'src/modules/emailing/jobs/materialize-ca
 import { ReconcileWorkspaceCampaignStatsJob } from 'src/modules/emailing/jobs/reconcile-workspace-campaign-stats.job';
 import { RefreshCampaignStatsJob } from 'src/modules/emailing/jobs/refresh-campaign-stats.job';
 import { SendCampaignEmailJob } from 'src/modules/emailing/jobs/send-campaign-email.job';
-import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogIngestionModule } from 'src/engine/core-modules/event-logs/ingest/event-log-ingestion.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { GenerateSdkClientJob } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job';
@@ -88,7 +87,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     AiAgentMonitorModule,
     AiChatModule,
     LogicFunctionModule,
-    EnterpriseModule,
     EmailingModule,
     ApplicationInstallModule,
     ApplicationManifestModule,

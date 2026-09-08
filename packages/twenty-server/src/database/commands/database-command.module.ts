@@ -23,7 +23,6 @@ import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/applicat
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
-import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanup/event-log-cleanup.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
@@ -87,7 +86,6 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     CodeInterpreterSessionCleanupModule,
     PublicDomainModule,
     EventLogCleanupModule,
-    EnterpriseModule,
     TwentyConfigModule,
     MarketplaceModule,
     ApplicationInstallModule,

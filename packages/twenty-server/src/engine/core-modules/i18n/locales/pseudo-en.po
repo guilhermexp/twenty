@@ -169,11 +169,6 @@ msgstr ""
 msgid "A field with this name already exists."
 msgstr ""
 
-#. js-lingui-id: cWaEaJ
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "A free development instance requires an active production instance on this enterprise subscription."
-msgstr ""
-
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "A front component with this name already exists."
@@ -5041,11 +5036,6 @@ msgstr ""
 msgid "Invalid email or domain."
 msgstr ""
 
-#. js-lingui-id: pOHI+b
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "Invalid enterprise key."
-msgstr ""
-
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
 msgid "Invalid event input."
@@ -5706,11 +5696,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Is Organizer"
-msgstr ""
-
-#. js-lingui-id: 1bOGPq
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ENTERPRISE_KEY to your .env file manually."
 msgstr ""
 
 #. js-lingui-id: rjyWPb
@@ -10049,11 +10034,6 @@ msgstr ""
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
 msgstr ""
 
-#. js-lingui-id: hmg/aY
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "The development instance slot for this enterprise key is already in use on another server."
-msgstr ""
-
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "The domain does not match your email domain."
@@ -10578,19 +10558,9 @@ msgstr ""
 msgid "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 msgstr ""
 
-#. js-lingui-id: i4wotH
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This enterprise key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr ""
-
 #. js-lingui-id: mjE4RD
 #: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
 msgid "This evaluation target could not be found."
-msgstr ""
-
-#. js-lingui-id: uNp8ZA
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
 msgstr ""
 
 #. js-lingui-id: hsi+jf
@@ -10652,11 +10622,6 @@ msgstr ""
 #. js-lingui-id: 7f5dRA
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
 msgid "This index does not exist or has already been deleted."
-msgstr ""
-
-#. js-lingui-id: AGMd5o
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr ""
 
 #. js-lingui-id: wQ3edW
@@ -12926,16 +12891,6 @@ msgstr ""
 msgid "You have reached the maximum number of invitations for this step."
 msgstr ""
 
-#. js-lingui-id: 4kMeNM
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later."
-msgstr ""
-
-#. js-lingui-id: 475gCs
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later."
-msgstr ""
-
 #. js-lingui-id: nq15cs
 #: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
 msgid "You must be authenticated to manage blocklist."
@@ -13015,3 +12970,4 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
 msgid "Your workspace is paused — reactivate to keep your data"
 msgstr ""
+

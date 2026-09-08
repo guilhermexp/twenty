@@ -3,7 +3,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
@@ -14,7 +13,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   imports: [
     TypeOrmModule.forFeature([WorkspaceSsoIdentityProviderEntity]),
 
-    EnterpriseModule,
     GuardRedirectModule,
     PermissionsModule,
     FeatureFlagModule,

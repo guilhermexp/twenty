@@ -26,7 +26,6 @@ import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/se
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
-import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -79,7 +78,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     JwtModule,
     CoreEntityCacheModule,
     EventLogEmitterModule,
-    EnterpriseModule,
     TwoFactorAuthenticationModule,
   ],
   providers: [
