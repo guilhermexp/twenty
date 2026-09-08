@@ -5,8 +5,8 @@ import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/event-log
 import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { type GenericTrackEvent } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/track';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { SEED_DEV_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { SEED_DEV_USER_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
 export type ObjectEventFixture = GenericTrackEvent & {
   recordId: string;
@@ -36,7 +36,7 @@ export const workspaceEventFixtures: Array<GenericTrackEvent> = [
     timestamp: '2024-10-24T15:55:35.177',
     version: '1',
     userId: '20202020-3957-45c9-be39-337dc4d9100a',
-    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    workspaceId: SEED_DEV_WORKSPACE_ID,
     properties: {},
   },
   {
@@ -45,7 +45,7 @@ export const workspaceEventFixtures: Array<GenericTrackEvent> = [
     timestamp: '2024-10-24T15:55:35.177',
     version: '1',
     userId: '20202020-3957-45c9-be39-337dc4d9100a',
-    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    workspaceId: SEED_DEV_WORKSPACE_ID,
     properties: {},
   },
 ];
@@ -57,7 +57,7 @@ export const objectEventFixtures: Array<ObjectEventFixture> = [
     timestamp: '2024-10-24T15:55:35.177',
     version: '1',
     userId: '20202020-3957-45c9-be39-337dc4d9100a',
-    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    workspaceId: SEED_DEV_WORKSPACE_ID,
     properties: {},
     recordId: '20202020-c21e-4ec2-873b-de4264d89025',
     objectMetadataId: '20202020-1f76-4e46-b33b-58a70e007ba0',
@@ -68,7 +68,7 @@ export const objectEventFixtures: Array<ObjectEventFixture> = [
     timestamp: '2024-10-24T15:55:35.177',
     version: '1',
     userId: '20202020-3957-45c9-be39-337dc4d9100a',
-    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    workspaceId: SEED_DEV_WORKSPACE_ID,
     properties: {},
     recordId: '20202020-c21e-4ec2-873b-de4264d89025',
     objectMetadataId: '20202020-1f76-4e46-b33b-58a70e007ba0',
@@ -79,7 +79,7 @@ export const objectEventFixtures: Array<ObjectEventFixture> = [
     timestamp: '2024-10-24T15:55:35.177',
     version: '1',
     userId: '20202020-3957-45c9-be39-337dc4d9100a',
-    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    workspaceId: SEED_DEV_WORKSPACE_ID,
     properties: {},
     recordId: '20202020-c21e-4ec2-873b-de4264d89025',
     objectMetadataId: '20202020-1f76-4e46-b33b-58a70e007ba0',
@@ -90,15 +90,10 @@ const buildUsageEventFixtures = (): UsageEventFixture[] => {
   const now = new Date();
   const fixtures: UsageEventFixture[] = [];
 
-  const users = [
-    USER_WORKSPACE_DATA_SEED_IDS.TIM,
-    USER_WORKSPACE_DATA_SEED_IDS.JANE,
-    USER_WORKSPACE_DATA_SEED_IDS.JONY,
-    USER_WORKSPACE_DATA_SEED_IDS.PHIL,
-  ];
+  const users = [SEED_DEV_USER_WORKSPACE_ID];
 
   // Weight per user so the breakdown isn't uniform
-  const userWeights = [1.0, 0.6, 0.3, 0.15];
+  const userWeights = [1.0];
 
   const aiModelIds = [
     'anthropic/claude-opus-4-6',
@@ -216,7 +211,7 @@ const buildUsageEventFixtures = (): UsageEventFixture[] => {
 
           fixtures.push({
             timestamp: formatDateTimeForClickHouse(eventDate),
-            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            workspaceId: SEED_DEV_WORKSPACE_ID,
             periodStart: formatDateTimeForClickHouse(
               new Date(
                 Date.UTC(

@@ -60,10 +60,7 @@ export const PrivateModeAutoLoginEffect = ({
         const availableWorkspaces =
           data?.signIn.availableWorkspaces.availableWorkspacesForSignIn ?? [];
 
-        const workspace =
-          availableWorkspaces.find(
-            ({ displayName }) => displayName === 'Apple',
-          ) ?? availableWorkspaces[0];
+        const workspace = availableWorkspaces[0];
 
         if (!workspace?.loginToken) {
           throw new Error('No dev workspace login token');

@@ -9,6 +9,7 @@ import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain
 import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
@@ -80,14 +81,16 @@ export class WorkspaceDomainsService {
 
     if (workspaces.length > 1) {
       Logger.warn(
-        `${workspaces.length} workspaces found in database. In single-workspace mode, there should be only one workspace. The Apple seed workspace will be used as fallback if present.`,
+        `${workspaces.length} workspaces found in database. In single-workspace mode, there should be only one workspace. The most recently created workspace will be used.`,
       );
     }
 
     const foundWorkspace =
-      workspaces.find(
-        (workspace) => workspace.id === SEED_APPLE_WORKSPACE_ID,
-      ) ?? workspaces[0];
+      process.env.NODE_ENV === NodeEnvironment.TEST
+        ? (workspaces.find(
+            (workspace) => workspace.id === SEED_APPLE_WORKSPACE_ID,
+          ) ?? workspaces[0])
+        : workspaces[0];
 
     assertIsDefinedOrThrow(foundWorkspace, WorkspaceNotFoundDefaultError);
 

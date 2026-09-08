@@ -13,6 +13,10 @@ import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import {
+  REACT_APP_DEV_AUTO_LOGIN_EMAIL,
+  REACT_APP_DEV_AUTO_LOGIN_PASSWORD,
+} from '~/config';
 
 const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z
@@ -64,8 +68,11 @@ export const useSignInUpForm = () => {
     }
 
     if (isDeveloperDefaultSignInPrefilled === true) {
-      form.setValue('email', prefilledEmail ?? 'tim@apple.dev');
-      form.setValue('password', 'tim@apple.dev');
+      form.setValue(
+        'email',
+        prefilledEmail ?? REACT_APP_DEV_AUTO_LOGIN_EMAIL,
+      );
+      form.setValue('password', REACT_APP_DEV_AUTO_LOGIN_PASSWORD);
     }
   }, [form, isDeveloperDefaultSignInPrefilled, prefilledEmail]);
   return { form };
