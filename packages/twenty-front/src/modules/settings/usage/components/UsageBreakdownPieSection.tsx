@@ -1,6 +1,6 @@
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
-import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
+import { SettingsInfoContainer } from '@/settings/components/SettingsInfoContainer';
 import { UsagePieChart } from '@/settings/usage/components/UsagePieChart';
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
@@ -111,9 +111,9 @@ export const UsageBreakdownPieSection = ({
           />
         }
       />
-      <SubscriptionInfoContainer>
+      <SettingsInfoContainer>
         <UsagePieChart data={pieData} />
-      </SubscriptionInfoContainer>
+      </SettingsInfoContainer>
     </Section>
   );
 };

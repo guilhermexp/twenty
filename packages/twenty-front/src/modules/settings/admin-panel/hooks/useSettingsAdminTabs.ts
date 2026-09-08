@@ -1,5 +1,4 @@
 import { currentUserState } from '@/auth/states/currentUserState';
-import { billingState } from '@/client-config/states/billingState';
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
@@ -14,11 +13,9 @@ import {
 
 export const useSettingsAdminTabs = () => {
   const currentUser = useAtomStateValue(currentUserState);
-  const billing = useAtomStateValue(billingState);
 
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
   const canImpersonate = currentUser?.canImpersonate;
-  const isBillingEnabled = billing?.isBillingEnabled;
 
   return [
     {
@@ -51,15 +48,11 @@ export const useSettingsAdminTabs = () => {
       Icon: IconHeart,
       disabled: !canAccessFullAdminPanel,
     },
-    ...(!isBillingEnabled
-      ? [
-          {
-            id: SETTINGS_ADMIN_TABS.ENTERPRISE,
-            title: t`Enterprise`,
-            Icon: IconKey,
-            disabled: !canAccessFullAdminPanel && !canImpersonate,
-          },
-        ]
-      : []),
+    {
+      id: SETTINGS_ADMIN_TABS.ENTERPRISE,
+      title: t`Enterprise`,
+      Icon: IconKey,
+      disabled: !canAccessFullAdminPanel && !canImpersonate,
+    },
   ];
 };

@@ -1,6 +1,8 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
+import { useContext } from 'react';
+import { IconCheck } from 'twenty-ui/icon';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queries/enterpriseCheckoutSession';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
@@ -62,6 +64,37 @@ const StyledBenefitsContainer = styled.div`
   padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
+const StyledBenefitContainer = styled.div`
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  flex-direction: row;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledCheckContainer = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.tertiary};
+  border-radius: 50%;
+  corner-shape: round;
+  display: flex;
+  height: 16px;
+  justify-content: center;
+  width: 16px;
+`;
+
+const EnterpriseBenefit = ({ children }: { children: React.ReactNode }) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledBenefitContainer>
+      <StyledCheckContainer>
+        <IconCheck color={theme.grayScale.gray11} size={14} />
+      </StyledCheckContainer>
+      {children}
+    </StyledBenefitContainer>
+  );
+};
+
 
 const StyledIntervalContainer = styled.div`
   display: flex;
@@ -158,7 +191,7 @@ export const EnterprisePlanModal = () => {
           </StyledPriceContainer>
           <StyledBenefitsContainer>
             {benefits.map((benefit) => (
-              <SubscriptionBenefit key={benefit}>{benefit}</SubscriptionBenefit>
+              <EnterpriseBenefit key={benefit}>{benefit}</EnterpriseBenefit>
             ))}
           </StyledBenefitsContainer>
         </StyledSubscriptionContainer>

@@ -31,7 +31,6 @@ import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 
 const THROTTLE_MS = 100;
 
@@ -376,8 +375,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'credits-exhausted': {
-          //TODO : add real time on currentUser
-          store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
 
           store.set(
             errorAtom,

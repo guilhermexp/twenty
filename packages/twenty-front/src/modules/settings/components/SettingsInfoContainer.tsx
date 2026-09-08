@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledSubscriptionInfoContainer = styled.div`
+const StyledSettingsInfoContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
@@ -13,4 +13,4 @@ const StyledSubscriptionInfoContainer = styled.div`
   width: 100%;
 `;
 
-export { StyledSubscriptionInfoContainer as SubscriptionInfoContainer };
+export { StyledSettingsInfoContainer as SettingsInfoContainer };

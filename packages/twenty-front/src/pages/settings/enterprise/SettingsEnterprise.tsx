@@ -5,8 +5,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-variables/graphql/queries/getDatabaseConfigVariable';
 import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
-import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
-import { SubscriptionInfoRowContainer } from '@/settings/billing/components/internal/SubscriptionInfoRowContainer';
+import { SettingsInfoContainer } from '@/settings/components/SettingsInfoContainer';
+import { SettingsInfoRowContainer } from '@/settings/components/SettingsInfoRowContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import {
@@ -680,8 +680,8 @@ export const SettingsEnterprise = ({
               disabled={isRefreshingToken}
             />
             <StyledSpacer />
-            <SubscriptionInfoContainer>
-              <SubscriptionInfoRowContainer
+            <SettingsInfoContainer>
+              <SettingsInfoRowContainer
                 label={t`Status`}
                 Icon={IconCheck}
                 currentValue={
@@ -696,20 +696,20 @@ export const SettingsEnterprise = ({
                 }
               />
               {licensee && (
-                <SubscriptionInfoRowContainer
+                <SettingsInfoRowContainer
                   label={t`Licensee`}
                   Icon={IconUser}
                   currentValue={licensee}
                 />
               )}
               {isDefined(cancellationOrPeriodEndDate) && (
-                <SubscriptionInfoRowContainer
+                <SettingsInfoRowContainer
                   label={cancellationOrPeriodEndDateLabel}
                   Icon={IconCalendarRepeat}
                   currentValue={cancellationOrPeriodEndDate.toLocaleDateString()}
                 />
               )}
-            </SubscriptionInfoContainer>
+            </SettingsInfoContainer>
           </Section>
           {isBoundToAnotherServer && transferSection}
           <Section>
@@ -740,13 +740,13 @@ export const SettingsEnterprise = ({
                   : t`Your enterprise features are active`
               }
             />
-            <SubscriptionInfoContainer>
-              <SubscriptionInfoRowContainer
+            <SettingsInfoContainer>
+              <SettingsInfoRowContainer
                 label={t`Status`}
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
-                    <StyledStatusDot isActive={!isCancelScheduled} />
+                    <StyledStatusDot isActive={false} />
                     {isCancelScheduled ? (
                       <Trans>Cancelling</Trans>
                     ) : stripeStatus === 'trialing' ? (
@@ -758,20 +758,20 @@ export const SettingsEnterprise = ({
                 }
               />
               {licensee && (
-                <SubscriptionInfoRowContainer
+                <SettingsInfoRowContainer
                   label={t`Licensee`}
                   Icon={IconUser}
                   currentValue={licensee}
                 />
               )}
               {isDefined(cancellationOrPeriodEndDate) && (
-                <SubscriptionInfoRowContainer
+                <SettingsInfoRowContainer
                   label={cancellationOrPeriodEndDateLabel}
                   Icon={IconCalendarRepeat}
                   currentValue={cancellationOrPeriodEndDate.toLocaleDateString()}
                 />
               )}
-            </SubscriptionInfoContainer>
+            </SettingsInfoContainer>
             {cancellationMessage && (
               <StyledCancellationNotice>
                 {cancellationMessage}
@@ -817,30 +817,30 @@ export const SettingsEnterprise = ({
               title={t`Enterprise License`}
               description={t`Your enterprise subscription has been canceled.`}
             />
-            <SubscriptionInfoContainer>
-              <SubscriptionInfoRowContainer
+            <SettingsInfoContainer>
+              <SettingsInfoRowContainer
                 label={t`Status`}
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
                     <StyledStatusDot isActive={false} />
-                    <Trans>Canceled</Trans>
+                    <Trans>Paused</Trans>
                   </StyledStatusContainer>
                 }
               />
-              <SubscriptionInfoRowContainer
+              <SettingsInfoRowContainer
                 label={t`Billing history`}
                 Icon={IconCreditCard}
                 currentValue={
                   <Button
-                    title={t`View invoices`}
+                    title={t`Invoices`}
                     variant="secondary"
                     size="small"
                     onClick={openBillingPortal}
                   />
                 }
               />
-            </SubscriptionInfoContainer>
+            </SettingsInfoContainer>
           </Section>
           <Section>
             <H2Title
@@ -867,18 +867,18 @@ export const SettingsEnterprise = ({
               title={t`Enterprise License`}
               description={t`There is a payment issue with your subscription. Please update your payment method.`}
             />
-            <SubscriptionInfoContainer>
-              <SubscriptionInfoRowContainer
+            <SettingsInfoContainer>
+              <SettingsInfoRowContainer
                 label={t`Status`}
                 Icon={IconCheck}
                 currentValue={
                   <StyledStatusContainer>
                     <StyledStatusDot isActive={false} />
-                    <Trans>Payment issue</Trans>
+                    <Trans>Payment failed</Trans>
                   </StyledStatusContainer>
                 }
               />
-            </SubscriptionInfoContainer>
+            </SettingsInfoContainer>
           </Section>
           <Section>
             <H2Title
@@ -905,8 +905,8 @@ export const SettingsEnterprise = ({
               title={t`Enterprise License`}
               description={t`Your subscription setup was not completed.`}
             />
-            <SubscriptionInfoContainer>
-              <SubscriptionInfoRowContainer
+            <SettingsInfoContainer>
+              <SettingsInfoRowContainer
                 label={t`Status`}
                 Icon={IconCheck}
                 currentValue={
@@ -916,7 +916,7 @@ export const SettingsEnterprise = ({
                   </StyledStatusContainer>
                 }
               />
-            </SubscriptionInfoContainer>
+            </SettingsInfoContainer>
           </Section>
           <Section>
             <H2Title

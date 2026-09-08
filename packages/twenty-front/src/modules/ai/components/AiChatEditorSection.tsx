@@ -10,7 +10,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { AiChatBanner } from '@/ai/components/AiChatBanner';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
-import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
@@ -26,7 +25,6 @@ import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
-import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
@@ -148,7 +146,6 @@ export const AiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isComposerCentered = useIsAiChatComposerCentered();
-  const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
   const { enabledModels } = useWorkspaceAiModelAvailability();
   const hasNoEnabledModels = enabledModels.length === 0;
   const { options, pinnedOption } = useAiModelOptions({
@@ -196,7 +193,6 @@ export const AiChatEditorSection = () => {
             variant="warning"
           />
         )}
-        {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
         {isDefined(pendingQuestion) ? (
           <AiChatQuestionCard pendingQuestion={pendingQuestion} />
         ) : (

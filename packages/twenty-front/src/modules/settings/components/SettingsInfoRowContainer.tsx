@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-type SubscriptionInfoRowContainerProps = {
+type SettingsInfoRowContainerProps = {
   Icon: IconComponent;
   label: string;
   currentValue: React.ReactNode;
@@ -37,7 +37,7 @@ const StyledHeaderText = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-export const SubscriptionInfoHeaderRow = ({ show }: { show: boolean }) => {
+export const SettingsInfoHeaderRow = ({ show }: { show: boolean }) => {
   if (!show) return null;
   return (
     <StyledContainer>
@@ -48,12 +48,12 @@ export const SubscriptionInfoHeaderRow = ({ show }: { show: boolean }) => {
   );
 };
 
-export const SubscriptionInfoRowContainer = ({
+export const SettingsInfoRowContainer = ({
   Icon,
   label,
   currentValue,
   nextValue,
-}: SubscriptionInfoRowContainerProps) => {
+}: SettingsInfoRowContainerProps) => {
   const { theme } = useContext(ThemeContext);
 
   return (

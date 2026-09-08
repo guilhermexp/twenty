@@ -1,8 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { billingState } from '@/client-config/states/billingState';
-import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
-import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
-import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
+import { SettingsInfoContainer } from '@/settings/components/SettingsInfoContainer';
+import { SettingsLabelValueItem } from '@/settings/components/SettingsLabelValueItem';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { UsageBreakdownPieSection } from '@/settings/usage/components/UsageBreakdownPieSection';
 import { UsageByUserTableSection } from '@/settings/usage/components/UsageByUserTableSection';
@@ -20,12 +18,9 @@ import { OrganizationAdornment } from '~/pages/settings/enterprise/components/Or
 
 export const SettingsAiUsageTab = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const billing = useAtomStateValue(billingState);
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
   const hasEnterpriseAccess =
-    isBillingEnabled ||
     currentWorkspace?.hasValidEnterpriseValidityToken === true;
 
   const shouldSkipQuery = !hasEnterpriseAccess || !isClickHouseConfigured;
@@ -59,12 +54,12 @@ export const SettingsAiUsageTab = () => {
           title={t`AI Usage`}
           description={t`Track AI consumption across your workspace.`}
         />
-        <SubscriptionInfoContainer>
-          <SettingsBillingLabelValueItem
+        <SettingsInfoContainer>
+          <SettingsLabelValueItem
             label={t`ClickHouse Not Configured`}
             value={t`AI usage analytics requires ClickHouse. Contact your administrator.`}
           />
-        </SubscriptionInfoContainer>
+        </SettingsInfoContainer>
       </Section>
     );
   }
@@ -87,12 +82,12 @@ export const SettingsAiUsageTab = () => {
           title={t`AI Usage`}
           description={t`Track AI consumption across your workspace.`}
         />
-        <SubscriptionInfoContainer>
-          <SettingsBillingLabelValueItem
+        <SettingsInfoContainer>
+          <SettingsLabelValueItem
             label={t`No usage data yet`}
             value={t`AI usage analytics will appear here once you start using AI features.`}
           />
-        </SubscriptionInfoContainer>
+        </SettingsInfoContainer>
       </Section>
     );
   }

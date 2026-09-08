@@ -14,9 +14,7 @@ import {
   type AgentChatLastMessageUsage,
 } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { billingState } from '@/client-config/states/billingState';
-import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
+import { SettingsLabelValueItem } from '@/settings/components/SettingsLabelValueItem';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -103,15 +101,8 @@ export const AiChatContextUsageButton = () => {
     agentChatUsageComponentFamilyState,
     { threadId: currentAiChatThread },
   );
-  const billing = useAtomStateValue(billingState);
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const { formatUsageValue } = useUsageValueFormatter();
-
   // Values from the streaming API arrive as display credits (micro-credits).
   const formatChatCost = (displayCredits: number): string => {
-    if (isBillingEnabled) {
-      return `${formatUsageValue(displayCredits)}`;
-    }
     const dollars = displayCredits / 1000;
 
     return `$${formatNumber(dollars, { decimals: 2 })}`;
@@ -197,21 +188,21 @@ export const AiChatContextUsageButton = () => {
               />
               <StyledSection>
                 <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
-                <SettingsBillingLabelValueItem
+                <SettingsLabelValueItem
                   label={t`Input tokens`}
                   value={`${formatNumber(lastMessage.inputTokens, {
                     abbreviate: true,
                     decimals: 1,
                   })}${getCachedLabel(lastMessage)}`}
                 />
-                <SettingsBillingLabelValueItem
+                <SettingsLabelValueItem
                   label={t`Output tokens`}
                   value={formatNumber(lastMessage.outputTokens, {
                     abbreviate: true,
                     decimals: 1,
                   })}
                 />
-                <SettingsBillingLabelValueItem
+                <SettingsLabelValueItem
                   label={t`Cost`}
                   value={formatChatCost(
                     lastMessage.inputCredits + lastMessage.outputCredits,
@@ -227,21 +218,21 @@ export const AiChatContextUsageButton = () => {
           />
           <StyledSection>
             <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
-            <SettingsBillingLabelValueItem
+            <SettingsLabelValueItem
               label={t`Input tokens`}
               value={formatNumber(agentChatUsage.inputTokens, {
                 abbreviate: true,
                 decimals: 1,
               })}
             />
-            <SettingsBillingLabelValueItem
+            <SettingsLabelValueItem
               label={t`Output tokens`}
               value={formatNumber(agentChatUsage.outputTokens, {
                 abbreviate: true,
                 decimals: 1,
               })}
             />
-            <SettingsBillingLabelValueItem
+            <SettingsLabelValueItem
               label={t`Total cost`}
               value={formatChatCost(totalCredits)}
             />

@@ -1,7 +1,6 @@
 import {
   type ApiConfig,
   type AuthProviders,
-  type Billing,
   type Captcha,
   type ClientAiModelConfig,
   type ClientConfigMaintenanceMode,
@@ -18,7 +17,6 @@ export type ClientConfig = {
   analyticsEnabled: boolean;
   api: ApiConfig;
   authProviders: AuthProviders;
-  billing: Billing;
   calendarBookingPageId?: string;
   isBookCallOnboardingStepEnabled: boolean;
   isCompanyEnrichmentEnabled: boolean;

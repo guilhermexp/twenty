@@ -3,7 +3,6 @@ import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { appVersionState } from '@/client-config/states/appVersionState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
-import { billingState } from '@/client-config/states/billingState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { captchaState } from '@/client-config/states/captchaState';
@@ -64,7 +63,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     isEmailVerificationRequiredState,
   );
 
-  const setBilling = useSetAtomState(billingState);
   const setSupportChat = useSetAtomState(supportChatState);
 
   const setSentryConfig = useSetAtomState(sentryConfigState);
@@ -183,7 +181,6 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
       setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);
       setIsEmailVerificationRequired(clientConfig.isEmailVerificationRequired);
-      setBilling(clientConfig.billing);
       setSupportChat(clientConfig.support);
 
       setSentryConfig({
@@ -262,7 +259,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     setOnboardingConfig,
     setAppVersion,
     setAuthProviders,
-    setBilling,
     setCalendarBookingPageId,
     setCanManageFeatureFlags,
     setCaptcha,
