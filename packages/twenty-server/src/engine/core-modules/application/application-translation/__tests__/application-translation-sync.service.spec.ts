@@ -54,18 +54,18 @@ describe('ApplicationTranslationSyncService', () => {
 
   it('applies the manifest when it declares translations', async () => {
     repository.find.mockResolvedValue([
-      { id: 'row-de', locale: 'de-DE', deletedAt: null },
+      { id: 'row-de', locale: 'pseudo-en', deletedAt: null },
     ]);
 
     await service.syncFromManifest({
       applicationRegistrationId: APPLICATION_REGISTRATION_ID,
-      translations: { 'fr-FR': { abc123: 'Entreprise' } },
+      translations: { 'pt-BR': { abc123: 'Entreprise' } },
     });
 
     expect(repository.insert).toHaveBeenCalledTimes(1);
     expect(repository.insert).toHaveBeenCalledWith({
       applicationRegistrationId: APPLICATION_REGISTRATION_ID,
-      locale: 'fr-FR',
+      locale: 'pt-BR',
       messages: { abc123: 'Entreprise' },
     });
     expect(repository.softDelete).toHaveBeenCalledTimes(1);

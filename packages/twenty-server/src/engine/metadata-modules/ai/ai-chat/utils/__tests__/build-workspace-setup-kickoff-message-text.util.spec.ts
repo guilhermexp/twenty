@@ -111,8 +111,6 @@ describe('buildWorkspaceSetupKickoffMessageText', () => {
   });
 
   it.each([
-    ['fr-FR', 'French'],
-    ['de-DE', 'German'],
     ['pt-BR', 'Portuguese'],
     ['en', 'English'],
   ])(

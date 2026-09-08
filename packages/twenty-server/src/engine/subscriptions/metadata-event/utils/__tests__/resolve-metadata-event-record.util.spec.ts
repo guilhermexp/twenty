@@ -119,9 +119,9 @@ describe('resolveMetadataEventRecord', () => {
       metadataName: 'objectMetadata',
       record: {
         labelSingular: 'Company',
-        overrides: { translations: { 'fr-FR': { labelSingular: 'Société' } } },
+        overrides: { translations: { 'pt-BR': { labelSingular: 'Société' } } },
       },
-      i18nContext: buildI18nContext({ locale: 'fr-FR' }),
+      i18nContext: buildI18nContext({ locale: 'pt-BR' }),
     });
 
     expect(resolved.labelSingular).toBe('Société');

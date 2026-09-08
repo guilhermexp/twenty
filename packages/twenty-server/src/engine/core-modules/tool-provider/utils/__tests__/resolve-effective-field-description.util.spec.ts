@@ -69,7 +69,7 @@ describe('resolveEffectiveFieldDescription', () => {
   it('should return the locale translation of a standard field description', () => {
     const result = resolveEffectiveFieldDescription({
       flatFieldMetadata: getStandardFlatFieldMetadata(),
-      locale: 'fr-FR',
+      locale: 'pt-BR',
       i18nInstance: buildTranslator({
         [generateMessageId(BASE_DESCRIPTION, 'fieldMetadata.description')]:
           "Date d'échéance",
@@ -83,9 +83,9 @@ describe('resolveEffectiveFieldDescription', () => {
     const result = resolveEffectiveFieldDescription({
       flatFieldMetadata: getStandardFlatFieldMetadata({
         description: OVERRIDDEN_DESCRIPTION,
-        translations: { 'fr-FR': { description: 'Stocké en UTC' } },
+        translations: { 'pt-BR': { description: 'Stocké en UTC' } },
       }),
-      locale: 'fr-FR',
+      locale: 'pt-BR',
       i18nInstance: untranslated,
     });
 

@@ -188,11 +188,11 @@ describe('email templates rendering', () => {
         duration: '5 minutes',
         hasPassword: true,
         link: 'https://app.twenty.com/reset-password',
-        locale: 'fr-FR',
+        locale: 'pt-BR',
       }),
     );
 
-    expect(html).toContain('mot de passe');
+    expect(html).toContain('senha');
   });
 });
 

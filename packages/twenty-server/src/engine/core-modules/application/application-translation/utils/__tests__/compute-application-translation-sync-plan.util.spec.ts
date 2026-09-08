@@ -5,11 +5,11 @@ describe('computeApplicationTranslationSyncPlan', () => {
     expect(
       computeApplicationTranslationSyncPlan({
         existingRows: [],
-        translations: { 'fr-FR': { abc123: 'Entreprise' } },
+        translations: { 'pt-BR': { abc123: 'Entreprise' } },
       }),
     ).toEqual({
       rowsToUpdate: [],
-      rowsToInsert: [{ locale: 'fr-FR', messages: { abc123: 'Entreprise' } }],
+      rowsToInsert: [{ locale: 'pt-BR', messages: { abc123: 'Entreprise' } }],
       rowIdsToSoftDelete: [],
     });
   });
@@ -17,8 +17,8 @@ describe('computeApplicationTranslationSyncPlan', () => {
   it('updates a locale it already stores', () => {
     expect(
       computeApplicationTranslationSyncPlan({
-        existingRows: [{ id: 'row-fr', locale: 'fr-FR', deletedAt: null }],
-        translations: { 'fr-FR': { abc123: 'Société' } },
+        existingRows: [{ id: 'row-fr', locale: 'pt-BR', deletedAt: null }],
+        translations: { 'pt-BR': { abc123: 'Société' } },
       }),
     ).toEqual({
       rowsToUpdate: [{ id: 'row-fr', messages: { abc123: 'Société' } }],
@@ -30,10 +30,10 @@ describe('computeApplicationTranslationSyncPlan', () => {
   it('prunes only the locales the manifest dropped', () => {
     const plan = computeApplicationTranslationSyncPlan({
       existingRows: [
-        { id: 'row-fr', locale: 'fr-FR', deletedAt: null },
-        { id: 'row-de', locale: 'de-DE', deletedAt: null },
+        { id: 'row-fr', locale: 'pt-BR', deletedAt: null },
+        { id: 'row-de', locale: 'pseudo-en', deletedAt: null },
       ],
-      translations: { 'fr-FR': { abc123: 'Entreprise' } },
+      translations: { 'pt-BR': { abc123: 'Entreprise' } },
     });
 
     expect(plan.rowIdsToSoftDelete).toEqual(['row-de']);
@@ -46,8 +46,8 @@ describe('computeApplicationTranslationSyncPlan', () => {
     expect(
       computeApplicationTranslationSyncPlan({
         existingRows: [
-          { id: 'row-fr', locale: 'fr-FR', deletedAt: null },
-          { id: 'row-de', locale: 'de-DE', deletedAt: null },
+          { id: 'row-fr', locale: 'pt-BR', deletedAt: null },
+          { id: 'row-de', locale: 'pseudo-en', deletedAt: null },
         ],
         translations: {},
       }).rowIdsToSoftDelete,
@@ -58,7 +58,7 @@ describe('computeApplicationTranslationSyncPlan', () => {
     expect(
       computeApplicationTranslationSyncPlan({
         existingRows: [
-          { id: 'row-fr', locale: 'fr-FR', deletedAt: new Date() },
+          { id: 'row-fr', locale: 'pt-BR', deletedAt: new Date() },
         ],
         translations: {},
       }).rowIdsToSoftDelete,
@@ -69,9 +69,9 @@ describe('computeApplicationTranslationSyncPlan', () => {
     expect(
       computeApplicationTranslationSyncPlan({
         existingRows: [
-          { id: 'row-fr-old', locale: 'fr-FR', deletedAt: new Date() },
+          { id: 'row-fr-old', locale: 'pt-BR', deletedAt: new Date() },
         ],
-        translations: { 'fr-FR': { abc123: 'Entreprise' } },
+        translations: { 'pt-BR': { abc123: 'Entreprise' } },
       }),
     ).toEqual({
       rowsToUpdate: [{ id: 'row-fr-old', messages: { abc123: 'Entreprise' } }],

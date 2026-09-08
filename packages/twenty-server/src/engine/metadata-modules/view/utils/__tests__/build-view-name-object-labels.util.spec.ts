@@ -6,7 +6,7 @@ const objectMetadata = {
 };
 
 const i18nContext = {
-  locale: 'fr-FR' as const,
+  locale: 'pt-BR' as const,
   i18nInstance: { _: (id: string) => id },
   isStandardApp: true,
 };

@@ -14,7 +14,7 @@ const USER_CONTEXT = {
   firstName: 'Ada',
   lastName: 'Lovelace',
   jobTitle: 'COO',
-  locale: 'fr-FR',
+  locale: 'pt-BR',
   timezone: 'Europe/Paris',
 };
 

@@ -17,12 +17,12 @@ describe('mergeTranslationsIntoOverrides', () => {
       mergeTranslationsIntoOverrides({
         existingOverrides: { labelSingular: 'Client' },
         translationEntries: [
-          { locale: 'fr-FR', property: 'labelSingular', value: 'Entreprise' },
+          { locale: 'pt-BR', property: 'labelSingular', value: 'Entreprise' },
         ],
       }),
     ).toEqual({
       labelSingular: 'Client',
-      translations: { 'fr-FR': { labelSingular: 'Entreprise' } },
+      translations: { 'pt-BR': { labelSingular: 'Entreprise' } },
     });
   });
 
@@ -31,18 +31,18 @@ describe('mergeTranslationsIntoOverrides', () => {
       mergeTranslationsIntoOverrides({
         existingOverrides: {
           translations: {
-            'fr-FR': { labelSingular: 'Entreprise' },
-            'de-DE': { labelSingular: 'Unternehmen' },
+            'pt-BR': { labelSingular: 'Entreprise' },
+            'pseudo-en': { labelSingular: 'Unternehmen' },
           },
         },
         translationEntries: [
-          { locale: 'fr-FR', property: 'labelPlural', value: 'Entreprises' },
+          { locale: 'pt-BR', property: 'labelPlural', value: 'Entreprises' },
         ],
       }),
     ).toEqual({
       translations: {
-        'fr-FR': { labelSingular: 'Entreprise', labelPlural: 'Entreprises' },
-        'de-DE': { labelSingular: 'Unternehmen' },
+        'pt-BR': { labelSingular: 'Entreprise', labelPlural: 'Entreprises' },
+        'pseudo-en': { labelSingular: 'Unternehmen' },
       },
     });
   });
@@ -53,17 +53,17 @@ describe('mergeTranslationsIntoOverrides', () => {
         existingOverrides: {
           labelSingular: 'Client',
           translations: {
-            'fr-FR': { labelSingular: 'Entreprise' },
-            'de-DE': { labelSingular: 'Unternehmen' },
+            'pt-BR': { labelSingular: 'Entreprise' },
+            'pseudo-en': { labelSingular: 'Unternehmen' },
           },
         },
         translationEntries: [
-          { locale: 'fr-FR', property: 'labelSingular', value: null },
+          { locale: 'pt-BR', property: 'labelSingular', value: null },
         ],
       }),
     ).toEqual({
       labelSingular: 'Client',
-      translations: { 'de-DE': { labelSingular: 'Unternehmen' } },
+      translations: { 'pseudo-en': { labelSingular: 'Unternehmen' } },
     });
   });
 
@@ -71,10 +71,10 @@ describe('mergeTranslationsIntoOverrides', () => {
     expect(
       mergeTranslationsIntoOverrides({
         existingOverrides: {
-          translations: { 'fr-FR': { labelSingular: 'Entreprise' } },
+          translations: { 'pt-BR': { labelSingular: 'Entreprise' } },
         },
         translationEntries: [
-          { locale: 'fr-FR', property: 'labelSingular', value: '' },
+          { locale: 'pt-BR', property: 'labelSingular', value: '' },
         ],
       }),
     ).toBeNull();
@@ -85,7 +85,7 @@ describe('mergeTranslationsIntoOverrides', () => {
       mergeTranslationsIntoOverrides({
         existingOverrides: null,
         translationEntries: [
-          { locale: 'fr-FR', property: 'labelSingular', value: null },
+          { locale: 'pt-BR', property: 'labelSingular', value: null },
         ],
       }),
     ).toBeNull();
@@ -93,19 +93,19 @@ describe('mergeTranslationsIntoOverrides', () => {
 
   it('does not mutate the existing overrides', () => {
     const existingOverrides = {
-      translations: { 'fr-FR': { labelSingular: 'Entreprise' } },
+      translations: { 'pt-BR': { labelSingular: 'Entreprise' } },
     };
 
     mergeTranslationsIntoOverrides({
       existingOverrides,
       translationEntries: [
-        { locale: 'fr-FR', property: 'labelSingular', value: 'Société' },
-        { locale: 'it-IT', property: 'labelSingular', value: 'Azienda' },
+        { locale: 'pt-BR', property: 'labelSingular', value: 'Société' },
+        { locale: 'en', property: 'labelSingular', value: 'Azienda' },
       ],
     });
 
     expect(existingOverrides).toEqual({
-      translations: { 'fr-FR': { labelSingular: 'Entreprise' } },
+      translations: { 'pt-BR': { labelSingular: 'Entreprise' } },
     });
   });
 });

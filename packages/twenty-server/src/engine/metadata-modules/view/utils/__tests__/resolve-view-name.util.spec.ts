@@ -13,7 +13,7 @@ const buildContext = ({
   isStandardApp?: boolean;
   applicationCatalog?: Record<string, string>;
 } = {}) => ({
-  locale: 'fr-FR' as const,
+  locale: 'pt-BR' as const,
   i18nInstance: mockI18n,
   isStandardApp,
   applicationCatalog,

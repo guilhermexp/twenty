@@ -104,7 +104,7 @@ describe('fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpdateO
           updateTimelineActivityTypeInput: {
             id: timelineActivityType.id,
             translations: [
-              { locale: 'fr-FR', property: 'label', value: 'a été créé par' },
+              { locale: 'pt-BR', property: 'label', value: 'a été créé par' },
             ],
           },
           callerApplicationUniversalIdentifier:
@@ -115,7 +115,7 @@ describe('fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpdateO
       );
 
     expect(result.overrides).toEqual({
-      translations: { 'fr-FR': { label: 'a été créé par' } },
+      translations: { 'pt-BR': { label: 'a été créé par' } },
     });
   });
 
@@ -127,7 +127,7 @@ describe('fromUpdateTimelineActivityTypeInputToFlatTimelineActivityTypeToUpdateO
           updateTimelineActivityTypeInput: {
             id: timelineActivityType.id,
             translations: [
-              { locale: 'fr-FR', property: 'icon', value: 'IconPlus' },
+              { locale: 'pt-BR', property: 'icon', value: 'IconPlus' },
             ],
           },
           callerApplicationUniversalIdentifier:

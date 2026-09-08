@@ -126,7 +126,7 @@ const mockI18n = {
   _: (id: string) => `translated:${id}`,
 } as unknown as I18n;
 
-const LOCALES: Locale[] = [undefined, SOURCE_LOCALE, 'fr-FR'];
+const LOCALES: Locale[] = [undefined, SOURCE_LOCALE, 'pt-BR'];
 const BOOLS = [true, false];
 
 const OBJECT_KEYS = [
@@ -163,16 +163,16 @@ const OBJECT_OVERRIDES_CORPUS: AnyOverrides[] = [
   { icon: 'IconStar' },
   { color: 'red' },
   { icon: 'IconStar', color: 'red', labelSingular: 'Org' },
-  { translations: { 'fr-FR': { labelSingular: 'Société' } } },
+  { translations: { 'pt-BR': { labelSingular: 'Société' } } },
   { translations: { en: { labelPlural: 'Companies EN' } } },
   {
     labelSingular: 'Org',
     translations: {
-      'fr-FR': { labelSingular: 'Société', description: 'desc fr' },
+      'pt-BR': { labelSingular: 'Société', description: 'desc fr' },
     },
   },
   { translations: {} },
-  { translations: { 'fr-FR': {} } },
+  { translations: { 'pt-BR': {} } },
 ];
 
 const FIELD_OVERRIDES_CORPUS: AnyOverrides[] = [
@@ -184,10 +184,10 @@ const FIELD_OVERRIDES_CORPUS: AnyOverrides[] = [
   { description: 'custom desc' },
   { icon: 'IconStar' },
   { icon: 'IconStar', label: 'Full name' },
-  { translations: { 'fr-FR': { label: 'Nom' } } },
+  { translations: { 'pt-BR': { label: 'Nom' } } },
   {
     label: 'Full name',
-    translations: { 'fr-FR': { label: 'Nom', description: 'desc fr' } },
+    translations: { 'pt-BR': { label: 'Nom', description: 'desc fr' } },
   },
   { translations: {} },
 ];

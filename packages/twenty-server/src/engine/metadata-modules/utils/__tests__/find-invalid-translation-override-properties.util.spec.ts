@@ -5,10 +5,10 @@ describe('findInvalidTranslationOverrideProperties', () => {
     expect(
       findInvalidTranslationOverrideProperties(
         [
-          { locale: 'fr-FR', property: 'labelSingular', value: 'Entreprise' },
-          { locale: 'fr-FR', property: 'labelPlural', value: 'Entreprises' },
+          { locale: 'pt-BR', property: 'labelSingular', value: 'Entreprise' },
+          { locale: 'pt-BR', property: 'labelPlural', value: 'Entreprises' },
           {
-            locale: 'de-DE',
+            locale: 'pseudo-en',
             property: 'description',
             value: 'Ein Unternehmen',
           },
@@ -28,9 +28,9 @@ describe('findInvalidTranslationOverrideProperties', () => {
     expect(
       findInvalidTranslationOverrideProperties(
         [
-          { locale: 'fr-FR', property: 'labelSingular', value: 'Entreprise' },
-          { locale: 'fr-FR', property: 'icon', value: 'IconBuilding' },
-          { locale: 'fr-FR', property: 'nameSingular', value: 'entreprise' },
+          { locale: 'pt-BR', property: 'labelSingular', value: 'Entreprise' },
+          { locale: 'pt-BR', property: 'icon', value: 'IconBuilding' },
+          { locale: 'pt-BR', property: 'nameSingular', value: 'entreprise' },
         ],
         'objectMetadata',
       ),
@@ -40,7 +40,7 @@ describe('findInvalidTranslationOverrideProperties', () => {
   it('reports a property invalid for the metadata name even when another one allows it', () => {
     expect(
       findInvalidTranslationOverrideProperties(
-        [{ locale: 'fr-FR', property: 'labelSingular', value: 'Entreprise' }],
+        [{ locale: 'pt-BR', property: 'labelSingular', value: 'Entreprise' }],
         'fieldMetadata',
       ),
     ).toEqual(['labelSingular']);
@@ -50,9 +50,9 @@ describe('findInvalidTranslationOverrideProperties', () => {
     expect(
       findInvalidTranslationOverrideProperties(
         [
-          { locale: 'fr-FR', property: 'icon', value: 'IconBuilding' },
-          { locale: 'de-DE', property: 'icon', value: 'IconBuilding' },
-          { locale: 'es-ES', property: 'icon', value: 'IconBuilding' },
+          { locale: 'pt-BR', property: 'icon', value: 'IconBuilding' },
+          { locale: 'pseudo-en', property: 'icon', value: 'IconBuilding' },
+          { locale: 'en', property: 'icon', value: 'IconBuilding' },
         ],
         'objectMetadata',
       ),
@@ -63,8 +63,8 @@ describe('findInvalidTranslationOverrideProperties', () => {
     expect(
       findInvalidTranslationOverrideProperties(
         [
-          { locale: 'fr-FR', property: 'label', value: 'Entreprise' },
-          { locale: 'fr-FR', property: 'name', value: 'entreprise' },
+          { locale: 'pt-BR', property: 'label', value: 'Entreprise' },
+          { locale: 'pt-BR', property: 'name', value: 'entreprise' },
         ],
         // Absent from the registry, so the `?? []` fallback makes every
         // property invalid rather than silently accepting the write.

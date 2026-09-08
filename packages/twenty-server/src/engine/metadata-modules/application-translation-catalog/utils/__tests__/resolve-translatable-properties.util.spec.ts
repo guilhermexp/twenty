@@ -4,7 +4,7 @@ import { resolveTranslatableProperties } from 'src/engine/metadata-modules/appli
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 
 const i18nContext: EffectiveEntityI18nContext = {
-  locale: 'fr-FR',
+  locale: 'pt-BR',
   i18nInstance: { _: (messageId: string) => messageId },
   isStandardApp: false,
   applicationCatalog: undefined,
@@ -46,7 +46,7 @@ describe('resolveTranslatableProperties', () => {
         entity: {
           labelSingular: 'Company',
           overrides: {
-            translations: { 'fr-FR': { labelSingular: 'Entreprise' } },
+            translations: { 'pt-BR': { labelSingular: 'Entreprise' } },
           },
         },
         i18nContext: { ...i18nContext, isStandardApp: true },
