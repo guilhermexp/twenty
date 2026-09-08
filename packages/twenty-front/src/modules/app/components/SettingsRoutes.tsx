@@ -1079,15 +1079,6 @@ const createSettingsRouteElements = ({
       <>
         <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
         <Route
-          path={SettingsPath.Enterprise}
-          element={
-            <Navigate
-              to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
-              replace
-            />
-          }
-        />
-        <Route
           path={SettingsPath.AdminPanelInferredVersion}
           element={<SettingsAdminInferredVersion />}
         />

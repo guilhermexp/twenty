@@ -11,7 +11,6 @@ export enum SettingsPath {
   EditImapSmtpCaldavConnection = 'accounts/edit-imap-smtp-caldav-connection/:connectedAccountId',
   Usage = 'billing/usage',
   UsageUserDetail = 'billing/usage/user/:userWorkspaceId',
-  Enterprise = 'enterprise',
   Objects = 'objects',
   ObjectOverview = 'objects/overview',
   ObjectDetail = 'objects/:objectNamePlural',
@@ -71,7 +70,6 @@ export enum SettingsPath {
   NewSsoIdentityProvider = 'security/sso/new',
 
   AdminPanel = 'admin-panel',
-  AdminPanelEnterprise = 'admin-panel#enterprise',
   AdminPanelHealthStatus = 'admin-panel#health-status',
   AdminPanelIndicatorHealthStatus = 'admin-panel/health-status/:indicatorId',
   AdminPanelInferredVersion = 'admin-panel/health-status/inferred-version',

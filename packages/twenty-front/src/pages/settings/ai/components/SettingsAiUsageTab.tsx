@@ -1,8 +1,6 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { SettingsInfoContainer } from '@/settings/components/SettingsInfoContainer';
 import { SettingsLabelValueItem } from '@/settings/components/SettingsLabelValueItem';
-import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { UsageBreakdownPieSection } from '@/settings/usage/components/UsageBreakdownPieSection';
 import { UsageByUserTableSection } from '@/settings/usage/components/UsageByUserTableSection';
 import { UsageDailyChartSection } from '@/settings/usage/components/UsageDailyChartSection';
@@ -15,38 +13,16 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 export const SettingsAiUsageTab = () => {
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
-  const hasEnterpriseAccess =
-    currentWorkspace?.hasValidEnterpriseValidityToken === true;
-
-  const shouldSkipQuery = !hasEnterpriseAccess || !isClickHouseConfigured;
+  const shouldSkipQuery = !isClickHouseConfigured;
 
   const { analytics, isInitialLoading } = useUsageAnalyticsData({
     operationTypes: AI_OPERATION_TYPES,
     skip: shouldSkipQuery,
   });
-
-  if (!hasEnterpriseAccess) {
-    return (
-      <Section>
-        <H2Title
-          title={t`AI Usage`}
-          description={t`Track AI consumption across your workspace.`}
-          adornment={<OrganizationAdornment />}
-        />
-        <SettingsEnterpriseFeatureGateCard
-          title={t`Enterprise feature`}
-          description={t`AI usage analytics is available with an Enterprise key.`}
-          buttonTitle={t`Activate`}
-        />
-      </Section>
-    );
-  }
 
   if (!isClickHouseConfigured) {
     return (

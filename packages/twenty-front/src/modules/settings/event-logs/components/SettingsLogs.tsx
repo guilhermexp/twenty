@@ -2,11 +2,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { EventLogFilters } from '@/settings/event-logs/components/EventLogFilters';
 import { EventLogResultsTable } from '@/settings/event-logs/components/EventLogResultsTable';
 import { EventLogTableSelector } from '@/settings/event-logs/components/EventLogTableSelector';
@@ -16,7 +14,6 @@ import { type EventLogFiltersState } from '@/settings/event-logs/types/EventLogF
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconLock,
   IconPlayerPause,
   IconPlayerPlay,
 } from 'twenty-ui/icon';
@@ -24,11 +21,7 @@ import { IconButton } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import {
-  BillingEntitlementKey,
-  EventLogTable,
-} from '~/generated-metadata/graphql';
-import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { EventLogTable } from '~/generated-metadata/graphql';
 
 const StyledRoot = styled.div`
   box-sizing: border-box;
@@ -88,14 +81,7 @@ export const SettingsLogs = () => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
 
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
-  const hasAuditLogsEntitlement =
-    currentWorkspace?.billingEntitlements?.some(
-      (entitlement) =>
-        entitlement.key === BillingEntitlementKey.AUDIT_LOGS &&
-        entitlement.value,
-    ) === true;
 
   const [selectedTable, setSelectedTable] = useState<EventLogTable>(
     EventLogTable.WORKSPACE_EVENT,
@@ -103,9 +89,7 @@ export const SettingsLogs = () => {
   const [filters, setFilters] = useState<EventLogFiltersState>({});
   const [isPaused, setIsPaused] = useState(false);
 
-  const isApplicationLog = selectedTable === EventLogTable.APPLICATION_LOG;
-  const canQuery =
-    isClickHouseConfigured && (isApplicationLog || hasAuditLogsEntitlement);
+  const canQuery = isClickHouseConfigured;
 
   const { records, totalCount, hasNextPage, loading, error, loadMore } =
     useEventLogs(
@@ -155,21 +139,7 @@ export const SettingsLogs = () => {
     setFilters(newFilters);
   };
 
-  const renderUpgradeCard = () => (
-    <Card rounded backgroundColor={themeCssVariables.background.secondary}>
-      <SettingsOptionCardContentButton
-        Icon={IconLock}
-        title={t`Upgrade to access audit logs`}
-        description={t`Only application logs are available on your current plan. Other log types require an Enterprise subscription.`}
-      />
-    </Card>
-  );
-
   const renderResults = () => {
-    if (!isApplicationLog && !hasAuditLogsEntitlement) {
-      return renderUpgradeCard();
-    }
-
     if (!isClickHouseConfigured) {
       return (
         <SettingsEmptyPlaceholder>
@@ -179,10 +149,6 @@ export const SettingsLogs = () => {
     }
 
     if (isDefined(error)) {
-      if (isGraphqlErrorOfType(error, 'NO_ENTITLEMENT')) {
-        return renderUpgradeCard();
-      }
-
       return (
         <SettingsEmptyPlaceholder>
           {t`Something went wrong while loading logs. Please try again.`}

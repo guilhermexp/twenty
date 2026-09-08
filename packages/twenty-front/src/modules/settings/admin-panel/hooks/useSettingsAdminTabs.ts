@@ -5,7 +5,6 @@ import { t } from '@lingui/core/macro';
 import {
   IconApps,
   IconHeart,
-  IconKey,
   IconSettings2,
   IconSparkles,
   IconVariable,
@@ -47,12 +46,6 @@ export const useSettingsAdminTabs = () => {
       title: t`Health`,
       Icon: IconHeart,
       disabled: !canAccessFullAdminPanel,
-    },
-    {
-      id: SETTINGS_ADMIN_TABS.ENTERPRISE,
-      title: t`Enterprise`,
-      Icon: IconKey,
-      disabled: !canAccessFullAdminPanel && !canImpersonate,
     },
   ];
 };

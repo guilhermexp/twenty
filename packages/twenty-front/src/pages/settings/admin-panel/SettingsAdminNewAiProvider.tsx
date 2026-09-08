@@ -28,8 +28,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
 
@@ -54,12 +52,6 @@ export const SettingsAdminNewAiProvider = () => {
     null,
   );
   const [isCustomMode, setIsCustomMode] = useState(false);
-  const {
-    hasAccess: hasCustomAiProviderAccess,
-    gateDescription: customAiProviderGateDescription,
-    tooltipContent: customAiProviderTooltipContent,
-  } = useCustomAiProviderAccess();
-
   const [addAiProvider] = useMutation(ADD_AI_PROVIDER, {
     client: apolloAdminClient,
   });
@@ -250,32 +242,16 @@ export const SettingsAdminNewAiProvider = () => {
         actionButton={
           <SaveAndCancelButtons
             onCancel={() => navigate(AI_ADMIN_PATH)}
-            isSaveDisabled={
-              isSubmitting || !hasSelected || !hasCustomAiProviderAccess
-            }
+            isSaveDisabled={isSubmitting || !hasSelected}
             onSave={handleSave}
           />
         }
       >
         <SettingsPageContainer>
-          {!hasCustomAiProviderAccess && (
-            <Info
-              accent="danger"
-              text={customAiProviderGateDescription}
-              buttonTitle={t`Activate`}
-              to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
-            />
-          )}
-
           <Section>
             <H2Title
               title={t`Provider`}
               description={t`Select a known provider or create a custom one`}
-              adornment={
-                <OrganizationAdornment
-                  tooltipContent={customAiProviderTooltipContent}
-                />
-              }
             />
             <Select
               dropdownId="ai-provider-models-dev-select"

@@ -12,12 +12,10 @@ import { Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
-import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
 import { SET_ADMIN_AI_MODELS_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsRecommended';
@@ -29,14 +27,12 @@ import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAi
 import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
 import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
 import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
 import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Select } from '@/ui/input/components/Select';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -47,7 +43,6 @@ import {
   AiModelRole,
   type AdminAiModelConfig,
 } from '~/generated-admin/graphql';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 const USAGE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
@@ -62,14 +57,6 @@ export const SettingsAdminAI = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { refetch: refetchClientConfig } = useClientConfig();
   const { formatUsageValue } = useUsageValueFormatter();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const hasEnterpriseAccess =
-    currentWorkspace?.hasValidEnterpriseValidityToken === true;
-  const {
-    hasAccess: hasCustomAiProviderAccess,
-    gateDescription: customAiProviderGateDescription,
-    tooltipContent: customAiProviderTooltipContent,
-  } = useCustomAiProviderAccess();
   const [usagePeriod, setUsagePeriod] = useState<PeriodPreset>('30d');
   const periodOptions = getPeriodOptions();
   const usageDates = getPeriodDates(usagePeriod);
@@ -109,7 +96,6 @@ export const SettingsAdminAI = () => {
       periodStart: usageDates.periodStart,
       periodEnd: usageDates.periodEnd,
     },
-    skip: !hasEnterpriseAccess,
   });
 
   const effectiveUsageData = usageData ?? previousUsageData;
@@ -203,25 +189,12 @@ export const SettingsAdminAI = () => {
         <H2Title
           title={t`Custom Providers`}
           description={t`Add custom endpoints, private gateways, or additional regions.`}
-          adornment={
-            <OrganizationAdornment
-              tooltipContent={customAiProviderTooltipContent}
-            />
-          }
         />
 
         <SettingsAdminAiProviderListCard
           providers={customProviders}
-          showAddButton={hasCustomAiProviderAccess}
+          showAddButton={true}
         />
-
-        {!hasCustomAiProviderAccess && (
-          <SettingsEnterpriseFeatureGateCard
-            title={t`Organization feature`}
-            description={customAiProviderGateDescription}
-            buttonTitle={t`Activate`}
-          />
-        )}
       </Section>
 
       {availableModelOptions.length > 0 && (
@@ -330,22 +303,17 @@ export const SettingsAdminAI = () => {
           title={t`AI Usage by Workspace`}
           description={t`AI consumption across all workspaces.`}
           adornment={
-            hasEnterpriseAccess ? (
-              <Select
-                dropdownId="admin-ai-usage-period"
-                value={usagePeriod}
-                options={periodOptions}
-                onChange={setUsagePeriod}
-                needIconCheck
-                selectSizeVariant="small"
-              />
-            ) : (
-              <OrganizationAdornment />
-            )
+            <Select
+              dropdownId="admin-ai-usage-period"
+              value={usagePeriod}
+              options={periodOptions}
+              onChange={setUsagePeriod}
+              needIconCheck
+              selectSizeVariant="small"
+            />
           }
         />
-        {hasEnterpriseAccess ? (
-          usageByWorkspace.length > 0 ? (
+        {usageByWorkspace.length > 0 ? (
             <Table>
               <TableRow gridTemplateColumns={USAGE_TABLE_GRID_TEMPLATE_COLUMNS}>
                 <TableHeader>{t`Workspace`}</TableHeader>
@@ -379,14 +347,7 @@ export const SettingsAdminAI = () => {
                 </TableCell>
               </TableRow>
             </Card>
-          )
-        ) : (
-          <SettingsEnterpriseFeatureGateCard
-            title={t`Enterprise feature`}
-            description={t`AI usage analytics across workspaces is available with an Enterprise key.`}
-            buttonTitle={t`Activate`}
-          />
-        )}
+          )}
       </Section>
     </>
   );
