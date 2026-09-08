@@ -1,14 +1,12 @@
+jest.mock('~/config', () => ({
+  REACT_APP_SERVER_BASE_URL: 'http://localhost:3000',
+}));
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getClientConfig } from '@/client-config/utils/getClientConfig';
 
 global.fetch = jest.fn();
 
 const mockClientConfig = {
-  billing: {
-    isBillingEnabled: true,
-    billingUrl: 'https://billing.example.com',
-    trialPeriods: [],
-  },
   authProviders: {
     google: true,
     magicLink: false,
@@ -21,10 +19,6 @@ const mockClientConfig = {
   isEmailVerificationRequired: false,
   defaultSubdomain: 'app',
   frontDomain: 'localhost',
-  support: {
-    supportDriver: 'none',
-    supportFrontChatId: undefined,
-  },
   sentry: {
     environment: 'development',
     release: '1.0.0',

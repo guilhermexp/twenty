@@ -1,7 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
-
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
@@ -37,16 +35,6 @@ describe('ClientConfigController', () => {
   describe('getClientConfig', () => {
     it('should return client config from service', async () => {
       const mockClientConfig = {
-        billing: {
-          isBillingEnabled: true,
-          billingUrl: 'https://billing.example.com',
-          trialPeriods: [
-            {
-              duration: 7,
-              isCreditCardRequired: false,
-            },
-          ],
-        },
         aiModels: [
           {
             modelId: 'openai/gpt-4o' as ModelId,
@@ -70,10 +58,6 @@ describe('ClientConfigController', () => {
         defaultSubdomain: 'app',
         frontDomain: 'localhost',
         publicFunctionDomain: null,
-        support: {
-          supportDriver: SupportDriver.NONE,
-          supportFrontChatId: undefined,
-        },
         sentry: {
           environment: 'development',
           release: '1.0.0',

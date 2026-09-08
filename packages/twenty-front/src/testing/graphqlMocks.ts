@@ -2,7 +2,6 @@ import { parse, type FieldNode } from 'graphql';
 import { graphql, http, HttpResponse, type GraphQLQuery } from 'msw';
 import { getOperationName } from '~/utils/getOperationName';
 
-import { TRACK_ANALYTICS } from '@/analytics/graphql/queries/track';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -15,11 +14,7 @@ import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/public
 import { mockedUserData } from '~/testing/mock-data/users';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
-import { BILLING_PORTAL_SESSION } from '@/settings/billing/graphql/queries/billingPortalSession';
-import { GET_RESOURCE_CREDIT_USAGE } from '@/settings/billing/graphql/queries/getResourceCreditUsage';
-import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
-import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata';
@@ -163,13 +158,6 @@ export const graphqlMocks = {
         });
       },
     ),
-    graphql.mutation(getOperationName(TRACK_ANALYTICS) ?? '', () => {
-      return HttpResponse.json({
-        data: {
-          track: { success: 1, __typename: 'TRACK_ANALYTICS' },
-        },
-      });
-    }),
     http.get(`${REACT_APP_SERVER_BASE_URL}/client-config`, () => {
       return HttpResponse.json(mockedClientConfig);
     }),
@@ -525,48 +513,6 @@ export const graphqlMocks = {
           getRoles: mockedRoles,
         },
       });
-    }),
-    graphql.query(getOperationName(LIST_PLANS) ?? '', () => {
-      return HttpResponse.json({
-        data: mockBillingPlans,
-      });
-    }),
-    graphql.query(getOperationName(GET_RESOURCE_CREDIT_USAGE) ?? '', () => {
-      return HttpResponse.json({
-        data: {
-          getResourceCreditUsage: [
-            {
-              __typename: 'BillingResourceCreditUsage',
-              productKey: 'RESOURCE_CREDIT',
-              usedCredits: 1000,
-              grantedCredits: 500000,
-              rolloverCredits: 0,
-              totalGrantedCredits: 500000,
-              unitPriceCents: 1,
-            },
-          ],
-        },
-      });
-    }),
-    graphql.query(getOperationName(BILLING_PORTAL_SESSION) ?? '', () => {
-      return HttpResponse.json({
-        data: {
-          billingPortalSession: {
-            __typename: 'BillingSession',
-            url: 'https://billing.stripe.com/p/mock-portal-session',
-          },
-        },
-      });
-    }),
-    http.get('https://chat-assets.frontapp.com/v1/chat.bundle.js', () => {
-      return HttpResponse.text(
-        `
-          window.FrontChat = () => {};
-          console.log("This is a mocked script response.");
-          // Additional JavaScript code here
-        `,
-        { status: 200 },
-      );
     }),
     metadataGraphql.query('GetApiKeys', () => {
       return HttpResponse.json({

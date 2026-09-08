@@ -13,6 +13,9 @@ import {
   WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
 
+jest.mock('~/config', () => ({
+  REACT_APP_SERVER_BASE_URL: 'http://localhost:3000',
+}));
 enableFetchMocks();
 
 jest.mock('~/utils/sleep', () => ({
@@ -55,9 +58,7 @@ const mockWorkspace = {
   metadataVersion: 1,
   allowImpersonation: false,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
-  billingSubscriptions: [],
   billingEntitlements: [],
-  currentBillingSubscription: null,
   workspaceMembersCount: 0,
   isPublicInviteLinkEnabled: false,
   workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
@@ -68,7 +69,6 @@ const mockWorkspace = {
   isGoogleAuthBypassEnabled: false,
   isPasswordAuthBypassEnabled: false,
   isMicrosoftAuthBypassEnabled: false,
-  hasActivatedAndValidEnterpriseKey: false,
   hasValidSignedEnterpriseKey: false,
   hasValidEnterpriseValidityToken: false,
   subdomain: 'test',
@@ -113,18 +113,8 @@ const makeRequestWithContext = async (context?: Record<string, unknown>) => {
   await client.mutate({
     context,
     mutation: gql`
-      mutation TrackAnalytics(
-        $type: AnalyticsType!
-        $event: String
-        $name: String
-        $properties: JSON
-      ) {
-        trackAnalytics(
-          type: $type
-          event: $event
-          name: $name
-          properties: $properties
-        ) {
+      mutation TestMutation {
+        test {
           success
         }
       }

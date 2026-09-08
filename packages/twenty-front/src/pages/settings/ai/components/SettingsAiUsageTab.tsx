@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { SettingsInfoContainer } from '@/settings/components/SettingsInfoContainer';
 import { SettingsLabelValueItem } from '@/settings/components/SettingsLabelValueItem';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';

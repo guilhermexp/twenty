@@ -5,6 +5,9 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 
+jest.mock('~/config', () => ({
+  REACT_APP_SERVER_BASE_URL: 'http://localhost:3000',
+}));
 enableFetchMocks();
 
 const mockNavigate = jest.fn();
@@ -78,8 +81,8 @@ describe('useApolloFactory', () => {
       await act(async () => {
         await result.current.factory.mutate({
           mutation: gql`
-            mutation Track($type: String!, $sessionId: String!, $data: JSON!) {
-              track(type: $type, sessionId: $sessionId, data: $data) {
+            mutation TestMutation {
+              test {
                 success
               }
             }

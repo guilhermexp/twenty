@@ -10,8 +10,6 @@ import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
-  SubscriptionInterval,
-  SubscriptionStatus,
   WorkspaceActivationStatus,
   WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
@@ -53,22 +51,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
         subdomainUrl: 'https://twenty.twenty.com',
         customUrl: 'https://my-custom-domain.com',
       },
-      currentBillingSubscription: {
-        id: '1',
-        interval: SubscriptionInterval.Month,
-        status: SubscriptionStatus.Active,
-        metadata: {},
-        phases: [],
-      },
       billingEntitlements: [],
-      billingSubscriptions: [
-        {
-          id: '1',
-          status: SubscriptionStatus.Active,
-          metadata: {},
-          phases: [],
-        },
-      ],
       isTwoFactorAuthenticationEnforced: false,
       trashRetentionDays: 14,
       eventLogRetentionDays: 365 * 3,

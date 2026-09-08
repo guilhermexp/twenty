@@ -37,69 +37,6 @@ describe('EventLogEmitterResolver', () => {
     expect(resolver).toBeDefined();
   });
 
-  it('should handle a valid pageview input', async () => {
-    const mockInsertPageviewEvent = jest
-      .fn()
-      .mockResolvedValue('Pageview created');
-
-    auditService.createContext.mockReturnValue({
-      createPageviewEvent: mockInsertPageviewEvent,
-      insertWorkspaceEvent: jest.fn(),
-      createObjectEvent: jest.fn(),
-    });
-
-    const input = {
-      type: 'pageview' as const,
-      name: 'Test Page',
-      properties: {},
-    };
-    const result = await resolver.trackAnalytics(
-      input,
-      { id: 'workspace-1' } as WorkspaceEntity,
-      { id: 'user-1' } as UserEntity,
-    );
-
-    expect(auditService.createContext).toHaveBeenCalledWith({
-      workspaceId: 'workspace-1',
-      userId: 'user-1',
-    });
-    expect(mockInsertPageviewEvent).toHaveBeenCalledWith('Test Page', {});
-    expect(result).toBe('Pageview created');
-  });
-
-  it('should handle a valid track input', async () => {
-    const mockInsertWorkspaceEvent = jest
-      .fn()
-      .mockResolvedValue('Track created');
-
-    auditService.createContext.mockReturnValue({
-      insertWorkspaceEvent: mockInsertWorkspaceEvent,
-      createObjectEvent: jest.fn(),
-      createPageviewEvent: jest.fn(),
-    });
-
-    const input = {
-      type: 'track' as const,
-      event: 'Custom Domain Activated' as const,
-      properties: {},
-    };
-    const result = await resolver.trackAnalytics(
-      input,
-      { id: 'workspace-2' } as WorkspaceEntity,
-      { id: 'user-2' } as UserEntity,
-    );
-
-    expect(auditService.createContext).toHaveBeenCalledWith({
-      workspaceId: 'workspace-2',
-      userId: 'user-2',
-    });
-    expect(mockInsertWorkspaceEvent).toHaveBeenCalledWith(
-      'Custom Domain Activated',
-      {},
-    );
-    expect(result).toBe('Track created');
-  });
-
   it('should handle object event creation', async () => {
     const mockInsertObjectEvent = jest
       .fn()
@@ -108,7 +45,6 @@ describe('EventLogEmitterResolver', () => {
     auditService.createContext.mockReturnValue({
       insertWorkspaceEvent: jest.fn(),
       createObjectEvent: mockInsertObjectEvent,
-      createPageviewEvent: jest.fn(),
     });
 
     const input = {
@@ -139,19 +75,6 @@ describe('EventLogEmitterResolver', () => {
       },
     );
     expect(result).toBe('Object event created');
-  });
-
-  it('should throw an EventLogEmitterException for invalid input', async () => {
-    const invalidInput = { type: 'invalid' };
-
-    await expect(
-      resolver.trackAnalytics(invalidInput as any, undefined, undefined),
-    ).rejects.toThrowError(
-      new EventLogEmitterException(
-        'Invalid analytics input',
-        EventLogEmitterExceptionCode.INVALID_TYPE,
-      ),
-    );
   });
 
   it('should throw an EventLogEmitterException when workspace is missing for createObjectEvent', async () => {

@@ -2,11 +2,9 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { createElement, type ReactNode } from 'react';
-import { AppPath } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { billingState } from '@/client-config/states/billingState';
 import { ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingBookCallPendingUserVarKey';
 import { useCompleteBookCallOnboardingStep } from '@/onboarding/hooks/useCompleteBookCallOnboardingStep';
 import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
@@ -45,29 +43,29 @@ const mutationMock = {
   },
 };
 
-const renderCompleteHook = ({
-  isBillingEnabled,
-  withSubscription,
-}: {
-  isBillingEnabled: boolean;
-  withSubscription: boolean;
-}) => {
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    billingSubscriptions: withSubscription
-      ? mockCurrentWorkspace.billingSubscriptions
-      : [],
-  });
-  jotaiStore.set(billingState.atom, {
-    __typename: 'Billing',
-    isBillingEnabled,
-    trialPeriods: [],
-  } as never);
+const mutationMockBooked = {
+  request: {
+    query: CompleteBookCallOnboardingStepDocument,
+    variables: { hasBookedCall: true, isAutoSkipped: false },
+  },
+  maxUsageCount: Number.POSITIVE_INFINITY,
+  result: {
+    data: {
+      completeBookCallOnboardingStep: {
+        __typename: 'OnboardingStepSuccess',
+        success: true,
+      },
+    },
+  },
+};
+
+const renderCompleteHook = () => {
+  jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
 
   const wrapper = ({ children }: { children: ReactNode }) =>
     createElement(
       MockedProvider,
-      { mocks: [mutationMock] as never },
+      { mocks: [mutationMock, mutationMockBooked] as never },
       createElement(JotaiProvider, { store: jotaiStore }, children),
     );
 
@@ -80,36 +78,31 @@ describe('useCompleteBookCallOnboardingStep', () => {
     jest.clearAllMocks();
   });
 
-  it('should navigate to the plan step when a plan is still required', async () => {
-    const { result } = renderCompleteHook({
-      isBillingEnabled: true,
-      withSubscription: false,
-    });
+  it('should advance onboarding status without manual navigation', async () => {
+    const { result } = renderCompleteHook();
 
     await act(async () => {
       await result.current({ hasBookedCall: false });
     });
 
-    expect(mockSetNextOnboardingStatus).toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith(AppPath.PlanRequired);
+    expect(mockSetNextOnboardingStatus).toHaveBeenCalledWith({
+      stepHistoryEffect: 'recordAsReversible',
+    });
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it.each([
-    { isBillingEnabled: false, withSubscription: false },
-    { isBillingEnabled: true, withSubscription: true },
-  ])(
-    'should leave routing to the redirect engine when no plan is required (%o)',
-    async (options) => {
-      const { result } = renderCompleteHook(options);
+  it('should clear history when call was booked', async () => {
+    const { result } = renderCompleteHook();
 
-      await act(async () => {
-        await result.current({ hasBookedCall: false });
-      });
+    await act(async () => {
+      await result.current({ hasBookedCall: true });
+    });
 
-      expect(mockSetNextOnboardingStatus).toHaveBeenCalled();
-      expect(mockNavigate).not.toHaveBeenCalled();
-    },
-  );
+    expect(mockSetNextOnboardingStatus).toHaveBeenCalledWith({
+      stepHistoryEffect: 'clearAfterIrreversibleStep',
+    });
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
 
   it('should clear the pending flag before advancing so the step cannot reopen', async () => {
     jotaiStore.set(currentUserState.atom, {
@@ -117,10 +110,7 @@ describe('useCompleteBookCallOnboardingStep', () => {
       userVars: { [ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY]: true },
     } as never);
 
-    const { result } = renderCompleteHook({
-      isBillingEnabled: true,
-      withSubscription: false,
-    });
+    const { result } = renderCompleteHook();
 
     mockSetNextOnboardingStatus.mockImplementation(() => {
       expect(

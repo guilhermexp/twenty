@@ -5,7 +5,6 @@ import { Provider as JotaiProvider } from 'jotai';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { billingState } from '@/client-config/states/billingState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingBookCallPendingUserVarKey';
@@ -31,8 +30,6 @@ const Wrapper = ({ children }: { children: React.ReactNode }) =>
   createElement(JotaiProvider, { store: jotaiStore }, children);
 
 type RenderHooksOptions = {
-  withSubscription?: boolean;
-  isBillingEnabled?: boolean;
   withOneWorkspaceMember?: boolean;
   isOnboardingAiChatEnabled?: boolean;
   stepHistoryEffect?: OnboardingStepHistoryEffect;
@@ -44,8 +41,6 @@ type RenderHooksOptions = {
 const renderHooks = (
   onboardingStatus: OnboardingStatus | null,
   {
-    withSubscription = false,
-    isBillingEnabled = false,
     withOneWorkspaceMember = true,
     isOnboardingAiChatEnabled = false,
     stepHistoryEffect = 'leaveUnchanged',
@@ -66,7 +61,6 @@ const renderHooks = (
         currentUserWorkspaceState,
       );
       const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
-      const setBilling = useSetAtomState(billingState);
       const setIsBookCallOnboardingStepEnabled = useSetAtomState(
         isBookCallOnboardingStepEnabledState,
       );
@@ -82,7 +76,6 @@ const renderHooks = (
         setCurrentUser,
         setCurrentWorkspace,
         setCurrentUserWorkspace,
-        setBilling,
         setIsBookCallOnboardingStepEnabled,
         setNextOnboardingStatus,
         isWelcomeAnimationVisible,
@@ -107,15 +100,7 @@ const renderHooks = (
     result.current.setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
     result.current.setCurrentWorkspace({
       ...mockCurrentWorkspace,
-      billingSubscriptions: withSubscription
-        ? mockCurrentWorkspace.billingSubscriptions
-        : [],
       workspaceMembersCount: withOneWorkspaceMember ? 1 : 2,
-    });
-    result.current.setBilling({
-      __typename: 'Billing',
-      isBillingEnabled,
-      trialPeriods: [],
     });
     result.current.setIsBookCallOnboardingStepEnabled(
       isBookCallOnboardingStepEnabled,
@@ -211,22 +196,7 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
 
-  it('should require a plan after profile creation when billing is enabled and the workspace has no subscription', () => {
-    const {
-      nextOnboardingStatus,
-      isWelcomeAnimationVisible,
-      shouldOpenAiChatAfterOnboarding,
-    } = renderHooks(OnboardingStatus.PROFILE_CREATION, {
-      withOneWorkspaceMember: false,
-      isBillingEnabled: true,
-      withSubscription: false,
-    });
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
-    expect(isWelcomeAnimationVisible).toBe(false);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
-  });
-
-  it('should complete after inviting the team when billing is disabled', () => {
+  it('should complete after inviting the team', () => {
     const {
       nextOnboardingStatus,
       isWelcomeAnimationVisible,
@@ -237,41 +207,12 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
 
-  it('should complete after inviting the team when the workspace already has a subscription', () => {
-    const {
-      nextOnboardingStatus,
-      isWelcomeAnimationVisible,
-      shouldOpenAiChatAfterOnboarding,
-    } = renderHooks(OnboardingStatus.INVITE_TEAM, {
-      isBillingEnabled: true,
-      withSubscription: true,
-    });
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-    expect(isWelcomeAnimationVisible).toBe(true);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
-  });
-
-  it('should require a plan after inviting the team when billing is enabled and the workspace has no subscription', () => {
-    const {
-      nextOnboardingStatus,
-      isWelcomeAnimationVisible,
-      shouldOpenAiChatAfterOnboarding,
-    } = renderHooks(OnboardingStatus.INVITE_TEAM, {
-      isBillingEnabled: true,
-      withSubscription: false,
-    });
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
-    expect(isWelcomeAnimationVisible).toBe(false);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
-  });
-
   it('should book a call after inviting the team when the server flagged the step', () => {
     const {
       nextOnboardingStatus,
       isWelcomeAnimationVisible,
       shouldOpenAiChatAfterOnboarding,
     } = renderHooks(OnboardingStatus.INVITE_TEAM, {
-      isBillingEnabled: true,
       isBookCallOnboardingStepEnabled: true,
       isBookCallOnboardingStepPending: true,
     });
@@ -285,22 +226,11 @@ describe('useSetNextOnboardingStatus', () => {
       OnboardingStatus.PROFILE_CREATION,
       {
         withOneWorkspaceMember: false,
-        isBillingEnabled: true,
         isBookCallOnboardingStepEnabled: true,
         isBookCallOnboardingStepPending: true,
       },
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.BOOK_CALL);
-  });
-
-  it('should skip the book-call step once the workspace has a subscription, matching the server', () => {
-    const { nextOnboardingStatus } = renderHooks(OnboardingStatus.INVITE_TEAM, {
-      isBillingEnabled: true,
-      withSubscription: true,
-      isBookCallOnboardingStepEnabled: true,
-      isBookCallOnboardingStepPending: true,
-    });
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
 
   it.each([
@@ -317,30 +247,16 @@ describe('useSetNextOnboardingStatus', () => {
       isBookCallOnboardingStepPending: false,
     },
   ])(
-    'should skip the book-call step when enabled is $isBookCallOnboardingStepEnabled and pending is $isBookCallOnboardingStepPending',
+    'should complete after inviting the team when book-call is skipped (enabled is $isBookCallOnboardingStepEnabled and pending is $isBookCallOnboardingStepPending)',
     (options) => {
       const { nextOnboardingStatus } = renderHooks(
         OnboardingStatus.INVITE_TEAM,
-        { isBillingEnabled: true, ...options },
+        options,
       );
-      expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
+      expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
     },
   );
-
-  it('should require a plan after booking a call when billing is enabled and the workspace has no subscription', () => {
-    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
-      OnboardingStatus.BOOK_CALL,
-      {
-        isBillingEnabled: true,
-        isBookCallOnboardingStepEnabled: true,
-        isBookCallOnboardingStepPending: true,
-      },
-    );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
-    expect(isWelcomeAnimationVisible).toBe(false);
-  });
-
-  it('should complete after booking a call when billing is disabled', () => {
+  it('should complete after booking a call', () => {
     const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
       OnboardingStatus.BOOK_CALL,
       {
@@ -426,18 +342,9 @@ describe('useSetNextOnboardingStatus', () => {
     expect(previousOnboardingStatus).toBeNull();
   });
 
-  it('should stay on the plan step when advancing from it without a subscription', () => {
+  it('should complete when advancing from the plan step', () => {
     const { nextOnboardingStatus } = renderHooks(
       OnboardingStatus.PLAN_REQUIRED,
-      { isBillingEnabled: true, withSubscription: false },
-    );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
-  });
-
-  it('should complete when advancing from the plan step with a subscription', () => {
-    const { nextOnboardingStatus } = renderHooks(
-      OnboardingStatus.PLAN_REQUIRED,
-      { isBillingEnabled: true, withSubscription: true },
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
@@ -449,14 +356,8 @@ describe('useSetNextOnboardingStatus', () => {
     });
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
-      billingSubscriptions: [],
       workspaceMembersCount: 1,
     });
-    jotaiStore.set(billingState.atom, {
-      __typename: 'Billing',
-      isBillingEnabled: true,
-      trialPeriods: [],
-    } as never);
     jotaiStore.set(isBookCallOnboardingStepEnabledState.atom, true);
 
     const { result } = renderHook(() => useSetNextOnboardingStatus(), {
@@ -488,7 +389,6 @@ describe('useSetNextOnboardingStatus', () => {
     });
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
-      billingSubscriptions: [],
       workspaceMembersCount: 1,
     });
 

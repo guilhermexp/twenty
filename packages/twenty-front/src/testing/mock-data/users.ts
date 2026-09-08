@@ -29,7 +29,6 @@ type MockedUser = Pick<
   | 'canAccessFullAdminPanel'
   | 'canImpersonate'
   | '__typename'
-  | 'supportUserHash'
   | 'onboardingStatus'
   | 'userVars'
   | 'availableWorkspaces'
@@ -194,8 +193,6 @@ export const mockedUserData: MockedUser = {
   canAccessFullAdminPanel: false,
   canImpersonate: false,
   hasPassword: true,
-  supportUserHash:
-    'a95afad9ff6f0b364e2a3fd3e246a1a852c22b6e55a3ca33745a86c201f9c10d',
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
@@ -263,8 +260,6 @@ export const mockedOnboardingUserData = (
     hasPassword: false,
     canAccessFullAdminPanel: false,
     canImpersonate: false,
-    supportUserHash:
-      '4fb61d34ed3a4aeda2476d4b308b5162db9e1809b2b8277e6fdc6efc4a609254',
     workspaceMember: null,
     workspaceMembers: [],
     currentWorkspace: mockCurrentWorkspace,

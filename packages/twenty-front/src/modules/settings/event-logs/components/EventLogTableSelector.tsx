@@ -10,7 +10,9 @@ type EventLogTableSelectorProps = {
   onChange: (value: EventLogTable) => void;
 };
 
-const TABLE_LABELS: Record<EventLogTable, MessageDescriptor> = {
+// Partial: the generated schema enum is regenerated from the server, so it can
+// still carry a table the server no longer serves.
+const TABLE_LABELS: Partial<Record<EventLogTable, MessageDescriptor>> = {
   [EventLogTable.WORKSPACE_EVENT]: msg`Workspace Events`,
   [EventLogTable.OBJECT_EVENT]: msg`Object Events`,
   [EventLogTable.USAGE_EVENT]: msg`Usage Events`,

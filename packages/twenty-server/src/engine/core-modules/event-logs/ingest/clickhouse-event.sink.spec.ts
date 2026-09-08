@@ -2,9 +2,9 @@ import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { ClickHouseEventSink } from 'src/engine/core-modules/event-logs/ingest/clickhouse-event.sink';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 
-const makePageview = (name: string): WorkspaceEventEnvelope => ({
-  table: 'pageview',
-  row: { type: 'page', name, properties: {}, timestamp: 't', version: '1' },
+const makeWorkspaceEvent = (event: string): WorkspaceEventEnvelope => ({
+  table: 'workspaceEvent',
+  row: { type: 'track', event, properties: {}, timestamp: 't', version: '1' },
 });
 
 const applicationLog: WorkspaceEventEnvelope = {
@@ -37,26 +37,23 @@ describe('ClickHouseEventSink', () => {
   });
 
   it('groups envelopes by table and inserts each group once', async () => {
-    const first = makePageview('a');
-    const second = makePageview('b');
+    const first = makeWorkspaceEvent('a');
+    const second = makeWorkspaceEvent('b');
 
     await sink.write([first, second, applicationLog]);
 
     expect(insert).toHaveBeenCalledTimes(2);
-    expect(insert).toHaveBeenCalledWith('pageview', [first.row, second.row], {
-      asyncInsertBusyTimeoutMaxMs: 100,
-    });
-    expect(insert).toHaveBeenCalledWith(
-      'applicationLog',
-      [applicationLog.row],
-      undefined,
-    );
+    expect(insert).toHaveBeenCalledWith('workspaceEvent', [
+      first.row,
+      second.row,
+    ]);
+    expect(insert).toHaveBeenCalledWith('applicationLog', [applicationLog.row]);
   });
 
   it('no-ops when ClickHouse is not configured', async () => {
     getMainClient.mockReturnValue(undefined);
 
-    await sink.write([makePageview('a')]);
+    await sink.write([makeWorkspaceEvent('a')]);
 
     expect(insert).not.toHaveBeenCalled();
   });
@@ -70,7 +67,7 @@ describe('ClickHouseEventSink', () => {
   it('throws when a ClickHouse insert fails so the consumer retries', async () => {
     insert.mockResolvedValue({ success: false, error: new Error('boom') });
 
-    await expect(sink.write([makePageview('a')])).rejects.toThrow();
+    await expect(sink.write([makeWorkspaceEvent('a')])).rejects.toThrow();
   });
 
   it('surfaces the underlying ClickHouse error in the message and cause', async () => {
@@ -78,9 +75,9 @@ describe('ClickHouseEventSink', () => {
 
     insert.mockResolvedValue({ success: false, error });
 
-    await expect(sink.write([makePageview('a')])).rejects.toMatchObject({
+    await expect(sink.write([makeWorkspaceEvent('a')])).rejects.toMatchObject({
       message:
-        'Failed to insert 1 pageview row(s) into ClickHouse: socket hang up',
+        'Failed to insert 1 workspaceEvent row(s) into ClickHouse: socket hang up',
       cause: error,
     });
   });

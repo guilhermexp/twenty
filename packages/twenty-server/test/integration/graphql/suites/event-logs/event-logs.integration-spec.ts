@@ -45,29 +45,19 @@ describe('Event Logs (integration)', () => {
   const seedTestData = async () => {
     const now = new Date();
 
-    const pageviewRecords = Array.from({ length: 25 }, (_, i) => ({
-      workspaceId: testWorkspaceId,
-      userId: testUserWorkspaceId,
-      name: i % 2 === 0 ? 'settings/profile' : 'objects/companies',
-      timestamp: formatDateTimeForClickHouse(
-        new Date(now.getTime() - i * 60000),
-      ),
-      properties: { path: `/settings/${i}` },
-    }));
-
-    const workspaceEventRecords = Array.from({ length: 15 }, (_, i) => ({
+    const workspaceEventRecords = Array.from({ length: 25 }, (_, i) => ({
       workspaceId: testWorkspaceId,
       userId: testUserWorkspaceId,
       event:
         i % 3 === 0
           ? 'user.login'
           : i % 3 === 1
-            ? 'user.logout'
-            : 'settings.updated',
+            ? 'settings.profile'
+            : 'objects.companies',
       timestamp: formatDateTimeForClickHouse(
-        new Date(now.getTime() - i * 120000),
+        new Date(now.getTime() - i * 60000),
       ),
-      properties: { action: `action_${i}` },
+      properties: { path: `/settings/${i}`, action: `action_${i}` },
     }));
 
     const objectEventRecords = Array.from({ length: 20 }, (_, i) => ({
@@ -112,11 +102,6 @@ describe('Event Logs (integration)', () => {
       ),
     }));
 
-    await clickHouseClient.insert({
-      table: 'pageview',
-      values: pageviewRecords,
-      format: 'JSONEachRow',
-    });
 
     await clickHouseClient.insert({
       table: 'workspaceEvent',
@@ -148,9 +133,6 @@ describe('Event Logs (integration)', () => {
 
   const cleanupTestData = async () => {
     try {
-      await clickHouseClient.command({
-        query: `ALTER TABLE pageview DELETE WHERE workspaceId = '${testWorkspaceId}'`,
-      });
       await clickHouseClient.command({
         query: `ALTER TABLE workspaceEvent DELETE WHERE workspaceId = '${testWorkspaceId}'`,
       });
@@ -201,20 +183,6 @@ describe('Event Logs (integration)', () => {
   };
 
   describe('querying different tables', () => {
-    it('should query PAGEVIEW table', async () => {
-      const response = await makeEventLogsQuery({
-        table: 'PAGEVIEW',
-        first: 10,
-      });
-
-      expect(response.status).toBe(200);
-      expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.eventLogs).toBeDefined();
-      expect(response.body.data.eventLogs.records.length).toBeGreaterThan(0);
-      expect(response.body.data.eventLogs.totalCount).toBeGreaterThanOrEqual(
-        response.body.data.eventLogs.records.length,
-      );
-    });
 
     it('should query WORKSPACE_EVENT table', async () => {
       const response = await makeEventLogsQuery({
@@ -289,7 +257,7 @@ describe('Event Logs (integration)', () => {
   describe('pagination', () => {
     it('should return hasNextPage=true when more records exist', async () => {
       const response = await makeEventLogsQuery({
-        table: 'PAGEVIEW',
+        table: 'WORKSPACE_EVENT',
         first: 5,
       });
 
@@ -301,7 +269,7 @@ describe('Event Logs (integration)', () => {
 
     it('should fetch next page using cursor', async () => {
       const firstPage = await makeEventLogsQuery({
-        table: 'PAGEVIEW',
+        table: 'WORKSPACE_EVENT',
         first: 5,
       });
 
@@ -309,7 +277,7 @@ describe('Event Logs (integration)', () => {
       const cursor = firstPage.body.data.eventLogs.pageInfo.endCursor;
 
       const secondPage = await makeEventLogsQuery({
-        table: 'PAGEVIEW',
+        table: 'WORKSPACE_EVENT',
         first: 5,
         after: cursor,
       });
@@ -336,12 +304,12 @@ describe('Event Logs (integration)', () => {
 
     it('should return correct totalCount regardless of page size', async () => {
       const smallPage = await makeEventLogsQuery({
-        table: 'PAGEVIEW',
+        table: 'WORKSPACE_EVENT',
         first: 3,
       });
 
       const largePage = await makeEventLogsQuery({
-        table: 'PAGEVIEW',
+        table: 'WORKSPACE_EVENT',
         first: 100,
       });
 
@@ -355,7 +323,7 @@ describe('Event Logs (integration)', () => {
     describe('eventType filter', () => {
       it('should filter by event type (partial match)', async () => {
         const response = await makeEventLogsQuery({
-          table: 'PAGEVIEW',
+          table: 'WORKSPACE_EVENT',
           first: 50,
           filters: {
             eventType: 'settings',
@@ -397,7 +365,7 @@ describe('Event Logs (integration)', () => {
         const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
 
         const response = await makeEventLogsQuery({
-          table: 'PAGEVIEW',
+          table: 'WORKSPACE_EVENT',
           first: 50,
           filters: {
             dateRange: {
@@ -422,7 +390,7 @@ describe('Event Logs (integration)', () => {
         const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
 
         const response = await makeEventLogsQuery({
-          table: 'PAGEVIEW',
+          table: 'WORKSPACE_EVENT',
           first: 50,
           filters: {
             dateRange: {
@@ -448,7 +416,7 @@ describe('Event Logs (integration)', () => {
         const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
 
         const response = await makeEventLogsQuery({
-          table: 'PAGEVIEW',
+          table: 'WORKSPACE_EVENT',
           first: 50,
           filters: {
             dateRange: {
@@ -567,9 +535,9 @@ describe('Event Logs (integration)', () => {
   });
 
   describe('record structure', () => {
-    it('should return properly structured pageview records', async () => {
+    it('should return properly structured workspace event records', async () => {
       const response = await makeEventLogsQuery({
-        table: 'PAGEVIEW',
+        table: 'WORKSPACE_EVENT',
         first: 1,
       });
 
@@ -604,7 +572,7 @@ describe('Event Logs (integration)', () => {
   describe('permissions', () => {
     it('should deny access to member role', async () => {
       const response = await makeEventLogsQuery(
-        { table: 'PAGEVIEW', first: 10 },
+        { table: 'WORKSPACE_EVENT', first: 10 },
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
 
@@ -624,7 +592,7 @@ describe('Event Logs (integration)', () => {
             }
           }
         `,
-        variables: { input: { table: 'PAGEVIEW', first: 10 } },
+        variables: { input: { table: 'WORKSPACE_EVENT', first: 10 } },
       });
 
       expect(response.status).toBe(200);
@@ -636,7 +604,7 @@ describe('Event Logs (integration)', () => {
   describe('error handling', () => {
     it('should reject invalid table name', async () => {
       const response = await makeEventLogsQuery({
-        table: 'INVALID_TABLE' as 'PAGEVIEW',
+        table: 'INVALID_TABLE' as 'WORKSPACE_EVENT',
         first: 10,
       });
 

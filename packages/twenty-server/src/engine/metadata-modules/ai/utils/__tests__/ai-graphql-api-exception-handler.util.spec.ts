@@ -2,10 +2,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
 import { aiGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/ai/utils/ai-graphql-api-exception-handler.util';
 import {
   ErrorCode,
@@ -37,14 +33,6 @@ describe('aiGraphqlApiExceptionHandler', () => {
     expect(graphqlError.extensions.userFriendlyMessage).toBeDefined();
   });
 
-  it('leaves billing exceptions to the billing filter', () => {
-    const exception = new BillingException(
-      'Credits exhausted',
-      BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
-    );
-
-    expect(() => aiGraphqlApiExceptionHandler(exception)).toThrow(exception);
-  });
 
   it('maps THREAD_NOT_FOUND to NOT_FOUND', () => {
     const error = new AiException(

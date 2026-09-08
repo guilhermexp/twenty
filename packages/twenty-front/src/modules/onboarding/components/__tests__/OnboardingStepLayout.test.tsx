@@ -18,9 +18,9 @@ import {
 import { messages } from '~/locales/generated/en';
 
 jest.mock(
-  '@/onboarding/effect-components/PrefetchPlanRequiredStepEffect',
+  '@/onboarding/effect-components/PrefetchBookCallStepEffect',
   () => ({
-    PrefetchPlanRequiredStepEffect: () => null,
+    PrefetchBookCallStepEffect: () => null,
   }),
 );
 

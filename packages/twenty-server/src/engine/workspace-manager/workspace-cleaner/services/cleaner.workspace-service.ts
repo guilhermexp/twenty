@@ -8,8 +8,7 @@ import {
   WarnSuspendedWorkspaceEmail,
   renderEmail,
 } from 'twenty-emails';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -110,7 +109,7 @@ export class CleanerWorkspaceService {
   async sendWarningEmail(
     workspaceMember: WorkspaceMemberWorkspaceEntity,
     workspaceDisplayName: string | undefined,
-    billingSettingsUrl: string,
+    workspaceUrl: string,
     daysSinceInactive: number,
   ) {
     const emailData = {
@@ -118,7 +117,7 @@ export class CleanerWorkspaceService {
       inactiveDaysBeforeDelete: this.inactiveDaysBeforeSoftDelete,
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       workspaceDisplayName: `${workspaceDisplayName}`,
-      link: billingSettingsUrl,
+      link: workspaceUrl,
       locale: workspaceMember.locale,
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
@@ -174,11 +173,8 @@ export class CleanerWorkspaceService {
         .join(', ')}']`,
     );
 
-    const billingSettingsUrl = this.workspaceDomainsService
-      .buildWorkspaceURL({
-        workspace,
-        pathname: getSettingsPath(SettingsPath.Billing),
-      })
+    const workspaceUrl = this.workspaceDomainsService
+      .buildWorkspaceURL({ workspace })
       .toString();
 
     if (!dryRun) {
@@ -186,7 +182,7 @@ export class CleanerWorkspaceService {
         await this.sendWarningEmail(
           workspaceMember,
           workspace.displayName,
-          billingSettingsUrl,
+          workspaceUrl,
           daysSinceInactive,
         );
 

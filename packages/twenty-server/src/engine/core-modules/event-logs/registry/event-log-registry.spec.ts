@@ -63,15 +63,6 @@ describe('event-log registry', () => {
       expect(record.timestamp.toISOString()).toBe('2026-01-01T00:00:00.000Z');
     });
 
-    it('maps a pageview row from the name column', () => {
-      const record = EVENT_LOG_TYPES[EventLogTable.PAGEVIEW].normalize({
-        name: '/settings',
-        timestamp,
-      });
-
-      expect(record.event).toBe('/settings');
-    });
-
     it('maps a usage event row (resourceType, userWorkspaceId, folded metadata)', () => {
       const record = EVENT_LOG_TYPES[EventLogTable.USAGE_EVENT].normalize({
         resourceType: 'WORKFLOW_NODE_RUN',

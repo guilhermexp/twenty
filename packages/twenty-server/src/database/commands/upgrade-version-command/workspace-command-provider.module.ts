@@ -32,7 +32,6 @@ import { V2_36_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
 import { V2_37_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-37/2-37-upgrade-version-command.module';
 import { V2_38_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-38/2-38-upgrade-version-command.module';
 import { V2_39_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-39/2-39-upgrade-version-command.module';
-import { V2_4_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-4/2-4-upgrade-version-command.module';
 import { V2_5_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-5/2-5-upgrade-version-command.module';
 import { V2_7_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-7/2-7-upgrade-version-command.module';
 import { V2_8_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-8/2-8-upgrade-version-command.module';

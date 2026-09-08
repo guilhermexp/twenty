@@ -5,7 +5,6 @@ import { hasCustomAiProviderAccess } from 'src/engine/core-modules/enterprise/ut
 
 describe('hasCustomAiProviderAccess', () => {
   const selfHosted = {
-    isBillingEnabled: false,
     hasValidEnterprisePlan: false,
   };
 
@@ -39,20 +38,10 @@ describe('hasCustomAiProviderAccess', () => {
   it('grants access above the threshold with a valid enterprise plan', () => {
     expect(
       hasCustomAiProviderAccess({
-        isBillingEnabled: false,
         hasValidEnterprisePlan: true,
         seatCount: MAX_SEATS_WITHOUT_ENTERPRISE_KEY + 100,
       }),
     ).toBe(true);
   });
 
-  it('grants access on a billing-enabled instance whatever its seat count', () => {
-    expect(
-      hasCustomAiProviderAccess({
-        isBillingEnabled: true,
-        hasValidEnterprisePlan: false,
-        seatCount: 10_000,
-      }),
-    ).toBe(true);
-  });
 });

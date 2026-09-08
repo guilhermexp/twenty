@@ -131,7 +131,6 @@ export const responseData = {
       email: 'test@example.com',
       canAccessFullAdminPanel: false,
       canImpersonate: false,
-      supportUserHash: null,
       onboardingStatus: 'completed',
       workspaceMember: {
         id: 'test-workspace-member-id',
@@ -171,7 +170,6 @@ export const responseData = {
         },
         featureFlags: [],
         metadataVersion: 1,
-        currentBillingSubscription: null,
         workspaceMembersCount: 1,
         defaultRole: {
           id: 'default-role-id',
@@ -185,8 +183,6 @@ export const responseData = {
           canDestroyAllObjectRecords: true,
         },
       },
-      currentBillingSubscription: null,
-      billingSubscriptions: [],
       workspaces: [],
       userVars: null,
     },

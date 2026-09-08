@@ -4,18 +4,15 @@ export const AuditContextMock = (params?: {
   insertWorkspaceEvent?:
     | ((
         event: TrackEventName,
-        properties: any,
+        properties: Record<string, unknown>,
       ) => Promise<{ success: boolean }>)
-    | jest.Mock<any, any>;
+    | jest.Mock;
   createObjectEvent?:
     | ((
         event: TrackEventName,
-        properties: any,
+        properties: Record<string, unknown>,
       ) => Promise<{ success: boolean }>)
-    | jest.Mock<any, any>;
-  createPageviewEvent?:
-    | ((name: string, properties: any) => Promise<{ success: boolean }>)
-    | jest.Mock<any, any>;
+    | jest.Mock;
 }) => {
   return {
     insertWorkspaceEvent:
@@ -23,9 +20,6 @@ export const AuditContextMock = (params?: {
       jest.fn().mockResolvedValue({ success: true }),
     createObjectEvent:
       params?.createObjectEvent ??
-      jest.fn().mockResolvedValue({ success: true }),
-    createPageviewEvent:
-      params?.createPageviewEvent ??
       jest.fn().mockResolvedValue({ success: true }),
   };
 };

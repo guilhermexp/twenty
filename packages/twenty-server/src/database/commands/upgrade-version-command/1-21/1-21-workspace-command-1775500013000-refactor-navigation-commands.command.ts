@@ -51,7 +51,6 @@ const SETTINGS_NAVIGATION_ITEM_KEYS = [
   'goToSettingsMembers',
   'goToSettingsRoles',
   'goToSettingsDomains',
-  'goToSettingsBilling',
   'goToSettingsApiWebhooks',
   'goToSettingsApplications',
   'goToSettingsAI',

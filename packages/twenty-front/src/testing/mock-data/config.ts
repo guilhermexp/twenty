@@ -1,5 +1,5 @@
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
-import { CaptchaDriverType, SupportDriver } from '~/generated-metadata/graphql';
+import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
 export const mockedClientConfig: ClientConfig = {
   aiModels: [],
@@ -16,28 +16,10 @@ export const mockedClientConfig: ClientConfig = {
   frontDomain: 'localhost',
   defaultSubdomain: 'app',
   analyticsEnabled: true,
-  support: {
-    supportDriver: SupportDriver.FRONT,
-    supportFrontChatId: null,
-  },
   sentry: {
     dsn: 'MOCKED_DSN',
     release: 'MOCKED_RELEASE',
     environment: 'MOCKED_ENVIRONMENT',
-  },
-  billing: {
-    isBillingEnabled: true,
-    billingUrl: '',
-    trialPeriods: [
-      {
-        duration: 30,
-        isCreditCardRequired: true,
-      },
-      {
-        duration: 7,
-        isCreditCardRequired: false,
-      },
-    ],
   },
   captcha: {
     provider: CaptchaDriverType.GOOGLE_RECAPTCHA,

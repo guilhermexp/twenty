@@ -27,16 +27,12 @@ describe('AdminPanelAiProviderService', () => {
 
   const givenInstance = ({
     seatCount,
-    isBillingEnabled = false,
     isEnterpriseValid = false,
   }: {
     seatCount: number;
-    isBillingEnabled?: boolean;
     isEnterpriseValid?: boolean;
   }) => {
-    twentyConfigService.get.mockImplementation((key: string) =>
-      key === 'IS_BILLING_ENABLED' ? isBillingEnabled : providers,
-    );
+    twentyConfigService.get.mockReturnValue(providers);
     enterprisePlanService.isValid.mockReturnValue(isEnterpriseValid);
     enterprisePlanService.getBillableSeatCount.mockResolvedValue(seatCount);
   };

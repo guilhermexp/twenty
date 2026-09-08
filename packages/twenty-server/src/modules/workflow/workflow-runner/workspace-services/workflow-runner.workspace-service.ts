@@ -287,7 +287,198 @@ export class WorkflowRunnerWorkspaceService {
     if (!isDefined(workflowRun.state)) {
       throw new WorkflowRunException(
         'Cannot retry a workflow run without state',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
 
+    const steps = workflowRun.state.flow.steps;
 
+    const { stepInfosToUpdate, stepIdsToRetry } = buildRetryStepInfos({
+      steps,
+      stepInfos: workflowRun.state.stepInfos,
+    });
 
-[Showing lines 1-300 of 301. Use :301 to continue]
+    const mergedStepInfos = {
+      ...workflowRun.state.stepInfos,
+      ...stepInfosToUpdate,
+    };
+
+    const runnableStepIds = getRunnableStepIds({
+      steps,
+      stepInfos: mergedStepInfos,
+    });
+
+    const stepIdsToRun = Array.from(
+      new Set([...stepIdsToRetry, ...runnableStepIds]),
+    );
+
+    if (stepIdsToRun.length === 0) {
+      return {
+        id: workflowRun.id,
+        status: workflowRun.status,
+      };
+    }
+
+    await this.workflowRunWorkspaceService.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        status: WorkflowRunStatus.RUNNING,
+        endedAt: null,
+        state: {
+          ...workflowRun.state,
+          stepInfos: mergedStepInfos,
+          workflowRunError: undefined,
+        },
+      },
+    });
+
+    try {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RunWorkflowJob.name,
+        {
+          workspaceId,
+          workflowRunId,
+          stepIdsToRetry: stepIdsToRun,
+        },
+        buildRunWorkflowJobOptions(workflowRunId),
+      );
+    } catch (error) {
+      // The job couldn't be enqueued: revert to the previous failed state so
+      // the run isn't left stuck as RUNNING without a worker job.
+      await this.workflowRunWorkspaceService.updateWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        partialUpdate: {
+          status: WorkflowRunStatus.FAILED,
+          endedAt: workflowRun.endedAt,
+          state: workflowRun.state,
+        },
+      });
+
+      throw error;
+    }
+
+    return {
+      id: workflowRun.id,
+      status: WorkflowRunStatus.RUNNING,
+    };
+  }
+
+  private async checkHardThrottleLimit(workspaceId: string): Promise<boolean> {
+    try {
+      await this.workflowThrottlingWorkspaceService.throttleOrThrowIfHardLimitReached(
+        workspaceId,
+      );
+
+      return false;
+    } catch {
+      void this.metricsService.incrementCounterForEvent({
+        key: MetricsKeys.WorkflowRunThrottled,
+        eventId: workspaceId,
+      });
+
+      return true;
+    }
+  }
+
+  private async createFailedWorkflowRun({
+    workspaceId,
+    workflowVersionId,
+    initialWorkflowRunId,
+    source,
+    payload,
+  }: {
+    workspaceId: string;
+    workflowVersionId: string;
+    initialWorkflowRunId?: string;
+    source: ActorMetadata;
+    payload: object;
+  }) {
+    const workflowRunId =
+      await this.workflowRunWorkspaceService.createWorkflowRun({
+        workflowVersionId,
+        workflowRunId: initialWorkflowRunId,
+        createdBy: source,
+        status: WorkflowRunStatus.FAILED,
+        triggerPayload: payload,
+        error: 'Throttle limit reached',
+        workspaceId,
+      });
+
+    return { workflowRunId };
+  }
+
+  private async enqueueWorkflowRun({
+    workspaceId,
+    workflowVersionId,
+    initialWorkflowRunId,
+    source,
+    payload,
+  }: {
+    workspaceId: string;
+    workflowVersionId: string;
+    initialWorkflowRunId?: string;
+    source: ActorMetadata;
+    payload: object;
+  }) {
+    const workflowRunId =
+      await this.workflowRunWorkspaceService.createWorkflowRun({
+        workflowVersionId,
+        workflowRunId: initialWorkflowRunId,
+        createdBy: source,
+        status: WorkflowRunStatus.ENQUEUED,
+        triggerPayload: payload,
+        workspaceId,
+      });
+
+    await this.messageQueueService.add<RunWorkflowJobData>(
+      RunWorkflowJob.name,
+      {
+        workspaceId,
+        workflowRunId,
+      },
+      buildRunWorkflowJobOptions(workflowRunId),
+    );
+
+    return { workflowRunId };
+  }
+
+  private async createNotStartedWorkflowRunAndTriggerEnqueueJob({
+    workspaceId,
+    workflowVersionId,
+    initialWorkflowRunId,
+    source,
+    payload,
+  }: {
+    workspaceId: string;
+    workflowVersionId: string;
+    initialWorkflowRunId?: string;
+    source: ActorMetadata;
+    payload: object;
+  }) {
+    const workflowRunId =
+      await this.workflowRunWorkspaceService.createWorkflowRun({
+        workflowVersionId,
+        workflowRunId: initialWorkflowRunId,
+        createdBy: source,
+        status: WorkflowRunStatus.NOT_STARTED,
+        triggerPayload: payload,
+        workspaceId,
+      });
+
+    await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(
+      workspaceId,
+    );
+
+    await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
+      WorkflowRunEnqueueJob.name,
+      {
+        workspaceId,
+        isCacheMode: true,
+      },
+    );
+
+    return { workflowRunId };
+  }
+}
