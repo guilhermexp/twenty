@@ -312,7 +312,7 @@ describe('Portuguese (Brazil) locale tests', () => {
     it('should format 30 seconds ago in Portuguese', () => {
       const pastDate = '2023-12-31T23:59:30.000Z'; // 30 seconds ago
       const result = beautifyPastDateRelativeToNow(pastDate, ptBR);
-      expect(result).toBe('há 30 segundos');
+      expect(result).toBe('há meio minuto');
     });
 
     it('should format minutes ago in Portuguese', () => {
