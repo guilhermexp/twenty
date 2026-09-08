@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import {
@@ -94,7 +94,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       const adminPassword =
         options.adminPassword ?? process.env.SEED_ADMIN_PASSWORD;
 
-      if (!isNonEmptyString(adminPassword)) {
+      if (!isDefined(adminPassword) || adminPassword.length === 0) {
         throw new Error(
           'SEED_ADMIN_PASSWORD is required in development. Set the env var or pass --admin-password.',
         );
