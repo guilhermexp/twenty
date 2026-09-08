@@ -115,7 +115,6 @@ const COLUMNS_BY_TABLE: Record<EventLogTable, ColumnConfig[]> = {
   [EventLogTable.USAGE_EVENT]: USAGE_EVENT_COLUMNS,
   [EventLogTable.APPLICATION_LOG]: APPLICATION_LOG_COLUMNS,
   [EventLogTable.WORKSPACE_EVENT]: DEFAULT_COLUMNS,
-  [EventLogTable.PAGEVIEW]: DEFAULT_COLUMNS,
 };
 
 export const getColumnsForEventLogTable = (

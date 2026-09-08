@@ -5,10 +5,6 @@ import {
   type TrackEventProperties,
 } from 'src/engine/core-modules/event-logs/emit/events.type';
 import {
-  type PageviewProperties,
-  pageviewSchema,
-} from 'src/engine/core-modules/event-logs/emit/events/pageview/pageview';
-import {
   eventsRegistry,
   type GenericTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/track';
@@ -17,18 +13,6 @@ const common = (): Record<EventCommonPropertiesType, string> => ({
   timestamp: formatDateTimeForClickHouse(new Date()),
   version: '1',
 });
-
-export function makePageview(
-  name: string,
-  properties: Partial<PageviewProperties> = {},
-) {
-  return pageviewSchema.parse({
-    type: 'page',
-    name,
-    ...common(),
-    properties,
-  });
-}
 
 export function makeTrackEvent<T extends TrackEventName>(
   event: T,

@@ -98,7 +98,7 @@ export const SettingsLogs = () => {
     ) === true;
 
   const [selectedTable, setSelectedTable] = useState<EventLogTable>(
-    EventLogTable.PAGEVIEW,
+    EventLogTable.WORKSPACE_EVENT,
   );
   const [filters, setFilters] = useState<EventLogFiltersState>({});
   const [isPaused, setIsPaused] = useState(false);

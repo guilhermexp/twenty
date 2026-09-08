@@ -2,11 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   buildObjectEventEnvelope,
-  buildPageviewEnvelope,
   buildWorkspaceEventEnvelope,
   computeEventContextFields,
 } from 'src/engine/core-modules/event-logs/emit/build-event-envelope';
-import { type PageviewProperties } from 'src/engine/core-modules/event-logs/emit/events/pageview/pageview';
 import {
   type TrackEventName,
   type TrackEventProperties,
@@ -59,11 +57,6 @@ export class EventLogEmitterService {
         this.emit(() =>
           buildObjectEventEnvelope(contextFields, event, properties),
         ),
-      createPageviewEvent: (
-        name: string,
-        properties: Partial<PageviewProperties>,
-      ) =>
-        this.emit(() => buildPageviewEnvelope(contextFields, name, properties)),
     };
   }
 

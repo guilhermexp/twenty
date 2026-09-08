@@ -11,14 +11,6 @@ type AnalyticsEventRow = EventContextFields & {
   version: string;
 };
 
-export type PageviewRow = EventContextFields & {
-  type: 'page';
-  name: string;
-  properties: Record<string, unknown>;
-  timestamp: string;
-  version: string;
-};
-
 export type ObjectEventRow = AnalyticsEventRow & {
   recordId: string;
   objectMetadataId: string;
@@ -54,7 +46,6 @@ export type ApplicationLogRow = {
 // The `table` literals must match the registry's clickHouseTable values (EVENT_LOG_TYPES).
 export type WorkspaceEventEnvelope =
   | { table: 'workspaceEvent'; row: AnalyticsEventRow }
-  | { table: 'pageview'; row: PageviewRow }
   | { table: 'objectEvent'; row: ObjectEventRow }
   | { table: 'usageEvent'; row: UsageEventRow }
   | { table: 'applicationLog'; row: ApplicationLogRow };

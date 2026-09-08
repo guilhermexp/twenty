@@ -105,13 +105,6 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
     isHiddenOnLoad: true,
     isHiddenInAdminPanel: false,
   },
-  [ConfigVariablesGroup.SUPPORT_CHAT_CONFIG]: {
-    position: 1700,
-    description:
-      'We use this to setup a small support chat on the bottom left. Currently powered by Front.',
-    isHiddenOnLoad: true,
-    isHiddenInAdminPanel: true,
-  },
   [ConfigVariablesGroup.ANALYTICS_CONFIG]: {
     position: 1800,
     description:

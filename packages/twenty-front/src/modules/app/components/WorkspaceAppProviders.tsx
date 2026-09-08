@@ -3,7 +3,6 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { ApplicationsLoadEffect } from '@/applications/components/ApplicationsLoadEffect';
-import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { InitializeQueryParamStateEffect } from '@/app/effect-components/InitializeQueryParamStateEffect';
@@ -26,7 +25,6 @@ import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOv
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
-import { SupportChatEffect } from '@/support/components/SupportChatEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
@@ -83,9 +81,7 @@ export const WorkspaceAppProviders = () => {
                       </AgentChatProvider>
                     </SnackBarProvider>
                   </ContextStoreComponentInstanceContext.Provider>
-                  <SupportChatEffect />
                   <InitializeQueryParamStateEffect />
-                  <TrackPageViewEffect />
                   <RequestFreshCaptchaTokenEffect />
                   <PageChangeEffect />
                   <WelcomeOverlay />

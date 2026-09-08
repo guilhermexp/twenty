@@ -1,22 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type ClickHouseInsertOptions,
-  ClickHouseService,
-} from 'src/database/clickhouse/clickhouse.service';
+import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { type EventSink } from 'src/engine/core-modules/event-logs/ingest/event-sink';
 import {
   type WorkspaceEventEnvelope,
   type WorkspaceEventTable,
 } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
-
-const CLICKHOUSE_INSERT_OPTIONS_BY_TABLE: Partial<
-  Record<WorkspaceEventTable, ClickHouseInsertOptions>
-> = {
-  pageview: {
-    asyncInsertBusyTimeoutMaxMs: 100,
-  },
-};
 
 @Injectable()
 export class ClickHouseEventSink implements EventSink {
@@ -41,11 +30,7 @@ export class ClickHouseEventSink implements EventSink {
 
     await Promise.all(
       [...rowsByTable.entries()].map(async ([table, rows]) => {
-        const result = await this.clickHouseService.insert(
-          table,
-          rows,
-          CLICKHOUSE_INSERT_OPTIONS_BY_TABLE[table],
-        );
+        const result = await this.clickHouseService.insert(table, rows);
 
         if (!result.success) {
           throw Object.assign(

@@ -19,7 +19,6 @@ export const USER_QUERY_FRAGMENT = gql`
     hasPassword
     canAccessFullAdminPanel
     canImpersonate
-    supportUserHash
     onboardingStatus
     previousOnboardingStatus
     isWorkspaceCreator

@@ -8,8 +8,6 @@ import {
 import { type AiSdkPackage } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
-
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
@@ -156,16 +154,6 @@ export class AdminAiModelsDTO {
   defaultFastModelId?: string;
 }
 
-
-@ObjectType()
-export class Support {
-  @Field(() => SupportDriver)
-  supportDriver: SupportDriver;
-
-  @Field(() => String, { nullable: true })
-  supportFrontChatId?: string;
-}
-
 @ObjectType()
 export class Sentry {
   @Field(() => String, { nullable: true })
@@ -274,9 +262,6 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   analyticsEnabled: boolean;
-
-  @Field(() => Support)
-  support: Support;
 
   @Field(() => Boolean)
   isAttachmentPreviewEnabled: boolean;

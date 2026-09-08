@@ -28,7 +28,6 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
-import { supportChatState } from '@/client-config/states/supportChatState';
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useCallback } from 'react';
@@ -62,9 +61,6 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setIsEmailVerificationRequired = useSetAtomState(
     isEmailVerificationRequiredState,
   );
-
-  const setSupportChat = useSetAtomState(supportChatState);
-
   const setSentryConfig = useSetAtomState(sentryConfigState);
   const [clientConfigApiStatus, setClientConfigApiStatus] = useAtomState(
     clientConfigApiStatusState,
@@ -181,8 +177,6 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
       setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);
       setIsEmailVerificationRequired(clientConfig.isEmailVerificationRequired);
-      setSupportChat(clientConfig.support);
-
       setSentryConfig({
         dsn: clientConfig?.sentry?.dsn,
         release: clientConfig?.sentry?.release,
@@ -286,7 +280,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsMicrosoftCalendarEnabled,
     setIsMicrosoftMessagingEnabled,
     setSentryConfig,
-    setSupportChat,
     setAllowRequestsToTwentyIcons,
   ]);
 

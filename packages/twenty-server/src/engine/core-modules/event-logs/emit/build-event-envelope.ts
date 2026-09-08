@@ -6,11 +6,7 @@ import {
   type EventContextFields,
   type WorkspaceEventEnvelope,
 } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
-import {
-  makePageview,
-  makeTrackEvent,
-} from 'src/engine/core-modules/event-logs/emit/analytics.utils';
-import { type PageviewProperties } from 'src/engine/core-modules/event-logs/emit/events/pageview/pageview';
+import { makeTrackEvent } from 'src/engine/core-modules/event-logs/emit/analytics.utils';
 
 export const computeEventContextFields = (
   context?: EventContextFields,
@@ -54,12 +50,3 @@ export const buildObjectEventEnvelope = <T extends TrackEventName>(
     },
   };
 };
-
-export const buildPageviewEnvelope = (
-  contextFields: EventContextFields,
-  name: string,
-  properties: Partial<PageviewProperties>,
-): WorkspaceEventEnvelope => ({
-  table: 'pageview',
-  row: { ...contextFields, ...makePageview(name, properties) },
-});

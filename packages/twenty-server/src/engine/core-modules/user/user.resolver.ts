@@ -2,16 +2,12 @@ import { BadRequestException, UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import crypto from 'crypto';
-
 import { msg } from '@lingui/core/macro';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
-
-import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -77,14 +73,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-
-const getHMACKey = (email?: string, key?: string | null) => {
-  if (!email || !key) return null;
-
-  const hmac = crypto.createHmac('sha256', key);
-
-  return hmac.update(email).digest('hex');
-};
 
 @MetadataResolver(() => UserEntity)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
@@ -363,20 +351,6 @@ export class UserResolver {
   })
   hasPassword(@Parent() user: UserEntity): boolean {
     return isDefined(user.passwordHash);
-  }
-
-  @ResolveField(() => String, {
-    nullable: true,
-  })
-  supportUserHash(@Parent() parent: UserEntity): string | null {
-    if (
-      this.twentyConfigService.get('SUPPORT_DRIVER') !== SupportDriver.FRONT
-    ) {
-      return null;
-    }
-    const key = this.twentyConfigService.get('SUPPORT_FRONT_HMAC_KEY');
-
-    return getHMACKey(parent.email, key);
   }
 
   @Mutation(() => UserEntity)

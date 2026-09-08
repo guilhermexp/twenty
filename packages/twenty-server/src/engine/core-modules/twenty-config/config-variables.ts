@@ -26,8 +26,6 @@ import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
-
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
@@ -1055,34 +1053,6 @@ export class ConfigVariables {
   })
   @IsOptional()
   EVENT_SINKS: string[] = ['clickhouse'];
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
-    description: 'Driver used for support chat integration',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(SupportDriver),
-  })
-  @IsOptional()
-  @CastToUpperSnakeCase()
-  SUPPORT_DRIVER: SupportDriver = SupportDriver.NONE;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
-    isSensitive: true,
-    description: 'Chat ID for the support front integration',
-    type: ConfigVariableType.STRING,
-  })
-  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.FRONT)
-  SUPPORT_FRONT_CHAT_ID: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
-    isSensitive: true,
-    description: 'HMAC key for the support front integration',
-    type: ConfigVariableType.STRING,
-  })
-  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.FRONT)
-  SUPPORT_FRONT_HMAC_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

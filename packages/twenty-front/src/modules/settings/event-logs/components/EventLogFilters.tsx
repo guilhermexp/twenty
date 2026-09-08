@@ -84,8 +84,7 @@ export const EventLogFilters = ({
     onChange({ ...value, objectMetadataId: objectMetadataId || undefined });
   };
 
-  const eventLabel =
-    table === EventLogTable.PAGEVIEW ? t`Page name` : t`Event type`;
+  const eventLabel = t`Event type`;
 
   const userWorkspaceOptions: SelectOption<string | null>[] = [
     { label: t`All Members`, value: null, Icon: IconUser },

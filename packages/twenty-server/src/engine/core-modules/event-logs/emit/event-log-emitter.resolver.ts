@@ -15,15 +15,9 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { Analytics } from './dtos/analytics.dto';
-import {
-  CreateAnalyticsInputV2,
-  isPageviewAnalyticsInput,
-  isTrackAnalyticsInput,
-} from './dtos/create-analytics.input';
 import { EventLogEmitterService } from './event-log-emitter.service';
 
 @MetadataResolver(() => Analytics)
@@ -63,39 +57,5 @@ export class EventLogEmitterResolver {
       objectMetadataId: createObjectEventInput.objectMetadataId,
       isCustom: true,
     });
-  }
-
-  @Mutation(() => Analytics)
-  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  async trackAnalytics(
-    @Args()
-    createAnalyticsInput: CreateAnalyticsInputV2,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
-    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
-  ) {
-    const eventLogContext = this.eventLogEmitterService.createContext({
-      workspaceId: workspace?.id,
-      userId: user?.id,
-    });
-
-    if (isPageviewAnalyticsInput(createAnalyticsInput)) {
-      return eventLogContext.createPageviewEvent(
-        createAnalyticsInput.name,
-        createAnalyticsInput.properties ?? {},
-      );
-    }
-
-    if (isTrackAnalyticsInput(createAnalyticsInput)) {
-      return eventLogContext.insertWorkspaceEvent(
-        createAnalyticsInput.event,
-        createAnalyticsInput.properties ?? {},
-      );
-    }
-
-    throw new EventLogEmitterException(
-      'Invalid analytics input',
-      EventLogEmitterExceptionCode.INVALID_TYPE,
-    );
   }
 }

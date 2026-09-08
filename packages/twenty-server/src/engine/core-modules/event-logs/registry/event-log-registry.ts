@@ -7,7 +7,6 @@ import { type EventLogRecord } from 'src/engine/core-modules/event-logs/dtos/eve
 import {
   type ApplicationLogRow,
   type ObjectEventRow,
-  type PageviewRow,
   type UsageEventRow,
 } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 
@@ -15,7 +14,7 @@ type StoredRow<TRow> = Partial<Omit<TRow, 'type' | 'version'>> & {
   timestamp: string;
 };
 
-type StoredEventRow = StoredRow<ObjectEventRow & Pick<PageviewRow, 'name'>>;
+type StoredEventRow = StoredRow<ObjectEventRow>;
 
 export type EventLogTypeDefinition = {
   clickHouseTable: string;
@@ -28,39 +27,33 @@ export type EventLogTypeDefinition = {
   ) => Omit<EventLogRecord, 'timestamp'>;
 };
 
-const normalizeGenericEvent =
-  (eventFieldName: 'event' | 'name') =>
-  (row: Record<string, unknown>): Omit<EventLogRecord, 'timestamp'> => {
-    const record = row as StoredEventRow;
+const normalizeEvent = (
+  row: Record<string, unknown>,
+): Omit<EventLogRecord, 'timestamp'> => {
+  const record = row as StoredEventRow;
 
-    return {
-      event: record[eventFieldName] ?? '',
-      userId: record.userId ?? undefined,
-      properties: record.properties,
-      recordId: record.recordId,
-      objectMetadataId: record.objectMetadataId,
-      isCustom: record.isCustom,
-    };
+  return {
+    event: record.event ?? '',
+    userId: record.userId ?? undefined,
+    properties: record.properties,
+    recordId: record.recordId,
+    objectMetadataId: record.objectMetadataId,
+    isCustom: record.isCustom,
   };
+};
 
 export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
   [EventLogTable.WORKSPACE_EVENT]: {
     clickHouseTable: 'workspaceEvent',
     requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
     eventFieldName: 'event',
-    normalize: normalizeGenericEvent('event'),
-  },
-  [EventLogTable.PAGEVIEW]: {
-    clickHouseTable: 'pageview',
-    requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
-    eventFieldName: 'name',
-    normalize: normalizeGenericEvent('name'),
+    normalize: normalizeEvent,
   },
   [EventLogTable.OBJECT_EVENT]: {
     clickHouseTable: 'objectEvent',
     requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
     eventFieldName: 'event',
-    normalize: normalizeGenericEvent('event'),
+    normalize: normalizeEvent,
   },
   [EventLogTable.USAGE_EVENT]: {
     clickHouseTable: 'usageEvent',
