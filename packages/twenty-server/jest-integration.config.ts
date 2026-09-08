@@ -11,7 +11,6 @@ if (process.env.NODE_ENV === 'test') {
   dotenv.config({ path: '.env', override: true });
 }
 
-const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
 
 const tsConfig = require('./tsconfig.json');
@@ -27,7 +26,6 @@ const jestConfig: JestConfigWithTsJest = {
   rootDir: '.',
   testEnvironment: 'node',
   testPathIgnorePatterns: [
-    ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
     ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),
     // Requires an app booted as a secure deployment; run through
     // jest-integration-secure.config.ts (nx test:integration:secure).

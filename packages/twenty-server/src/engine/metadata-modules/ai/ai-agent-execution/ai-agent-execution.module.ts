@@ -2,7 +2,6 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -35,7 +34,7 @@ import { AgentRunService } from './services/agent-run.service';
     AiModelsModule,
     AiAgentModule,
     ApplicationModule,
-    BillingModule,
+
     FileUrlModule,
     WorkspaceDomainsModule,
     MetricsModule,

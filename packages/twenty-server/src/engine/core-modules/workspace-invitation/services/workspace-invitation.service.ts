@@ -312,21 +312,7 @@ export class WorkspaceInvitationService {
       );
     }
 
-    const isOnboardingInviteReward =
-      this.twentyConfigService.get('IS_BILLING_ENABLED') &&
-      (isOnboardingInviteRewardOverride ??
-        (await this.onboardingService.isOnboardingInviteTeamPending({
-          userId: sender.userId,
-          workspaceId: workspace.id,
-        })));
-
-    if (isOnboardingInviteReward) {
-      await this.throwIfOnboardingInvitationLimitReached({
-        workspaceId: workspace.id,
-        requestedCount: emails.length,
-        excludedAppTokenId: appTokenIdToInvalidate,
-      });
-    }
+    const isOnboardingInviteReward = false;
 
     await this.throttleInvitationSending(workspace.id, emails);
 
@@ -492,41 +478,6 @@ export class WorkspaceInvitationService {
     return this.appTokenRepository.save(invitationToken);
   }
 
-  private async throwIfOnboardingInvitationLimitReached({
-    workspaceId,
-    requestedCount,
-    excludedAppTokenId,
-  }: {
-    workspaceId: string;
-    requestedCount: number;
-    excludedAppTokenId?: string;
-  }) {
-    const maxOnboardingInvitations = this.twentyConfigService.get(
-      'ONBOARDING_INVITE_TEAM_MAX_INVITES',
-    );
-
-    const existingOnboardingInvitations = await this.appTokenRepository.count({
-      where: {
-        workspaceId,
-        type: AppTokenType.OnboardingInvitationToken,
-        deletedAt: IsNull(),
-        expiresAt: MoreThan(new Date()),
-        ...(isDefined(excludedAppTokenId)
-          ? { id: Not(excludedAppTokenId) }
-          : {}),
-      },
-    });
-
-    if (
-      existingOnboardingInvitations + requestedCount >
-      maxOnboardingInvitations
-    ) {
-      throw new WorkspaceInvitationException(
-        `Onboarding invitation limit (${maxOnboardingInvitations}) reached for workspace ${workspaceId}`,
-        WorkspaceInvitationExceptionCode.TOO_MANY_ONBOARDING_INVITATIONS,
-      );
-    }
-  }
 
   private async throttleInvitationSending(
     workspaceId: string,

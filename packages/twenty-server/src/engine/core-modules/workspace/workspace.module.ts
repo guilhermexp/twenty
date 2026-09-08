@@ -6,8 +6,6 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { CompanyEnrichmentModule } from 'src/engine/core-modules/company-enrichment/company-enrichment.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { CustomDomainManagerModule } from 'src/engine/core-modules/domain/custom-domain-manager/custom-domain-manager.module';
@@ -31,7 +29,6 @@ import { WorkspaceService } from 'src/engine/core-modules/workspace/services/wor
 import { WorkspaceGaugeService } from 'src/engine/core-modules/workspace/workspace-gauge.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
-import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -48,14 +45,14 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
   imports: [
     TypeORMModule,
     TypeOrmModule.forFeature([
-      BillingSubscriptionEntity,
+
       WorkspaceEntity,
       UserEntity,
       UserWorkspaceEntity,
     ]),
     MetricsModule,
     StandardObjectsPrefillModule,
-    BillingModule,
+
     FileModule,
     TokenModule,
     ObjectMetadataModule,
@@ -90,7 +87,7 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
     WorkspaceService,
     WorkspaceGaugeService,
     WorkspaceEntityCacheProviderService,
-    BillingDisabledGuard,
+
     CheckCustomDomainValidRecordsCronCommand,
     CheckCustomDomainValidRecordsCronJob,
   ],

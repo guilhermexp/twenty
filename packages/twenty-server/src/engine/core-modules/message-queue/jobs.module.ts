@@ -4,16 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
-import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
-import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
-import { ApplicationRecurringChargeModule } from 'src/engine/core-modules/billing/app-billing/application-recurring-charge.module';
-import { ApplicationRecurringChargeCronJob } from 'src/engine/core-modules/billing/app-billing/crons/jobs/application-recurring-charge.cron.job';
-import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders/billing-reminder.module';
-import { BillingReminderCronJob } from 'src/engine/core-modules/billing/reminders/crons/billing-reminder.cron.job';
-import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -67,16 +57,16 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
   imports: [
     TypeOrmModule.forFeature([
       WorkspaceEntity,
-      BillingSubscriptionEntity,
-      BillingSubscriptionItemEntity,
-      BillingProductEntity,
+
+
+
     ]),
     ObjectMetadataModule,
     TypeORMModule,
     UserModule,
     UserVarsModule,
     EmailModule,
-    BillingModule,
+
     UserWorkspaceModule,
     WorkspaceModule,
     AuthModule,
@@ -84,7 +74,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CalendarModule,
     CalendarEventParticipantManagerModule,
     TimelineActivityModule,
-    StripeModule,
+
     FeatureFlagModule,
     AutoCompaniesAndContactsCreationJobModule,
     TimelineJobModule,
@@ -106,12 +96,12 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     ApplicationUpgradeModule,
     PreInstalledAppsModule,
     OnboardingModule,
-    BillingReminderModule,
-    ApplicationRecurringChargeModule,
+
+
   ],
   providers: [
-    ApplicationRecurringChargeCronJob,
-    BillingReminderCronJob,
+
+
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,
@@ -120,7 +110,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     MaterializeCampaignChunkJob,
     RefreshCampaignStatsJob,
     ReconcileWorkspaceCampaignStatsJob,
-    UpdateSubscriptionQuantityJob,
+
     HandleWorkspaceMemberDeletedJob,
     WorkspaceDeletionApplicationUninstallJob,
     CleanWorkspaceDeletionWarningUserVarsJob,

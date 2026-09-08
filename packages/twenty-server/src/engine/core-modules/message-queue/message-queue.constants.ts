@@ -12,7 +12,6 @@ export enum MessageQueue {
   calendarQueue = 'calendar-queue',
   connectedAccountSyncWebhookQueue = 'connected-account-sync-webhook-queue',
   contactCreationQueue = 'contact-creation-queue',
-  billingQueue = 'billing-queue',
   workspaceQueue = 'workspace-queue',
   entityEventsToDbQueue = 'entity-events-to-db-queue',
   workflowQueue = 'workflow-queue',

@@ -3,7 +3,6 @@
 import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
 
 type HasCustomAiProviderAccessArgs = {
-  isBillingEnabled: boolean;
   hasValidEnterprisePlan: boolean;
   seatCount: number;
 };
@@ -12,10 +11,8 @@ type HasCustomAiProviderAccessArgs = {
 // threshold would always trip; there the plan is enforced per workspace by
 // billing entitlements instead.
 export const hasCustomAiProviderAccess = ({
-  isBillingEnabled,
   hasValidEnterprisePlan,
   seatCount,
 }: HasCustomAiProviderAccessArgs): boolean =>
-  isBillingEnabled ||
   hasValidEnterprisePlan ||
   seatCount <= MAX_SEATS_WITHOUT_ENTERPRISE_KEY;

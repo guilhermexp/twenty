@@ -1260,28 +1260,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
     payload: { path: '/settings/domains' },
   },
-  goToSettingsBilling: {
-    universalIdentifier: 'f46a0fb9-14e9-4d48-801d-c33bdd543f74',
-    label: i18nLabel(
-      msg({
-        message: `Go to Billing Settings`,
-        context: 'commandMenuItem.label',
-      }),
-    ),
-    icon: 'IconCreditCard',
-    isPinned: false,
-    position: 57,
-    shortLabel: i18nLabel(
-      msg({ message: `Billing`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression: 'permissionFlags.WORKSPACE',
-    availabilityObjectMetadataUniversalIdentifier: null,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.NAVIGATION,
-    hotKeys: null,
-    payload: { path: '/settings/billing' },
-  },
   goToSettingsApiWebhooks: {
     universalIdentifier: 'ed2c2fde-1e7a-4a42-ba63-221eaa7c9759',
     label: i18nLabel(

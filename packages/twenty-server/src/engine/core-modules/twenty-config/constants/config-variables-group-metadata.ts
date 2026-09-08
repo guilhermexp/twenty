@@ -64,13 +64,6 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
     isHiddenOnLoad: true,
     isHiddenInAdminPanel: false,
   },
-  [ConfigVariablesGroup.BILLING_CONFIG]: {
-    position: 1100,
-    description:
-      'We use Stripe in our Cloud app to charge customers. Not relevant to Self-hosters.',
-    isHiddenOnLoad: true,
-    isHiddenInAdminPanel: true,
-  },
   [ConfigVariablesGroup.CAPTCHA_CONFIG]: {
     position: 1200,
     description:

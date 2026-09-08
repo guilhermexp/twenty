@@ -10,7 +10,6 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
@@ -157,20 +156,6 @@ export class AdminAiModelsDTO {
   defaultFastModelId?: string;
 }
 
-@ObjectType()
-export class Billing {
-  @Field(() => Boolean)
-  isBillingEnabled: boolean;
-
-  @Field(() => String, { nullable: true })
-  billingUrl?: string;
-
-  @Field(() => String, { nullable: true })
-  stripePublishableKey?: string;
-
-  @Field(() => [BillingTrialPeriodDTO])
-  trialPeriods: BillingTrialPeriodDTO[];
-}
 
 @ObjectType()
 export class Support {
@@ -265,8 +250,6 @@ export class ClientConfig {
   @Field(() => AuthProvidersDTO, { nullable: false })
   authProviders: AuthProvidersDTO;
 
-  @Field(() => Billing, { nullable: false })
-  billing: Billing;
 
   @Field(() => [ClientAiModelConfig])
   aiModels: ClientAiModelConfig[];

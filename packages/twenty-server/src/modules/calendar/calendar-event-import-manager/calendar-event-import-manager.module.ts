@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -57,7 +56,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     GoogleCalendarDriverModule,
     CalDavDriverModule,
     MicrosoftCalendarDriverModule,
-    BillingModule,
+
     RefreshTokensManagerModule,
     ConnectedAccountModule,
     EmailAliasManagerModule,

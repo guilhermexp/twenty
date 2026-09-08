@@ -15,7 +15,6 @@ import { RedisHealthIndicator } from 'src/engine/core-modules/admin-panel/indica
 import { WorkerHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/worker.health';
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { AdminPanelAiProviderService } from 'src/engine/core-modules/admin-panel/services/admin-panel-ai-provider.service';
-import { AdminPanelBillingService } from 'src/engine/core-modules/admin-panel/services/admin-panel-billing.service';
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
 import { AdminPanelGlobalChatThreadsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-global-chat-threads.service';
 import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
@@ -26,9 +25,6 @@ import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
-import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
@@ -62,11 +58,9 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       FeatureFlagEntity,
       AgentChatThreadEntity,
       AgentMessageEntity,
-      BillingCustomerEntity,
-      BillingPriceEntity,
     ]),
     AuthModule,
-    BillingModule,
+
     FileModule,
     WorkspaceDomainsModule,
     RedisClientModule,
@@ -96,7 +90,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AdminPanelUserLookupService,
     AdminPanelServerAdminService,
     AdminPanelStatisticsService,
-    AdminPanelBillingService,
     AdminPanelChatService,
     AdminPanelGlobalChatThreadsService,
     AdminPanelConfigService,
@@ -112,7 +105,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AppHealthIndicator,
     provideWorkspaceScopedRepository(AgentMessageEntity),
     provideWorkspaceScopedRepository(FeatureFlagEntity),
-    provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
   exports: [
     AdminPanelUserLookupService,

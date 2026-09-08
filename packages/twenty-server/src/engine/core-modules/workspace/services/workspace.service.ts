@@ -24,8 +24,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
@@ -140,8 +138,6 @@ export class WorkspaceService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
@@ -475,10 +471,6 @@ export class WorkspaceService {
 
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
-
-    const hasWorkspaceAnySubscription =
-      await this.billingService.hasWorkspaceAnySubscription(workspaceId);
-
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -486,11 +478,8 @@ export class WorkspaceService {
 
     try {
       await queryRunner.manager.update(WorkspaceEntity, workspaceId, {
-        activationStatus: hasWorkspaceAnySubscription
-          ? WorkspaceActivationStatus.ACTIVE
-          : WorkspaceActivationStatus.CREATED,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
-
       await this.upgradeMigrationService.markAsWorkspaceInitial({
         name: initialCursor.name,
         workspaceId,
@@ -582,9 +571,6 @@ export class WorkspaceService {
 
     this.logger.log(`workspace ${id} cache flushed`);
 
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.cancelSubscription(workspace.id);
-    }
 
     await this.workspaceRepository.softDelete({ id, deletedAt: IsNull() });
     await this.coreEntityCacheService.invalidate('workspaceEntity', id);
@@ -620,11 +606,6 @@ export class WorkspaceService {
 
           this.logger.log(`workspace ${workspace.id} cache flushed`);
 
-          if (this.billingService.isBillingEnabled()) {
-            await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
-              workspace.id,
-            );
-          }
 
           await this.runPendingApplicationUninstallHooksBeforeHardDelete(
             workspace,

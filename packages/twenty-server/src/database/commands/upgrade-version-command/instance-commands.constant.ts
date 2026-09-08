@@ -75,7 +75,6 @@ import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/comm
 import { AddListViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1785929606728-add-list-view-type';
 import { AddListWidgetViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1786227282471-add-list-widget-view-type';
 import { AddRelationTargetFieldMetadataIdToViewFilterEarly2_4FastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1747234400000-add-relation-target-field-metadata-id-to-view-filter';
-import { AddMetadataToBillingPriceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1777100000000-add-metadata-to-billing-price';
 import { AddEmailGroupChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778256809018-add-email-group-channel-type';
 import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1798000003000-add-application-id-to-public-domain';
 import { AddRelationTargetFieldMetadataIdToViewFilterEarly2_5FastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1747234500000-add-relation-target-field-metadata-id-to-view-filter';
@@ -201,7 +200,6 @@ export const INSTANCE_COMMANDS = [
   AddIsPreInstalledToApplicationRegistrationFastInstanceCommand,
   AddProviderExecutedToAgentMessagePartFastInstanceCommand,
   BackfillPageLayoutWidgetPositionSlowInstanceCommand,
-  AddMetadataToBillingPriceFastInstanceCommand,
   AddCacheTokensToAgentChatThreadFastInstanceCommand,
   AddLogoToApplicationFastInstanceCommand,
   AddDeletedAtToAgentChatThreadFastInstanceCommand,

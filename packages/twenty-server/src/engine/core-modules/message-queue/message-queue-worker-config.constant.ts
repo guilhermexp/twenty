@@ -103,15 +103,6 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
-  [MessageQueue.billingQueue]: {
-    priority: 1,
-    workerOptions: {
-      concurrency: 1,
-      lockDuration: 30_000,
-      maxStalledCount: 1,
-      boundedShutdownDrain: false,
-    },
-  },
   [MessageQueue.workspaceQueue]: {
     priority: 5,
     workerOptions: {

@@ -67,7 +67,6 @@ $$;`,
       'firebase',
       'logflare',
       's3',
-      'stripe',
     ]; // See https://supabase.github.io/wrappers/
 
     for (const wrapper of supabaseWrappers) {

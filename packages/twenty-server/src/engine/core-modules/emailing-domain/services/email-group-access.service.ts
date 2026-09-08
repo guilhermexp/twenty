@@ -2,7 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   EmailGroupAccessException,
   EmailGroupAccessExceptionCode,
@@ -14,15 +13,11 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 @Injectable()
 export class EmailGroupAccessService {
   constructor(
-    private readonly billingService: BillingService,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   validateEmailGroupAccessOrThrow(): void {
-    if (this.billingService.isBillingEnabled()) {
-      return;
-    }
 
     if (
       COMMUNITY_EMAILING_DOMAIN_DRIVERS.includes(

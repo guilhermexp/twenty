@@ -28,7 +28,6 @@ export type MicrosoftRequest = Omit<
     locale?: keyof typeof APP_LOCALES | null;
     workspaceInviteHash?: string;
     workspaceId?: string;
-    billingCheckoutSessionState?: string;
     action: SocialSsoSignInUpActionType;
     returnToPath?: string;
   };
@@ -55,7 +54,6 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
         workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
         locale: req.query.locale,
-        billingCheckoutSessionState: req.query.billingCheckoutSessionState,
         action: req.query.action,
         returnToPath: req.query.returnToPath,
         oauthRetryCount: req.query.oauthRetryCount
@@ -91,7 +89,6 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       picture: photos?.[0]?.value ?? null,
       workspaceInviteHash: state?.workspaceInviteHash,
       workspaceId: state?.workspaceId,
-      billingCheckoutSessionState: state?.billingCheckoutSessionState,
       locale: state?.locale,
       action: state?.action ?? 'list-available-workspaces',
       returnToPath: state?.returnToPath,

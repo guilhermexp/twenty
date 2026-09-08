@@ -17,7 +17,6 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ConfigVariableExceptionCode } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
-import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -59,7 +58,6 @@ export class EnterpriseResolver {
   @Query(() => String, { nullable: true })
   @UseGuards(
     WorkspaceAuthGuard,
-    BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,
   )
@@ -73,7 +71,6 @@ export class EnterpriseResolver {
   @Query(() => String, { nullable: true })
   @UseGuards(
     WorkspaceAuthGuard,
-    BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,
   )
@@ -90,7 +87,6 @@ export class EnterpriseResolver {
   @Query(() => EnterpriseSubscriptionStatusDTO, { nullable: true })
   @UseGuards(
     WorkspaceAuthGuard,
-    BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,
   )
@@ -101,7 +97,6 @@ export class EnterpriseResolver {
   @Mutation(() => Boolean)
   @UseGuards(
     WorkspaceAuthGuard,
-    BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,
   )
@@ -116,7 +111,6 @@ export class EnterpriseResolver {
   @Mutation(() => EnterpriseLicenseInfoDTO)
   @UseGuards(
     WorkspaceAuthGuard,
-    BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,
   )
@@ -135,7 +129,6 @@ export class EnterpriseResolver {
   @Mutation(() => EnterpriseLicenseInfoDTO)
   @UseGuards(
     WorkspaceAuthGuard,
-    BillingDisabledGuard,
     AdminPanelGuard,
     NoPermissionGuard,
   )

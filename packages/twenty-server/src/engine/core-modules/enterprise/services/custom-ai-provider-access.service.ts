@@ -9,7 +9,6 @@ import { CUSTOM_AI_PROVIDER_ACCESS_RETRY_INTERVAL_MS } from 'src/engine/core-mod
 import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-enterprise-key.constant';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { hasCustomAiProviderAccess } from 'src/engine/core-modules/enterprise/utils/has-custom-ai-provider-access.util';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type CustomAiProviderAccess = {
   hasAccess: boolean;
@@ -28,7 +27,6 @@ export class CustomAiProviderAccessService {
   private didLastRefreshFail = false;
 
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
@@ -41,7 +39,6 @@ export class CustomAiProviderAccessService {
       const seatCount = await this.enterprisePlanService.getBillableSeatCount();
 
       this.hasAccess = hasCustomAiProviderAccess({
-        isBillingEnabled: this.twentyConfigService.get('IS_BILLING_ENABLED'),
         hasValidEnterprisePlan: this.enterprisePlanService.isValid(),
         seatCount,
       });

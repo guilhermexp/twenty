@@ -11,7 +11,6 @@ import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-executi
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
-import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type WorkflowAutomatedTriggerMaps } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
@@ -37,7 +36,6 @@ export type AdditionalCacheDataMaps = {
   flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
   applicationVariableMaps: ApplicationVariableCacheMaps;
   graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
-  currentBillingSubscription: CurrentBillingSubscription;
   workflowAutomatedTriggerMaps: WorkflowAutomatedTriggerMaps;
   usageLimits: UsageLimits;
 };
