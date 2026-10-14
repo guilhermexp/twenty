@@ -49,8 +49,8 @@ export class ApplicationRegistrationSummaryDTO {
   @Field(() => String, { nullable: true })
   issueReportUrl?: string | null;
 
-  @Field(() => [String])
-  galleryImageUrls?: string[];
+  @Field(() => [String], { nullable: true })
+  galleryImageUrls?: string[] | null;
 
   @Field(() => GraphQLJSON, { nullable: true })
   manifest?: Manifest | null;

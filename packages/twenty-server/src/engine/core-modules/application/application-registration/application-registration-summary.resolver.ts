@@ -22,7 +22,7 @@ export class ApplicationRegistrationSummaryResolver {
     );
   }
 
-  @ResolveField(() => [String])
+  @ResolveField(() => [String], { nullable: true })
   galleryImageUrls(
     @Parent() registration: ApplicationRegistrationEntity,
   ): string[] {
