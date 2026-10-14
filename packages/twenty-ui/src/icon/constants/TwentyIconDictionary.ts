@@ -510,16 +510,6 @@ export const TWENTY_ICON_DICTIONARY = [
       'Representing a generic integration, user account, or email field.',
   },
   {
-    key: 'marketplace',
-    label: 'Marketplace',
-    category: 'platform',
-    iconName: 'IconShoppingBag',
-    tablerName: 'shopping-bag',
-    keywords: ['marketplace', 'app catalog', 'browse apps', 'marketplace apps'],
-    useWhen: 'Representing the app marketplace or marketplace catalog.',
-    avoidWhen: 'Representing an installed app or the action of installing one.',
-  },
-  {
     key: 'application-version',
     label: 'Application Version',
     category: 'platform',

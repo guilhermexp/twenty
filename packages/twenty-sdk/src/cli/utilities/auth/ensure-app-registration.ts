@@ -68,7 +68,7 @@ export const ensureAppRegistration = async (
     appRefreshToken: undefined,
   });
 
-  // The registration may be a catalog-synced npm app owned by another (or no)
+  // The registration may be a published npm app owned by another (or no)
   // workspace, so rotating its shared client secret is neither allowed nor
   // desirable. Dev mode mints workspace-scoped app tokens via the
   // generateApplicationToken mutation instead.

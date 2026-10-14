@@ -30,7 +30,7 @@ Full documentation is available at **[docs.twenty.com/developers/extend/apps](ht
 
 - [Getting Started](https://docs.twenty.com/developers/extend/apps/getting-started) — scaffolding, local server, authentication, dev mode
 - [Building Apps](https://docs.twenty.com/developers/extend/apps/building) — entity definitions, API clients, testing, CLI reference
-- [Publishing](https://docs.twenty.com/developers/extend/apps/publishing) — deploy, npm publish, marketplace
+- [Publishing](https://docs.twenty.com/developers/extend/apps/publishing) — deploy, npm publish
 
 Guides in this repository:
 

@@ -177,16 +177,6 @@ export const registerDevCommands = (program: Command): void => {
     });
 
   program
-    .command('dev:catalog-sync')
-    .description('Trigger marketplace catalog sync')
-    .option('-r, --remote <name>', 'Sync on a specific remote')
-    .action(async (options: { remote?: string }) => {
-      const { CatalogSyncCommand } = await import('./catalog-sync');
-      const cmd = new CatalogSyncCommand();
-      await cmd.execute({ remote: options.remote });
-    });
-
-  program
     .command('dev:generate-client [appPath]')
     .description(
       'Generate the typed API client from the active remote (no app definition required)',

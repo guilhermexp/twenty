@@ -20,9 +20,9 @@ const isTokenExpired = (token: string): boolean => {
 export type AppTokenSources = {
   credentials?: { clientId: string; clientSecret: string };
   // Workspace-scoped token minting (generateApplicationToken mutation). Used
-  // when the registration is not owned by this workspace (e.g. an app synced
-  // from the marketplace catalog), where no client secret is available and
-  // rotating the shared one would break the published app.
+  // when the registration is not owned by this workspace (e.g. a published
+  // npm app), where no client secret is available and rotating the shared
+  // one would break the published app.
   fetchTokenPair?: () => Promise<
     { accessToken: string; refreshToken?: string } | undefined
   >;

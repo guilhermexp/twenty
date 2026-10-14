@@ -101,10 +101,6 @@ export class ApiService {
     return this.applicationApi.uninstallApplication(universalIdentifier);
   }
 
-  syncMarketplaceCatalog(): Promise<ApiResponse<boolean>> {
-    return this.applicationApi.syncMarketplaceCatalog();
-  }
-
   getSchema(options?: {
     appAccessToken?: string;
   }): Promise<ApiResponse<string>> {

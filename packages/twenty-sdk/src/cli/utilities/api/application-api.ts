@@ -11,44 +11,6 @@ import { isDefined } from 'twenty-shared/utils';
 export class ApplicationApi {
   constructor(private readonly client: AxiosInstance) {}
 
-  async syncMarketplaceCatalog(): Promise<ApiResponse<boolean>> {
-    try {
-      const query = `
-        mutation SyncMarketplaceCatalog {
-          syncMarketplaceCatalog
-        }
-      `;
-
-      const response = await this.client.post(
-        '/metadata',
-        { query },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: '*/*',
-          },
-        },
-      );
-
-      if (response.data.errors) {
-        return {
-          success: false,
-          error: response.data.errors[0],
-        };
-      }
-
-      return {
-        success: true,
-        data: response.data.data.syncMarketplaceCatalog,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error,
-      };
-    }
-  }
-
   async findApplicationRegistrationByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<

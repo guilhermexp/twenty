@@ -187,14 +187,4 @@ export const registerDeprecatedCommands = (program: Command): void => {
         process.exit(1);
       }
     });
-
-  program
-    .command('catalog-sync', { hidden: true })
-    .option('-r, --remote <name>', 'Sync on a specific remote')
-    .action(async (options: { remote?: string }) => {
-      deprecate('catalog-sync', 'dev:catalog-sync');
-      const { CatalogSyncCommand } = await import('./dev/catalog-sync');
-      const cmd = new CatalogSyncCommand();
-      await cmd.execute({ remote: options.remote });
-    });
 };
