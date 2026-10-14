@@ -85,7 +85,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     ? getAppPath(AppPath.AiChat, { threadId: null })
     : defaultHomePagePath;
 
-
   if (
     (!isLogged || !isOnAWorkspace || !isDefined(currentWorkspace)) &&
     !someMatchingLocationOf([
@@ -95,7 +94,6 @@ export const usePageChangeEffectNavigateLocation = () => {
   ) {
     return AppPath.SignInUp;
   }
-
 
   if (isWorkspaceSuspended) {
     if (!isMatchingLocation(location, AppPath.SettingsCatchAll)) {
@@ -163,7 +161,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.BookCall;
   }
 
-
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&
     someMatchingLocationOf([
@@ -174,7 +171,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     isLogged &&
     isOnAWorkspace
   ) {
-
     return resolvedReturnToPath ?? onboardingCompletedPath;
   }
 

@@ -77,7 +77,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     navigateSettings(SettingsPath.ProfilePage);
   };
 
-
   const handleChange = async (availableWorkspace: AvailableWorkspace) => {
     redirectToWorkspaceDomain(
       getWorkspaceUrl(availableWorkspace.workspaceUrls),

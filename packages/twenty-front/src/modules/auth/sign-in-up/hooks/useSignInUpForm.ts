@@ -68,10 +68,7 @@ export const useSignInUpForm = () => {
     }
 
     if (isDeveloperDefaultSignInPrefilled === true) {
-      form.setValue(
-        'email',
-        prefilledEmail ?? REACT_APP_DEV_AUTO_LOGIN_EMAIL,
-      );
+      form.setValue('email', prefilledEmail ?? REACT_APP_DEV_AUTO_LOGIN_EMAIL);
       form.setValue('password', REACT_APP_DEV_AUTO_LOGIN_PASSWORD);
     }
   }, [form, isDeveloperDefaultSignInPrefilled, prefilledEmail]);

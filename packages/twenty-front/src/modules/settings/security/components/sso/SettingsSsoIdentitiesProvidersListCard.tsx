@@ -51,10 +51,7 @@ export const SettingsSsoIdentitiesProvidersListCard = () => {
   return loading || !ssoIdentitiesProviders.length ? (
     <StyledLinkContainer isDisabled={false}>
       <Link to={getSettingsPath(SettingsPath.NewSsoIdentityProvider)}>
-        <SettingsCard
-          title={t`Add SSO Identity Provider`}
-          Icon={<IconKey />}
-        />
+        <SettingsCard title={t`Add SSO Identity Provider`} Icon={<IconKey />} />
       </Link>
     </StyledLinkContainer>
   ) : (

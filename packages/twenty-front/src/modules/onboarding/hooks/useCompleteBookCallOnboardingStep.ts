@@ -27,7 +27,6 @@ export const useCompleteBookCallOnboardingStep = () => {
           ? 'clearAfterIrreversibleStep'
           : 'recordAsReversible',
       });
-
     },
     [
       completeBookCallOnboardingStepMutation,

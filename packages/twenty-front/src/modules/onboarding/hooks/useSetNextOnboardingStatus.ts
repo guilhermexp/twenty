@@ -121,11 +121,6 @@ export const useSetNextOnboardingStatus = () => {
         );
       }
     },
-    [
-      currentUser,
-      currentWorkspace,
-      isOnboardingAiChatEnabled,
-      store,
-    ],
+    [currentUser, currentWorkspace, isOnboardingAiChatEnabled, store],
   );
 };

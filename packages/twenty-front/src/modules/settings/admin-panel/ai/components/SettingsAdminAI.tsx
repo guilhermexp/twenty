@@ -314,40 +314,40 @@ export const SettingsAdminAI = () => {
           }
         />
         {usageByWorkspace.length > 0 ? (
-            <Table>
-              <TableRow gridTemplateColumns={USAGE_TABLE_GRID_TEMPLATE_COLUMNS}>
-                <TableHeader>{t`Workspace`}</TableHeader>
-                <TableHeader align="right">{t`Usage`}</TableHeader>
-              </TableRow>
-              {usageByWorkspace.map((item) => (
-                <TableRow
-                  key={item.key}
-                  gridTemplateColumns={USAGE_TABLE_GRID_TEMPLATE_COLUMNS}
-                  to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
-                    workspaceId: item.key,
-                  })}
-                >
-                  <TableCell color={themeCssVariables.font.color.primary}>
-                    {item.label ?? item.key}
-                  </TableCell>
-                  <TableCell align="right">
-                    {formatUsageValue(item.creditsUsed)}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </Table>
-          ) : (
-            <Card rounded>
-              <TableRow gridTemplateColumns="1fr">
-                <TableCell
-                  color={themeCssVariables.font.color.tertiary}
-                  align="center"
-                >
-                  {t`No AI usage data recorded yet.`}
+          <Table>
+            <TableRow gridTemplateColumns={USAGE_TABLE_GRID_TEMPLATE_COLUMNS}>
+              <TableHeader>{t`Workspace`}</TableHeader>
+              <TableHeader align="right">{t`Usage`}</TableHeader>
+            </TableRow>
+            {usageByWorkspace.map((item) => (
+              <TableRow
+                key={item.key}
+                gridTemplateColumns={USAGE_TABLE_GRID_TEMPLATE_COLUMNS}
+                to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
+                  workspaceId: item.key,
+                })}
+              >
+                <TableCell color={themeCssVariables.font.color.primary}>
+                  {item.label ?? item.key}
+                </TableCell>
+                <TableCell align="right">
+                  {formatUsageValue(item.creditsUsed)}
                 </TableCell>
               </TableRow>
-            </Card>
-          )}
+            ))}
+          </Table>
+        ) : (
+          <Card rounded>
+            <TableRow gridTemplateColumns="1fr">
+              <TableCell
+                color={themeCssVariables.font.color.tertiary}
+                align="center"
+              >
+                {t`No AI usage data recorded yet.`}
+              </TableCell>
+            </TableRow>
+          </Card>
+        )}
       </Section>
     </>
   );
