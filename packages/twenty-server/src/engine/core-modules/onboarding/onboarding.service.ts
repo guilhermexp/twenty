@@ -31,6 +31,11 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY]: ReversibleOnboardingStep[];
 };
+const REVERSIBLE_ONBOARDING_STEPS: Record<ReversibleOnboardingStep, true> = {
+  [OnboardingStatus.SYNC_EMAIL]: true,
+  [OnboardingStatus.PROFILE_CREATION]: true,
+  [OnboardingStatus.INVITE_TEAM]: true,
+};
 
 @Injectable()
 export class OnboardingService {
@@ -272,7 +277,11 @@ export class OnboardingService {
       key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
     });
 
-    return Array.isArray(reversibleStepHistory) ? reversibleStepHistory : [];
+    return Array.isArray(reversibleStepHistory)
+      ? reversibleStepHistory.filter(
+          (step) => REVERSIBLE_ONBOARDING_STEPS[step] === true,
+        )
+      : [];
   }
 
   private async setReversibleOnboardingStepHistory(
