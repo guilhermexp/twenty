@@ -20,6 +20,7 @@ const buildFieldMaps = (
   return {
     byUniversalIdentifier,
     universalIdentifierById,
+    universalIdentifiersByApplicationId: {},
   };
 };
 

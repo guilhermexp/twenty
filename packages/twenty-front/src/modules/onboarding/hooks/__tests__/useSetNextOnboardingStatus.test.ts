@@ -5,9 +5,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
-import { ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingBookCallPendingUserVarKey';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
@@ -33,8 +31,6 @@ type RenderHooksOptions = {
   withOneWorkspaceMember?: boolean;
   isOnboardingAiChatEnabled?: boolean;
   stepHistoryEffect?: OnboardingStepHistoryEffect;
-  isBookCallOnboardingStepEnabled?: boolean;
-  isBookCallOnboardingStepPending?: boolean;
   isWorkspaceCreator?: boolean;
 };
 
@@ -44,8 +40,6 @@ const renderHooks = (
     withOneWorkspaceMember = true,
     isOnboardingAiChatEnabled = false,
     stepHistoryEffect = 'leaveUnchanged',
-    isBookCallOnboardingStepEnabled = false,
-    isBookCallOnboardingStepPending = false,
     isWorkspaceCreator = true,
   }: RenderHooksOptions = {},
 ) => {
@@ -61,9 +55,6 @@ const renderHooks = (
         currentUserWorkspaceState,
       );
       const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
-      const setIsBookCallOnboardingStepEnabled = useSetAtomState(
-        isBookCallOnboardingStepEnabledState,
-      );
       const setNextOnboardingStatus = useSetNextOnboardingStatus();
       const isWelcomeAnimationVisible = useAtomStateValue(
         isWelcomeAnimationVisibleState,
@@ -76,7 +67,6 @@ const renderHooks = (
         setCurrentUser,
         setCurrentWorkspace,
         setCurrentUserWorkspace,
-        setIsBookCallOnboardingStepEnabled,
         setNextOnboardingStatus,
         isWelcomeAnimationVisible,
         shouldOpenAiChatAfterOnboarding,
@@ -93,8 +83,6 @@ const renderHooks = (
       isWorkspaceCreator,
       userVars: {
         ...mockedUserData.userVars,
-        [ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY]:
-          isBookCallOnboardingStepPending,
       },
     });
     result.current.setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
@@ -102,9 +90,6 @@ const renderHooks = (
       ...mockCurrentWorkspace,
       workspaceMembersCount: withOneWorkspaceMember ? 1 : 2,
     });
-    result.current.setIsBookCallOnboardingStepEnabled(
-      isBookCallOnboardingStepEnabled,
-    );
   });
   act(() => {
     result.current.setNextOnboardingStatus({ stepHistoryEffect });
@@ -185,66 +170,6 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
 
-  it('should book a call after inviting the team when the server flagged the step', () => {
-    const {
-      nextOnboardingStatus,
-      isWelcomeAnimationVisible,
-      shouldOpenAiChatAfterOnboarding,
-    } = renderHooks(OnboardingStatus.INVITE_TEAM, {
-      isBookCallOnboardingStepEnabled: true,
-      isBookCallOnboardingStepPending: true,
-    });
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.BOOK_CALL);
-    expect(isWelcomeAnimationVisible).toBe(false);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
-  });
-
-  it('should book a call after profile creation when more than 1 workspaceMember exist', () => {
-    const { nextOnboardingStatus } = renderHooks(
-      OnboardingStatus.PROFILE_CREATION,
-      {
-        withOneWorkspaceMember: false,
-        isBookCallOnboardingStepEnabled: true,
-        isBookCallOnboardingStepPending: true,
-      },
-    );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.BOOK_CALL);
-  });
-
-  it.each([
-    {
-      isBookCallOnboardingStepEnabled: true,
-      isBookCallOnboardingStepPending: false,
-    },
-    {
-      isBookCallOnboardingStepEnabled: false,
-      isBookCallOnboardingStepPending: true,
-    },
-    {
-      isBookCallOnboardingStepEnabled: false,
-      isBookCallOnboardingStepPending: false,
-    },
-  ])(
-    'should complete after inviting the team when book-call is skipped (enabled is $isBookCallOnboardingStepEnabled and pending is $isBookCallOnboardingStepPending)',
-    (options) => {
-      const { nextOnboardingStatus } = renderHooks(
-        OnboardingStatus.INVITE_TEAM,
-        options,
-      );
-      expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-    },
-  );
-  it('should complete after booking a call', () => {
-    const { nextOnboardingStatus, isWelcomeAnimationVisible } = renderHooks(
-      OnboardingStatus.BOOK_CALL,
-      {
-        isBookCallOnboardingStepEnabled: true,
-        isBookCallOnboardingStepPending: true,
-      },
-    );
-    expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-    expect(isWelcomeAnimationVisible).toBe(true);
-  });
 
   it('should not show the welcome animation when the onboarding was already completed', () => {
     const {
@@ -327,38 +252,6 @@ describe('useSetNextOnboardingStatus', () => {
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
 
-  it('should honour a pending book-call flag that arrives after the callback was captured', () => {
-    jotaiStore.set(currentUserState.atom, {
-      ...mockedUserData,
-      onboardingStatus: OnboardingStatus.INVITE_TEAM,
-    });
-    jotaiStore.set(currentWorkspaceState.atom, {
-      ...mockCurrentWorkspace,
-      workspaceMembersCount: 1,
-    });
-    jotaiStore.set(isBookCallOnboardingStepEnabledState.atom, true);
-
-    const { result } = renderHook(() => useSetNextOnboardingStatus(), {
-      wrapper: Wrapper,
-    });
-
-    const advanceCapturedBeforeEnrichment = result.current;
-
-    act(() => {
-      jotaiStore.set(currentUserState.atom, (current) => ({
-        ...current!,
-        userVars: {
-          ...current?.userVars,
-          [ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY]: true,
-        },
-      }));
-      advanceCapturedBeforeEnrichment({ stepHistoryEffect: 'leaveUnchanged' });
-    });
-
-    expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toEqual(
-      OnboardingStatus.BOOK_CALL,
-    );
-  });
 
   it('should still sync emails when the server status landed before advancing', () => {
     jotaiStore.set(currentUserState.atom, {

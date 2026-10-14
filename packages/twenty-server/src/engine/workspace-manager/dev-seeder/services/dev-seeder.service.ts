@@ -476,7 +476,6 @@ export class DevSeederService {
       'ONBOARDING_CONNECT_ACCOUNT_PENDING',
       'ONBOARDING_INVITE_TEAM_PENDING',
       'ONBOARDING_CREATE_PROFILE_PENDING',
-      'ONBOARDING_BOOK_CALL_PENDING',
     ];
 
     await this.coreDataSource

@@ -38,8 +38,8 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
-@Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class SignInUpService {
   private readonly logger = new Logger(SignInUpService.name);
@@ -428,9 +428,9 @@ export class SignInUpService {
 
     const workspaceId = v4();
     const workspaceCustomApplicationId = v4();
-
     try {
-      await this.dataSource.transaction(async (entityManager) => {
+      const { user, workspace } = await this.dataSource.transaction(
+        async (entityManager) => {
         const queryRunner = entityManager.queryRunner as QueryRunner;
 
         const workspaceToCreate = this.workspaceRepository.create({

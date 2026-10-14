@@ -19,9 +19,6 @@ import {
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 
-jest.mock('@/onboarding/effect-components/PrefetchBookCallStepEffect', () => ({
-  PrefetchBookCallStepEffect: () => null,
-}));
 
 jest.mock('@/onboarding/components/OnboardingTransitionOutlet', () => ({
   OnboardingTransitionOutlet: () => null,

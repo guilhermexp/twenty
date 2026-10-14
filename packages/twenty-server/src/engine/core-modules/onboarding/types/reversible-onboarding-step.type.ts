@@ -4,4 +4,3 @@ export type ReversibleOnboardingStep =
   | OnboardingStatus.SYNC_EMAIL
   | OnboardingStatus.PROFILE_CREATION
   | OnboardingStatus.INVITE_TEAM
-  | OnboardingStatus.BOOK_CALL;

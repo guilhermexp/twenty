@@ -65,18 +65,12 @@ const InviteTeam = lazyWithPreload(() =>
   })),
 );
 
-const BookCall = lazyWithPreload(() =>
-  import('~/pages/onboarding/BookCall').then((module) => ({
-    default: module.BookCall,
-  })),
-);
 
 const preloadOnboardingPages = () => {
   WorkspaceActivation.preload();
   CreateProfile.preload();
   SyncEmails.preload();
   InviteTeam.preload();
-  BookCall.preload();
 
   return null;
 };
@@ -210,16 +204,6 @@ const createWorkspaceAppRouter = ({
                                 fallback={<OnboardingStepPageLoader />}
                               >
                                 <InviteTeam />
-                              </LazyRoute>
-                            ),
-                          },
-                          {
-                            path: AppPath.BookCall,
-                            element: (
-                              <LazyRoute
-                                fallback={<OnboardingStepPageLoader />}
-                              >
-                                <BookCall />
                               </LazyRoute>
                             ),
                           },

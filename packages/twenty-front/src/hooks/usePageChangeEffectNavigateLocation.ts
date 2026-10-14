@@ -137,16 +137,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.InviteTeam;
   }
 
-  if (
-    onboardingStatus === OnboardingStatus.BOOK_CALL &&
-    !isMatchingLocation(location, AppPath.BookCall)
-  ) {
-    if (REACT_APP_PRIVATE_MODE) {
-      return defaultHomePagePath;
-    }
-
-    return AppPath.BookCall;
-  }
 
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&

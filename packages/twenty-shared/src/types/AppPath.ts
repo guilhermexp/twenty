@@ -11,7 +11,6 @@ export enum AppPath {
   CreateProfile = '/create/profile',
   SyncEmails = '/sync/emails',
   InviteTeam = '/invite-team',
-  BookCall = '/book-call',
 
   // Onboarded
   AiChat = '/chat/:threadId?',

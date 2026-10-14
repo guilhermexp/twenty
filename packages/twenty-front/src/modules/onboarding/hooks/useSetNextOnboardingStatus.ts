@@ -8,13 +8,11 @@ import {
   type CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
-import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
-import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
 import { getNextPreviousOnboardingStatus } from '@/onboarding/utils/getNextPreviousOnboardingStatus';
 import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -26,17 +24,12 @@ import { OnboardingStatus } from '~/generated-metadata/graphql';
 type GetNextOnboardingStatusArgs = {
   currentUser: CurrentUser | null;
   currentWorkspace: CurrentWorkspace | null;
-  isBookCallRequired: boolean;
 };
 
 const getNextOnboardingStatus = ({
   currentUser,
   currentWorkspace,
-  isBookCallRequired,
 }: GetNextOnboardingStatusArgs) => {
-  const statusAfterInviteTeam = isBookCallRequired
-    ? OnboardingStatus.BOOK_CALL
-    : OnboardingStatus.COMPLETED;
   if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
     return OnboardingStatus.SYNC_EMAIL;
   }
@@ -49,15 +42,6 @@ const getNextOnboardingStatus = ({
     if (currentWorkspace?.workspaceMembersCount === 1) {
       return OnboardingStatus.INVITE_TEAM;
     }
-    return statusAfterInviteTeam;
-  }
-  if (currentUser?.onboardingStatus === OnboardingStatus.INVITE_TEAM) {
-    return statusAfterInviteTeam;
-  }
-  if (
-    currentUser?.onboardingStatus === OnboardingStatus.BOOK_CALL ||
-    currentUser?.onboardingStatus === OnboardingStatus.PLAN_REQUIRED
-  ) {
     return OnboardingStatus.COMPLETED;
   }
   return OnboardingStatus.COMPLETED;
@@ -80,9 +64,6 @@ export const useSetNextOnboardingStatus = () => {
       const nextOnboardingStatus = getNextOnboardingStatus({
         currentUser,
         currentWorkspace,
-        isBookCallRequired:
-          store.get(isBookCallOnboardingStepEnabledState.atom) &&
-          getIsBookCallOnboardingStepPending(store.get(currentUserState.atom)),
       });
 
       store.set(onboardingNavigationDirectionState.atom, 'forward');
