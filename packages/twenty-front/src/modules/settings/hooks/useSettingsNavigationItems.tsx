@@ -2,9 +2,7 @@ import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { getDocumentationUrl } from '~/utils/getDocumentationUrl';
 import {
   type NavigationDrawerItemIndentationLevel,
   type NavigationDrawerItemModifier,
@@ -20,7 +18,6 @@ import {
   IconColorSwatch,
   type IconComponent,
   IconDoorEnter,
-  IconHelpCircle,
   IconHierarchy,
   IconMail,
   IconMessageCircle,
@@ -31,7 +28,6 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
-import { REACT_APP_PRIVATE_MODE } from '~/config';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type SettingsNavigationSection = {
@@ -55,9 +51,6 @@ export type SettingsNavigationItem = {
 
 const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const { signOut } = useAuth();
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-
-  const isPrivateModeEnabled = REACT_APP_PRIVATE_MODE;
   const currentUser = useAtomStateValue(currentUserState);
   const isAdminEnabled = currentUser?.canAccessFullAdminPanel ?? false;
 
@@ -173,16 +166,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.AdminPanel,
           Icon: IconServer,
           isHidden: !isAdminEnabled,
-        },
-        {
-          label: t`Documentation`,
-          onClick: () =>
-            window.open(
-              getDocumentationUrl({ locale: currentWorkspaceMember?.locale }),
-              '_blank',
-            ),
-          Icon: IconHelpCircle,
-          isHidden: isPrivateModeEnabled,
         },
         {
           label: t`Logout`,

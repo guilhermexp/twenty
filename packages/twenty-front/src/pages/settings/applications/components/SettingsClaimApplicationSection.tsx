@@ -1,9 +1,6 @@
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { getDocumentationUrl } from '~/utils/getDocumentationUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLazyQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
@@ -21,7 +18,7 @@ import {
   FindClaimableApplicationRegistrationDocument,
   GithubClaimAuthorizationUrlDocument,
 } from '~/generated-metadata/graphql';
-import { getClaimErrorContent } from '~/pages/settings/applications/utils/getClaimErrorContent';
+import { getClaimErrorMessage } from '~/pages/settings/applications/utils/getClaimErrorMessage';
 
 export const CLAIM_ERROR_CODE_SEARCH_PARAM = 'claimErrorCode';
 
@@ -71,7 +68,6 @@ export const SettingsClaimApplicationSection = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -92,8 +88,8 @@ export const SettingsClaimApplicationSection = () => {
     );
   };
 
-  const claimError = isDefined(claimErrorCode)
-    ? getClaimErrorContent(claimErrorCode)
+  const claimErrorMessage = isDefined(claimErrorCode)
+    ? getClaimErrorMessage(claimErrorCode)
     : null;
 
   const [runLookup, { data: lookupData, loading: isLookingUp }] = useLazyQuery(
@@ -176,23 +172,12 @@ export const SettingsClaimApplicationSection = () => {
         title={t`Claim an application`}
         description={t`Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it.`}
       />
-      {isDefined(claimError) && (
+      {isDefined(claimErrorMessage) && (
         <StyledCalloutContainer>
           <Callout
             variant="error"
             title={t`Could not claim this application`}
-            description={i18n._(claimError.message)}
-            action={{
-              label: t`Read documentation`,
-              onClick: () =>
-                window.open(
-                  getDocumentationUrl({
-                    locale: currentWorkspaceMember?.locale,
-                    path: claimError.docPath,
-                  }),
-                  '_blank',
-                ),
-            }}
+            description={i18n._(claimErrorMessage)}
             isClosable
             onClose={dismissClaimError}
           />
