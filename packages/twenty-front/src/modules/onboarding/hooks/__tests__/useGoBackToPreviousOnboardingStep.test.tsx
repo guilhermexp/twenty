@@ -169,7 +169,7 @@ describe('useGoBackToPreviousOnboardingStep', () => {
       jotaiStore.get(currentUserState.atom)?.previousOnboardingStatus,
     ).toBeNull();
     expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toBe(
-      OnboardingStatus.PROFILE_CREATION,
+      OnboardingStatus.INVITE_TEAM,
     );
     expect(mockEnqueueErrorSnackBar).not.toHaveBeenCalled();
   });
