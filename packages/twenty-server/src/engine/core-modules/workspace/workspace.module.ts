@@ -6,7 +6,6 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { CompanyEnrichmentModule } from 'src/engine/core-modules/company-enrichment/company-enrichment.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -68,7 +67,6 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
     CoreEntityCacheModule,
     UpgradeModule,
     SdkClientModule,
-    CompanyEnrichmentModule,
   ],
   exports: [WorkspaceService],
   providers: [

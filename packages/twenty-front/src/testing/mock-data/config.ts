@@ -34,10 +34,7 @@ export const mockedClientConfig: ClientConfig = {
   isImapSmtpCaldavEnabled: false,
   isTwoFactorAuthenticationEnabled: false,
   isEmailingDomainInDemoMode: false,
-  allowRequestsToTwentyIcons: true,
   isClickHouseConfigured: false,
   isWorkspaceSchemaDDLLocked: false,
   isOnboardingAiChatEnabled: false,
-  isBookCallOnboardingStepEnabled: false,
-  isCompanyEnrichmentEnabled: false,
 };

@@ -230,14 +230,6 @@ export class ConfigVariables {
   IS_IMAP_SMTP_CALDAV_CONNECTION_TEST_ENABLED = true;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      "Enable or disable requests to twenty-icons to get companies' icons",
-    type: ConfigVariableType.BOOLEAN,
-  })
-  ALLOW_REQUESTS_TO_TWENTY_ICONS = false;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
     description: 'Enable or disable Microsoft authentication',
     type: ConfigVariableType.BOOLEAN,
@@ -852,26 +844,6 @@ export class ConfigVariables {
   @IsOptional()
   FRONTEND_URL: string;
 
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description: 'Page ID for Cal.com booking integration',
-    isHiddenInAdminPanel: true,
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  CALENDAR_BOOKING_PAGE_ID?: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Minimum enriched company employee count required to show the book-a-call onboarding step. Leave unset or set to 0 to disable the step. The step also requires CALENDAR_BOOKING_PAGE_ID.',
-    isHiddenInAdminPanel: true,
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  @IsInt()
-  @IsOptional()
-  ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT?: number;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
@@ -1727,15 +1699,6 @@ export class ConfigVariables {
   @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
   GOOGLE_MAP_API_KEY: string;
 
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    isSensitive: true,
-    description:
-      'API key for People Data Labs company enrichment. When unset, workspace company enrichment is skipped.',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  PEOPLE_DATA_LABS_API_KEY?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,

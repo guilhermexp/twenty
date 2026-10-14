@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
@@ -11,12 +11,7 @@ import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedA
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
-import { WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS } from '@/onboarding/constants/WorkspaceSetupChatEnrichmentMaxWaitMs';
-import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
-import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
-import { personEnrichmentState } from '@/onboarding/states/personEnrichmentState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   StartWorkspaceSetupChatDocument,
   WorkspaceSetupChatOutcome,
@@ -28,29 +23,9 @@ export const WorkspaceSetupChatKickoffEffect = () => {
   );
   const store = useStore();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
-  const isCompanyEnrichmentFetchInFlight = useAtomStateValue(
-    isCompanyEnrichmentFetchInFlightState,
-  );
-  const [hasWaitedForCompanyEnrichment, setHasWaitedForCompanyEnrichment] =
-    useState(false);
 
   useEffect(() => {
-    const waitTimer = setTimeout(
-      () => setHasWaitedForCompanyEnrichment(true),
-      WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS,
-    );
-
-    return () => clearTimeout(waitTimer);
-  }, []);
-
-  useEffect(() => {
-    const shouldWaitForCompanyEnrichment =
-      isCompanyEnrichmentFetchInFlight && !hasWaitedForCompanyEnrichment;
-
-    if (
-      shouldWaitForCompanyEnrichment ||
-      store.get(hasRequestedWorkspaceSetupChatState.atom)
-    ) {
+    if (store.get(hasRequestedWorkspaceSetupChatState.atom)) {
       return;
     }
 
@@ -58,12 +33,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
 
     const startWorkspaceSetupChat = async () => {
       try {
-        const { data } = await startWorkspaceSetupChatMutation({
-          variables: {
-            companyContext: store.get(companyEnrichmentState.atom) ?? undefined,
-            personContext: store.get(personEnrichmentState.atom) ?? undefined,
-          },
-        });
+        const { data } = await startWorkspaceSetupChatMutation();
 
         const result = data?.startWorkspaceSetupChat;
         const thread = result?.thread;
@@ -129,8 +99,6 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     store,
     addToDraft,
     applyChanges,
-    isCompanyEnrichmentFetchInFlight,
-    hasWaitedForCompanyEnrichment,
   ]);
 
   return null;

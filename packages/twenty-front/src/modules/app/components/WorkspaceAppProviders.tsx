@@ -22,7 +22,6 @@ import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/Mi
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
-import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
@@ -85,7 +84,6 @@ export const WorkspaceAppProviders = () => {
                   <RequestFreshCaptchaTokenEffect />
                   <PageChangeEffect />
                   <WelcomeOverlay />
-                  <CompanyEnrichmentOnboardingEffect />
                   <SignOutOnOtherTabSignOutEffect />
                 </SSEProvider>
               </ApolloAdminProvider>

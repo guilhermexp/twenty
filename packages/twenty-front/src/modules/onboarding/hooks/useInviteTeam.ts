@@ -1,7 +1,4 @@
-import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
-import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -10,7 +7,6 @@ import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCr
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useQuery } from '@apollo/client/react';
-import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
@@ -29,13 +25,6 @@ export const useInviteTeam = () => {
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const isBookCallOnboardingStepEnabled = useAtomStateValue(
-    isBookCallOnboardingStepEnabledState,
-  );
-  const isCompanyEnrichmentEnabled = useAtomStateValue(
-    isCompanyEnrichmentEnabledState,
-  );
-  const store = useStore();
 
   const [isNavigating, setIsNavigating] = useState(false);
 
@@ -139,12 +128,6 @@ export const useInviteTeam = () => {
       setIsNavigating(true);
 
       try {
-        // Only wait when enrichment is actually going to run, otherwise the
-        // settlement never resolves and every submit burns the full timeout.
-        const companyEnrichmentSettlement =
-          isBookCallOnboardingStepEnabled && isCompanyEnrichmentEnabled
-            ? waitForCompanyEnrichmentSettlement({ store })
-            : Promise.resolve();
 
         const result = await sendInvitation({ emails });
 
@@ -164,7 +147,6 @@ export const useInviteTeam = () => {
           });
         }
 
-        await companyEnrichmentSettlement;
 
         setNextOnboardingStatus({
           stepHistoryEffect:
@@ -180,11 +162,8 @@ export const useInviteTeam = () => {
     },
     [
       enqueueSuccessSnackBar,
-      isBookCallOnboardingStepEnabled,
-      isCompanyEnrichmentEnabled,
       sendInvitation,
       setNextOnboardingStatus,
-      store,
       t,
     ],
   );
