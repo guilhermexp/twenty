@@ -4,6 +4,7 @@ import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
+import { isWorkspaceNotFoundError } from '@/domain-manager/utils/isWorkspaceNotFoundError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -66,6 +67,25 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
           dedupeKey: 'email-verification-dedupe-key',
         },
       };
+
+      // A failed lookup that is not NOT_FOUND says nothing about whether the
+      // workspace exists. Verifying would burn the single-use token on the
+      // wrong flow, so stop here and let the user retry the link.
+      if (
+        !isDefined(workspacePublicData) &&
+        !isWorkspaceNotFoundError(workspacePublicDataError)
+      ) {
+        enqueueErrorSnackBar({
+          message: t`Could not reach the workspace. Please retry the verification link.`,
+          options: {
+            dedupeKey: 'email-verification-error-dedupe-key',
+          },
+        });
+
+        onError();
+
+        return;
+      }
 
       try {
         // The first account is verified before the only workspace exists.

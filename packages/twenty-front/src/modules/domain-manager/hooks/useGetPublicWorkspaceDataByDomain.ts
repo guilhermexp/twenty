@@ -1,13 +1,13 @@
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
+import { isWorkspaceNotFoundError } from '@/domain-manager/utils/isWorkspaceNotFoundError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useQuery } from '@apollo/client/react';
 import { GetPublicWorkspaceDataByDomainDocument } from '~/generated-metadata/graphql';
 
@@ -58,13 +58,7 @@ export const useGetPublicWorkspaceDataByDomain = () => {
 
     // A fresh instance has no workspace yet: sign-in then falls back to the
     // global scope, which bootstraps the instance's only workspace.
-    const isWorkspaceNotFoundError =
-      CombinedGraphQLErrors.is(error) &&
-      error.errors.some(
-        (graphQLError) => graphQLError.extensions?.code === 'NOT_FOUND',
-      );
-
-    if (!isWorkspaceNotFoundError) {
+    if (!isWorkspaceNotFoundError(error)) {
       // oxlint-disable-next-line no-console
       console.error(error);
     }

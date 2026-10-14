@@ -1,3 +1,4 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, waitFor } from '@testing-library/react';
@@ -24,6 +25,13 @@ const enqueueSuccessSnackBarMock = jest.fn();
 const enqueueErrorSnackBarMock = jest.fn();
 
 let workspacePublicDataErrorValue: Error | undefined;
+
+// What the server answers when the instance has no workspace yet.
+const WORKSPACE_NOT_FOUND_ERROR = new CombinedGraphQLErrors({
+  errors: [
+    { message: 'Workspace not found', extensions: { code: 'NOT_FOUND' } },
+  ],
+});
 
 jest.mock('@/auth/hooks/useAuth', () => ({
   useAuth: () => ({
@@ -88,7 +96,7 @@ describe('VerifyEmail', () => {
     jest.clearAllMocks();
     localStorage.clear();
     resetJotaiStore();
-    workspacePublicDataErrorValue = new Error('Workspace not found');
+    workspacePublicDataErrorValue = WORKSPACE_NOT_FOUND_ERROR;
     // The verification effect is gated on the client config having loaded.
     jotaiStore.set(clientConfigApiStatusState.atom, {
       isLoadedOnce: true,
@@ -130,6 +138,39 @@ describe('VerifyEmail', () => {
     });
     expect(navigateMock).not.toHaveBeenCalledWith(AppPath.SignInUp);
   });
+
+  it.each([
+    ['a network failure', new Error('Failed to fetch')],
+    [
+      'a server error',
+      new CombinedGraphQLErrors({
+        errors: [
+          {
+            message: 'Internal server error',
+            extensions: { code: 'INTERNAL_SERVER_ERROR' },
+          },
+        ],
+      }),
+    ],
+  ])(
+    'keeps the verification token unused when the workspace lookup fails with %s',
+    async (_label, workspaceLookupError) => {
+      workspacePublicDataErrorValue = workspaceLookupError;
+
+      renderVerifyEmail(VERIFY_EMAIL_URL);
+
+      await waitFor(() => {
+        expect(enqueueErrorSnackBarMock).toHaveBeenCalled();
+      });
+      // Verifying would consume the single-use token and, with a workspace
+      // already present, the bootstrap flow could never finish.
+      expect(
+        verifyEmailAndGetWorkspaceAgnosticTokenMock,
+      ).not.toHaveBeenCalled();
+      expect(verifyEmailAndGetLoginTokenMock).not.toHaveBeenCalled();
+      expect(navigateMock).not.toHaveBeenCalledWith(AppPath.SignInUp);
+    },
+  );
 
   it('exchanges the login token in place when the workspace exists', async () => {
     workspacePublicDataErrorValue = undefined;
