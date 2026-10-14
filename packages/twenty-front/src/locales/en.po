@@ -2792,7 +2792,6 @@ msgstr "Axis name"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 #: src/modules/side-panel/components/SidePanelBackButton.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
-#: src/pages/onboarding/BookCall.tsx
 msgid "Back"
 msgstr "Back"
 
@@ -2925,11 +2924,6 @@ msgstr "Body"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Body Input"
 msgstr "Body Input"
-
-#. js-lingui-id: SkYx9p
-#: src/pages/onboarding/BookCall.tsx
-msgid "Book a 30-minute call and we'll help you get your workspace production-ready."
-msgstr "Book a 30-minute call and we'll help you get your workspace production-ready."
 
 #. js-lingui-id: bOwPjT
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -9831,7 +9825,6 @@ msgid "Latest date"
 msgstr "Latest date"
 
 #. js-lingui-id: zUzYWu
-#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Latest version"
 msgstr "Latest version"
@@ -11736,11 +11729,6 @@ msgstr "No jobs were deleted{errorDetails}"
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "No jobs were retried{errorDetails}"
 msgstr "No jobs were retried{errorDetails}"
-
-#. js-lingui-id: OcMef3
-#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "No latest version found"
-msgstr "No latest version found"
 
 #. js-lingui-id: qtoOYG
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
@@ -16477,11 +16465,6 @@ msgstr "Table widget"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it."
 msgstr "Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it."
-
-#. js-lingui-id: gNSS33
-#: src/pages/onboarding/BookCall.tsx
-msgid "Talk to our team"
-msgstr "Talk to our team"
 
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx

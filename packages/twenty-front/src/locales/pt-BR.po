@@ -2797,7 +2797,6 @@ msgstr "Nome do eixo"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 #: src/modules/side-panel/components/SidePanelBackButton.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
-#: src/pages/onboarding/BookCall.tsx
 msgid "Back"
 msgstr "Voltar"
 
@@ -2930,11 +2929,6 @@ msgstr "Corpo"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Body Input"
 msgstr "Entrada do corpo"
-
-#. js-lingui-id: SkYx9p
-#: src/pages/onboarding/BookCall.tsx
-msgid "Book a 30-minute call and we'll help you get your workspace production-ready."
-msgstr "Agende uma chamada de 30 minutos e nós ajudaremos você a deixar seu espaço de trabalho pronto para produção."
 
 #. js-lingui-id: bOwPjT
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -9815,7 +9809,6 @@ msgid "Latest date"
 msgstr "Data mais recente"
 
 #. js-lingui-id: zUzYWu
-#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Latest version"
 msgstr "Última versão"
@@ -11720,11 +11713,6 @@ msgstr "Nenhum trabalho foi excluído{errorDetails}"
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "No jobs were retried{errorDetails}"
 msgstr "Nenhum trabalho foi repetido{errorDetails}"
-
-#. js-lingui-id: OcMef3
-#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "No latest version found"
-msgstr "Nenhuma versão mais recente encontrada"
 
 #. js-lingui-id: qtoOYG
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
@@ -16461,11 +16449,6 @@ msgstr "Widget de tabela"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it."
 msgstr "Assuma a propriedade de um aplicativo que você publicou no npm. Insira o nome exato do pacote (ou identificador universal) para encontrá-lo."
-
-#. js-lingui-id: gNSS33
-#: src/pages/onboarding/BookCall.tsx
-msgid "Talk to our team"
-msgstr "Fale com nossa equipe"
 
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx

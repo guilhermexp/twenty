@@ -2792,7 +2792,6 @@ msgstr ""
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 #: src/modules/side-panel/components/SidePanelBackButton.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
-#: src/pages/onboarding/BookCall.tsx
 msgid "Back"
 msgstr ""
 
@@ -2924,11 +2923,6 @@ msgstr ""
 #. js-lingui-id: khA6nE
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "Body Input"
-msgstr ""
-
-#. js-lingui-id: SkYx9p
-#: src/pages/onboarding/BookCall.tsx
-msgid "Book a 30-minute call and we'll help you get your workspace production-ready."
 msgstr ""
 
 #. js-lingui-id: bOwPjT
@@ -9810,7 +9804,6 @@ msgid "Latest date"
 msgstr ""
 
 #. js-lingui-id: zUzYWu
-#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Latest version"
 msgstr ""
@@ -11714,11 +11707,6 @@ msgstr ""
 #. js-lingui-id: ULhEV8
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "No jobs were retried{errorDetails}"
-msgstr ""
-
-#. js-lingui-id: OcMef3
-#: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
-msgid "No latest version found"
 msgstr ""
 
 #. js-lingui-id: qtoOYG
@@ -16455,11 +16443,6 @@ msgstr ""
 #. js-lingui-id: DBxdLI
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it."
-msgstr ""
-
-#. js-lingui-id: gNSS33
-#: src/pages/onboarding/BookCall.tsx
-msgid "Talk to our team"
 msgstr ""
 
 #. js-lingui-id: sceIIK
