@@ -182,6 +182,11 @@ import { DeleteOnboardingInstallAppsStepUserVarsSlowInstanceCommand } from 'src/
 import { DropWorkspaceCustomDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1791944918552-drop-workspace-custom-domain';
 import { DropPublicDomainFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1791944918553-drop-public-domain';
 import { DropEmailingDomainUnsubscribeHostnameFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1791944918554-drop-emailing-domain-unsubscribe-hostname';
+import { DropApplicationBillingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1791945277926-drop-application-billing';
+import { DropApplicationRegistrationPricingDescriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1791945277927-drop-application-registration-pricing-description';
+import { DropAgentChatThreadCreditsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1791945277928-drop-agent-chat-thread-credits';
+import { DeleteCreditMeterUsageLimitsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791945277929-delete-credit-meter-usage-limits';
+import { DeleteQuotaEngineCreditBoundFeatureFlagSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791945277930-delete-quota-engine-credit-bound-feature-flag';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -366,4 +371,9 @@ export const INSTANCE_COMMANDS = [
   DropWorkspaceCustomDomainFastInstanceCommand,
   DropPublicDomainFastInstanceCommand,
   DropEmailingDomainUnsubscribeHostnameFastInstanceCommand,
+  DropApplicationBillingFastInstanceCommand,
+  DropApplicationRegistrationPricingDescriptionFastInstanceCommand,
+  DropAgentChatThreadCreditsFastInstanceCommand,
+  DeleteCreditMeterUsageLimitsSlowInstanceCommand,
+  DeleteQuotaEngineCreditBoundFeatureFlagSlowInstanceCommand,
 ];
