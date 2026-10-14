@@ -59,7 +59,6 @@ import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { useStore } from 'jotai';
 
@@ -158,7 +157,7 @@ export const useAuth = () => {
           getFirstAvailableWorkspaces(availableWorkspaces);
 
         return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(targetWorkspace.workspaceUrls),
+          targetWorkspace.workspaceUrls.subdomainUrl,
           targetWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,
           {
             ...(targetWorkspace.loginToken && {
@@ -497,10 +496,8 @@ export const useAuth = () => {
 
       if (isMultiWorkspaceEnabled) {
         return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(
-            signUpInWorkspaceResult.data.signUpInWorkspace.workspace
-              .workspaceUrls,
-          ),
+          signUpInWorkspaceResult.data.signUpInWorkspace.workspace.workspaceUrls
+            .subdomainUrl,
           isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
           {
             ...(!isEmailVerificationRequired && {

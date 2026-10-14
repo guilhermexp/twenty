@@ -62,7 +62,6 @@ export const results = {
       id: 'workspace-id',
       workspaceUrls: {
         subdomainUrl: 'https://subdomain.twenty.com',
-        customUrl: 'https://custom.twenty.com',
       },
     },
   },
@@ -92,9 +91,7 @@ export const results = {
         inviteHash: 'inviteHash',
         allowImpersonation: true,
         subscriptionStatus: 'subscriptionStatus',
-        customDomain: null,
         workspaceUrls: {
-          customUrl: undefined,
           subdomainUrl: 'https://twenty.com',
         },
         featureFlags: {

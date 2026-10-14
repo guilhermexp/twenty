@@ -14,7 +14,6 @@ import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 type VerifyEmailEffectProps = {
@@ -84,7 +83,7 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
 
         enqueueSuccessSnackBar(successSnackbarParams);
 
-        const workspaceUrl = getWorkspaceUrl(workspaceUrls);
+        const workspaceUrl = workspaceUrls.subdomainUrl;
         if (workspaceUrl.slice(0, -1) !== window.location.origin) {
           return await redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
             loginToken: loginToken.token,

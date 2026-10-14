@@ -32,7 +32,6 @@ export type ClientConfig = {
   isMultiWorkspaceEnabled: boolean;
   isImapSmtpCaldavEnabled: boolean;
   isEmailingDomainInDemoMode: boolean;
-  isCloudflareIntegrationEnabled: boolean;
   isClickHouseConfigured: boolean;
   isWorkspaceSchemaDDLLocked: boolean;
   isOnboardingAiChatEnabled: boolean;

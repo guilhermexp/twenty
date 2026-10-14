@@ -43,7 +43,6 @@ import {
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
@@ -78,9 +77,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   };
 
   const handleChange = async (availableWorkspace: AvailableWorkspace) => {
-    redirectToWorkspaceDomain(
-      getWorkspaceUrl(availableWorkspace.workspaceUrls),
-    );
+    redirectToWorkspaceDomain(availableWorkspace.workspaceUrls.subdomainUrl);
   };
 
   const createWorkspace = () => {
@@ -151,7 +148,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                 <UndecoratedLink
                   key={availableWorkspace.id}
                   to={buildWorkspaceUrl(
-                    getWorkspaceUrl(availableWorkspace.workspaceUrls),
+                    availableWorkspace.workspaceUrls.subdomainUrl,
                   )}
                   onClick={(event) => {
                     event?.preventDefault();

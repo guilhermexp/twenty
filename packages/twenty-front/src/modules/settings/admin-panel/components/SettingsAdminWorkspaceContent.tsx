@@ -63,10 +63,6 @@ export const SettingsAdminWorkspaceContent = ({
     localeCatalog: localeCatalog,
   });
 
-  const getWorkspaceUrl = (workspaceUrls: WorkspaceInfo['workspaceUrls']) => {
-    return workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl;
-  };
-
   const upgradeHealthStatusBadge = getUpgradeHealthStatusBadge(
     workspaceUpgradeStatus?.health,
   );
@@ -112,7 +108,7 @@ export const SettingsAdminWorkspaceContent = ({
       Icon: IconLink,
       label: t`URL`,
       value: activeWorkspace?.workspaceUrls
-        ? getWorkspaceUrl(activeWorkspace.workspaceUrls)
+        ? activeWorkspace.workspaceUrls.subdomainUrl
         : '',
     },
     {

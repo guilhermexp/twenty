@@ -175,7 +175,6 @@ export class ApiClient {
           currentWorkspace {
             workspaceUrls {
               subdomainUrl
-              customUrl
             }
           }
         }
@@ -192,11 +191,8 @@ export class ApiClient {
         },
       );
 
-      const workspaceUrls =
-        response.data?.data?.currentWorkspace?.workspaceUrls;
-      const workspaceFrontendUrl = isNonEmptyString(workspaceUrls?.customUrl)
-        ? workspaceUrls.customUrl
-        : workspaceUrls?.subdomainUrl;
+      const workspaceFrontendUrl =
+        response.data?.data?.currentWorkspace?.workspaceUrls?.subdomainUrl;
 
       if (!isNonEmptyString(workspaceFrontendUrl)) {
         return null;

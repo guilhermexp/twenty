@@ -16,7 +16,6 @@ import {
 } from '@/app/routing/types/WorkspaceRouteObject';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -232,14 +231,6 @@ const SettingsSubdomainPage = lazy(() =>
   import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
     default: module.SettingsSubdomainPage,
   })),
-);
-
-const SettingsCustomDomainPage = lazy(() =>
-  import('~/pages/settings/domains/SettingsCustomDomainPage').then(
-    (module) => ({
-      default: module.SettingsCustomDomainPage,
-    }),
-  ),
 );
 
 const SettingsApiWebhooks = lazy(() =>
@@ -750,14 +741,6 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.Subdomain}
         element={<SettingsSubdomainPage />}
-      />
-      <Route
-        path={SettingsPath.CustomDomain}
-        element={<SettingsCustomDomainPage />}
-      />
-      <Route
-        path={SettingsPath.PublicDomain}
-        element={<SettingPublicDomain />}
       />
       <Route path={SettingsPath.LegalDpa} element={<SettingsLegalDpa />} />
       <Route

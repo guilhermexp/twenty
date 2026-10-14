@@ -12,7 +12,6 @@ import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttach
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
-import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isEmailingDomainInDemoModeState } from '@/client-config/states/isEmailingDomainInDemoModeState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -117,10 +116,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     allowRequestsToTwentyIconsState,
   );
 
-  const setIsCloudflareIntegrationEnabled = useSetAtomState(
-    isCloudflareIntegrationEnabledState,
-  );
-
   const setIsClickHouseConfigured = useSetAtomState(
     isClickHouseConfiguredState,
   );
@@ -214,9 +209,6 @@ export const useClientConfig = (): UseClientConfigResult => {
         clientConfig?.isEmailingDomainInDemoMode ?? false,
       );
       setAllowRequestsToTwentyIcons(clientConfig?.allowRequestsToTwentyIcons);
-      setIsCloudflareIntegrationEnabled(
-        clientConfig?.isCloudflareIntegrationEnabled,
-      );
       setIsClickHouseConfigured(clientConfig?.isClickHouseConfigured ?? false);
       setIsDDLLocked(clientConfig?.isWorkspaceSchemaDDLLocked ?? false);
       setIsOnboardingAiChatEnabled(
@@ -257,7 +249,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsMultiWorkspaceEnabled,
     setIsEmailingDomainInDemoMode,
     setIsClickHouseConfigured,
-    setIsCloudflareIntegrationEnabled,
     setIsDDLLocked,
     setIsOnboardingAiChatEnabled,
     setLabPublicFeatureFlags,

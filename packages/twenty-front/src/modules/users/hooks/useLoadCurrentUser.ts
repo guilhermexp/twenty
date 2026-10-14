@@ -19,7 +19,6 @@ import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordI
 import { type ColorScheme } from 'twenty-ui/input';
 import { useApolloClient } from '@apollo/client/react';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { REACT_APP_PRIVATE_MODE } from '~/config';
 import { type UiScale } from '@/workspace-member/types/WorkspaceMember';
@@ -133,7 +132,7 @@ export const useLoadCurrentUser = () => {
     if (isDefined(workspace) && isOnAWorkspace) {
       setLastAuthenticateWorkspaceDomain({
         workspaceId: workspace.id,
-        workspaceUrl: getWorkspaceUrl(workspace.workspaceUrls),
+        workspaceUrl: workspace.workspaceUrls.subdomainUrl,
       });
     }
 

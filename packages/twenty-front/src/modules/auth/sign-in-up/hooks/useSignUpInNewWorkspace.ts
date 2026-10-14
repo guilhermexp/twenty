@@ -10,7 +10,6 @@ import {
   SignUpInNewWorkspaceDocument,
   UploadNewWorkspaceLogoDocument,
 } from '~/generated-metadata/graphql';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
 
@@ -74,7 +73,7 @@ export const useSignUpInNewWorkspace = () => {
       }
 
       await redirectToWorkspaceDomain(
-        getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
+        data.signUpInNewWorkspace.workspace.workspaceUrls.subdomainUrl,
         AppPath.Verify,
         { loginToken },
         '_self',

@@ -10,7 +10,6 @@ import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGet
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceUrls } from '~/generated-metadata/graphql';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 const getCurrentSearchParams = (): Record<string, string> =>
   Object.fromEntries(new URLSearchParams(window.location.search));
@@ -35,7 +34,7 @@ export const WorkspaceProviderEffect = () => {
 
   const isWorkspaceHostnameMatchCurrentLocationHostname = useCallback(
     (workspaceUrls: WorkspaceUrls) => {
-      const { hostname } = new URL(getWorkspaceUrl(workspaceUrls));
+      const { hostname } = new URL(workspaceUrls.subdomainUrl);
       return hostname === currentLocationHostname;
     },
     [currentLocationHostname],
@@ -50,7 +49,7 @@ export const WorkspaceProviderEffect = () => {
       )
     ) {
       redirectToWorkspaceDomain(
-        getWorkspaceUrl(getPublicWorkspaceData.workspaceUrls),
+        getPublicWorkspaceData.workspaceUrls.subdomainUrl,
         window.location.pathname,
         getCurrentSearchParams(),
       );

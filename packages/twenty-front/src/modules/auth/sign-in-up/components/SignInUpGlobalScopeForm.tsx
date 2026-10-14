@@ -34,7 +34,6 @@ import {
   type AvailableWorkspace,
   GetWorkspaceCreationDefaultsDocument,
 } from '~/generated-metadata/graphql';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledWorkspaceContainer = styled.div`
@@ -148,7 +147,7 @@ export const SignInUpGlobalScopeForm = () => {
     );
 
     return buildWorkspaceUrl(
-      getWorkspaceUrl(availableWorkspace.workspaceUrls),
+      availableWorkspace.workspaceUrls.subdomainUrl,
       pathname,
       {
         ...searchParams,
@@ -192,7 +191,7 @@ export const SignInUpGlobalScopeForm = () => {
                         <StyledWorkspaceUrl>
                           {
                             new URL(
-                              getWorkspaceUrl(availableWorkspace.workspaceUrls),
+                              availableWorkspace.workspaceUrls.subdomainUrl,
                             ).hostname
                           }
                         </StyledWorkspaceUrl>

@@ -38,26 +38,7 @@ describe('ApiClient — frontend URL resolution', () => {
   });
 
   describe('getWorkspaceFrontendUrl', () => {
-    it('prefers customUrl over subdomainUrl', async () => {
-      vi.spyOn(client.client, 'post').mockResolvedValueOnce({
-        data: {
-          data: {
-            currentWorkspace: {
-              workspaceUrls: {
-                customUrl: 'https://crm.acme.com',
-                subdomainUrl: 'http://apple.localhost:3001',
-              },
-            },
-          },
-        },
-      });
-
-      expect(await client.getWorkspaceFrontendUrl()).toBe(
-        'https://crm.acme.com',
-      );
-    });
-
-    it('returns subdomainUrl when customUrl is absent', async () => {
+    it('returns the workspace subdomainUrl origin', async () => {
       vi.spyOn(client.client, 'post').mockResolvedValueOnce({
         data: {
           data: {

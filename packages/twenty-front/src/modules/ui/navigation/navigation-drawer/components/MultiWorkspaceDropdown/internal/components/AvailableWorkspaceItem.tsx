@@ -3,7 +3,6 @@ import { MenuItemSelectAvatar, UndecoratedLink } from 'twenty-ui/navigation';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { t } from '@lingui/core/macro';
@@ -26,7 +25,7 @@ export const AvailableWorkspaceItem = ({
 
   const handleChange = async () => {
     await redirectToWorkspaceDomain(
-      getWorkspaceUrl(availableWorkspace.workspaceUrls),
+      availableWorkspace.workspaceUrls.subdomainUrl,
       pathname,
       searchParams,
     );
@@ -36,7 +35,7 @@ export const AvailableWorkspaceItem = ({
     <UndecoratedLink
       key={availableWorkspace.id}
       to={buildWorkspaceUrl(
-        getWorkspaceUrl(availableWorkspace.workspaceUrls),
+        availableWorkspace.workspaceUrls.subdomainUrl,
         pathname,
         searchParams,
       )}
