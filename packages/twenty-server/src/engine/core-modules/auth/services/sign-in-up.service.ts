@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
@@ -40,7 +40,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
-// oxlint-disable-next-line twenty/inject-workspace-repository
+@Injectable()
 export class SignInUpService {
   private readonly logger = new Logger(SignInUpService.name);
 
