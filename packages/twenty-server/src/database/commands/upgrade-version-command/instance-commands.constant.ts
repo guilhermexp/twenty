@@ -176,6 +176,7 @@ import { ReshapeUsageLimitPeriodFastInstanceCommand } from 'src/database/command
 import { AddLogoToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788542613404-add-logo-to-connection-provider';
 import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788548844925-add-readability-to-object-metadata';
 import { DeleteBillingPermissionFlagFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788863700362-delete-billing-permission-flag';
+import { DeleteBillingPermissionFlagSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791944404447-delete-billing-permission-flag';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -354,4 +355,5 @@ export const INSTANCE_COMMANDS = [
   AddLogoToConnectionProviderFastInstanceCommand,
   AddReadabilityToObjectMetadataFastInstanceCommand,
   DeleteBillingPermissionFlagFastInstanceCommand,
+  DeleteBillingPermissionFlagSlowInstanceCommand,
 ];

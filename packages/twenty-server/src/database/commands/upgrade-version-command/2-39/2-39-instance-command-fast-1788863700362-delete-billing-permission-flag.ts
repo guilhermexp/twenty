@@ -7,11 +7,10 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 export class DeleteBillingPermissionFlagFastInstanceCommand
   implements FastInstanceCommand
 {
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `DELETE FROM "core"."permissionFlag" WHERE key = 'BILLING'`,
-    );
-  }
+  // Kept registered as a no-op: databases that already ran it record it in
+  // core.upgradeMigration and the upgrade cursor resolves it by name. The
+  // delete now runs in DeleteBillingPermissionFlagSlowInstanceCommand.
+  public async up(_queryRunner: QueryRunner): Promise<void> {}
 
   public async down(_queryRunner: QueryRunner): Promise<void> {
     // Licensing was removed; BILLING rows are not restored.
