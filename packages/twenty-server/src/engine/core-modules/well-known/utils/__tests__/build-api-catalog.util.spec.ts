@@ -1,7 +1,7 @@
 import { buildApiCatalog } from 'src/engine/core-modules/well-known/utils/build-api-catalog.util';
 
 describe('buildApiCatalog', () => {
-  const baseUrl = 'https://mycompany.twenty.com';
+  const baseUrl = 'https://crm.example.com';
 
   it('anchors each surface at its canonical URL on the given host', () => {
     const catalog = buildApiCatalog(baseUrl);
@@ -11,7 +11,6 @@ describe('buildApiCatalog', () => {
     expect(anchors).toEqual([
       `${baseUrl}/rest`,
       `${baseUrl}/rest/metadata`,
-      `${baseUrl}/graphql`,
       `${baseUrl}/mcp`,
     ]);
   });
@@ -49,13 +48,11 @@ describe('buildApiCatalog', () => {
     ]);
   });
 
-  it('gives every surface human documentation', () => {
+  it('does not link to external documentation', () => {
     const catalog = buildApiCatalog(baseUrl);
 
     for (const entry of catalog.linkset) {
-      expect(entry['service-doc']?.[0]?.href).toMatch(
-        /^https:\/\/docs\.twenty\.com\//,
-      );
+      expect(entry).not.toHaveProperty('service-doc');
     }
   });
 });

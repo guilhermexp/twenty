@@ -125,14 +125,8 @@ curl -H 'Authorization: Bearer <token>' \\
   ${serverUrl}/${ApiPath.Rest}/open-api/${schemaName} > twenty-${schemaName}.json
 \`\`\`
 `,
-      termsOfService:
-        'https://github.com/twentyhq/twenty?tab=coc-ov-file#readme',
-      contact: {
-        email: 'felix@twenty.com',
-      },
       license: {
         name: 'AGPL-3.0',
-        url: 'https://github.com/twentyhq/twenty?tab=License-1-ov-file#readme',
       },
       version: API_Version,
     },
@@ -158,10 +152,6 @@ curl -H 'Authorization: Bearer <token>' \\
         bearerAuth: [],
       },
     ],
-    externalDocs: {
-      description: 'Find out more about **Twenty**',
-      url: 'https://twenty.com',
-    },
     paths: { [`/open-api/${schemaName}`]: computeOpenApiPath(serverUrl) },
   };
 };

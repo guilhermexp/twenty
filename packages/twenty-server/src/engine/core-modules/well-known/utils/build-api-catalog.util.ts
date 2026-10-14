@@ -1,8 +1,4 @@
-import { DOCUMENTATION_BASE_URL } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
-
-const API_DOCS_URL = `${DOCUMENTATION_BASE_URL}/developers/extend/api`;
-const MCP_DOCS_URL = `${DOCUMENTATION_BASE_URL}/user-guide/ai/capabilities/mcp`;
 
 // service-desc points at each host's live OpenAPI, which is generated per
 // workspace and so includes that workspace's custom objects.
@@ -16,7 +12,6 @@ export const buildApiCatalog = (baseUrl: string) => ({
           type: 'application/json',
         },
       ],
-      'service-doc': [{ href: API_DOCS_URL, type: 'text/html' }],
       'service-meta': [
         {
           href: `${baseUrl}/${ApiPath.WellKnown}/oauth-protected-resource`,
@@ -32,11 +27,6 @@ export const buildApiCatalog = (baseUrl: string) => ({
           type: 'application/json',
         },
       ],
-      'service-doc': [{ href: API_DOCS_URL, type: 'text/html' }],
-    },
-    {
-      anchor: `${baseUrl}/${ApiPath.GraphQL}`,
-      'service-doc': [{ href: API_DOCS_URL, type: 'text/html' }],
     },
     {
       anchor: `${baseUrl}/${ApiPath.Mcp}`,
@@ -46,7 +36,6 @@ export const buildApiCatalog = (baseUrl: string) => ({
           type: 'application/json',
         },
       ],
-      'service-doc': [{ href: MCP_DOCS_URL, type: 'text/html' }],
     },
   ],
 });

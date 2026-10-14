@@ -16,11 +16,6 @@ export const buildMcpServerCard = ({
   title: 'Twenty CRM',
   description:
     'Read and write your Twenty CRM data - companies, people, opportunities, tasks, notes and any custom objects - from AI assistants. Tools are discovered at runtime and scoped to the authenticated workspace.',
-  websiteUrl: 'https://twenty.com',
-  repository: {
-    url: 'https://github.com/twentyhq/twenty',
-    source: 'github',
-  },
   remotes: [
     {
       type: 'streamable-http',
