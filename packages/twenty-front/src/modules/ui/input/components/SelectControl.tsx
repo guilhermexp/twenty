@@ -11,7 +11,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
-// TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
+// TODO: Factorize this control container.
 export const StyledControlContainer = styled.div<{
   disabled?: boolean;
   hasIcon: boolean;

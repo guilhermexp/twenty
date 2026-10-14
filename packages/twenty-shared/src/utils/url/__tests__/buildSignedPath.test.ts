@@ -48,22 +48,22 @@ describe('buildSignedPath', () => {
   it('should ignore absolute https urls', () => {
     expect(
       buildSignedPath({
-        path: 'https://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png',
+        path: 'https://example.com/placeholder-images/workspaces/logo.png',
         token: 'tokenValue',
       }),
     ).toBe(
-      'https://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png',
+      'https://example.com/placeholder-images/workspaces/logo.png',
     );
   });
 
   it('should ignore absolute http urls', () => {
     expect(
       buildSignedPath({
-        path: 'http://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png',
+        path: 'http://example.com/placeholder-images/workspaces/logo.png',
         token: 'tokenValue',
       }),
     ).toBe(
-      'http://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png',
+      'http://example.com/placeholder-images/workspaces/logo.png',
     );
   });
 });

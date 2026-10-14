@@ -54,7 +54,7 @@ export class WorkflowVersionStepResolver {
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
-  // Related to https://github.com/twentyhq/private-issues/issues/478
+  // Related to a private workflow integration issue.
   @Query(() => ConnectedAccountHandleDTO, { nullable: true })
   async workflowStepConnectedAccountHandle(
     @Args('connectedAccountId', { type: () => UUIDScalarType }) id: string,

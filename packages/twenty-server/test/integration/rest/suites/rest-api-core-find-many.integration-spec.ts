@@ -212,7 +212,7 @@ describe('Core REST API Find Many endpoint', () => {
     expect(filteredPeople.length).toBeGreaterThan(0);
   });
 
-  // TODO: Refacto-common - Uncomment this after https://github.com/twentyhq/core-team-issues/issues/1627
+  // TODO: Re-enable this assertion after the common refactor is complete.
 
   //     expect(response.body).toMatchInlineSnapshot(`
   // {

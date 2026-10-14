@@ -88,8 +88,7 @@ export type CompleteApplicationFileUploadsResult = {
 export class FileApi {
   constructor(private readonly client: AxiosInstance) {}
 
-  // TODO: Migrate to MetadataClient once available
-  // (see https://github.com/twentyhq/core-team-issues/issues/2289)
+  // TODO: Migrate to MetadataClient when available.
   async uploadAppTarball({
     tarballBuffer,
     universalIdentifier,

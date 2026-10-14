@@ -14,7 +14,7 @@ type PropertyConfiguration = {
   toCompare: boolean;
 };
 
-// TODO remove once https://github.com/twentyhq/core-team-issues/issues/2227 has been resolved
+// TODO remove once the universal flat entity comparison is corrected
 const EXTRA_PROPERTIES_TO_COMPARE = {
   index: {
     flatIndexFieldMetadatas: {

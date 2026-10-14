@@ -198,7 +198,7 @@ export const WithSecondaryLinks: Story = {
           label: 'Documentation',
         },
         {
-          url: 'https://github.com/twentyhq/twenty',
+          url: 'https://github.com/guilhermexp/twenty',
           label: 'GitHub',
         },
       ],

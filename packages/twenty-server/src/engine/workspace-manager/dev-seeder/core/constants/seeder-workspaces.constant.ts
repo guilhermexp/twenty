@@ -58,7 +58,7 @@ export const SEEDER_CREATE_WORKSPACE_INPUT = {
     displayName: 'Apple',
     subdomain: 'apple',
     inviteHash: 'apple.dev-invite-hash',
-    logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
+    logo: '',
     activationStatus: WorkspaceActivationStatus.PENDING_CREATION, // will be set to active after default role creation
     isTwoFactorAuthenticationEnforced: false,
   },
@@ -67,7 +67,7 @@ export const SEEDER_CREATE_WORKSPACE_INPUT = {
     displayName: 'YCombinator',
     subdomain: 'yc',
     inviteHash: 'yc.dev-invite-hash',
-    logo: 'https://twentyhq.github.io/placeholder-images/workspaces/ycombinator-logo.png',
+    logo: '',
     activationStatus: WorkspaceActivationStatus.PENDING_CREATION, // will be set to active after default role creation
     isTwoFactorAuthenticationEnforced: false,
   },

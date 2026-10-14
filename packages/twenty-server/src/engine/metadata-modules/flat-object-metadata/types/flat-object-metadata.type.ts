@@ -5,8 +5,7 @@ type BaseFlatObjectMetadata = FlatEntityFrom<
   Omit<ObjectMetadataEntity, 'dataSourceId'>
 >;
 export type FlatObjectMetadata = BaseFlatObjectMetadata & {
-  // NOTE: below fields are not reflected on the final UniversalFlatEntity either they should we should define a common source
-  // TODO remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+  // NOTE: These fields are not reflected on the final UniversalFlatEntity; define a common source when the shape is consolidated.
   labelIdentifierFieldMetadataUniversalIdentifier: string | null;
   imageIdentifierFieldMetadataUniversalIdentifier: string | null;
 };

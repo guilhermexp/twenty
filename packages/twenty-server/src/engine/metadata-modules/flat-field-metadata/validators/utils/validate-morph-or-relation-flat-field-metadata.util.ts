@@ -207,7 +207,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
     }
   }
 
-  // TODO prastoin refactor FlatFieldMetadataTypeValidator to implement two code flow: create and update https://github.com/twentyhq/core-team-issues/issues/2044
+  // TODO: Refactor FlatFieldMetadataTypeValidator to use two flows.
   if (isDefined(update)) {
     errors.push(
       ...validateMorphOrRelationFlatFieldMetadataUpdates({

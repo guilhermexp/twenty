@@ -241,7 +241,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       return {
         id: viewFilterGroup.id,
         logicalOperator:
-          viewFilterGroup.logicalOperator as unknown as RecordFilterGroupLogicalOperator, // TODO - https://github.com/twentyhq/twenty/issues/14746
+          viewFilterGroup.logicalOperator as unknown as RecordFilterGroupLogicalOperator, // TODO: Revisit group-by logical operator typing.
         parentRecordFilterGroupId: viewFilterGroup.parentViewFilterGroupId,
       };
     });

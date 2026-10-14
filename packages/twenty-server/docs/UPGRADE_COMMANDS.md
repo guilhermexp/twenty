@@ -7,6 +7,8 @@ The upgrade process relies on two types of commands:
 
 Both are registered via decorators and automatically discovered by the upgrade pipeline.
 
+This fork has independent versioning and does not sync release or upgrade history from upstream. Add new commands only under the current fork version directory; never renumber existing versions.
+
 ## Instance Commands
 
 ### Generating an instance command
@@ -122,7 +124,7 @@ Rule of thumb:
 
 All pre-2.19 commands follow this rule, including `upgrade:2-10:sync-call-recording-standard-objects`: it builds its create-set from the static twenty-standard definition (which declares all of `callRecording`'s fields, including the `searchVector` system field) and runs it through the legacy path so nothing is injected on top. Its matrix contains no `searchFieldMetadata` operations; the deterministic rows are created later in the same upgrade pipeline by `upgrade:2-16:backfill-search-field-metadata`, which derives them from the standard definition.
 
-Known gap: the static definition does not yet declare `callRecording`'s `searchVector` GIN index (every other searchable standard object declares its GIN index statically), so workspaces upgrading through 2-10 on the legacy path create the `searchVector` column unindexed. The static declaration plus a backfill for already-upgraded workspaces land in a follow-up (twentyhq/core-team-issues#2672), which must ship in the same release as this legacy path.
+- Known gap: the static definition does not yet declare `callRecording`'s `searchVector` GIN index (every other searchable standard object declares its GIN index statically), so workspaces upgrading through 2-10 on the legacy path create the `searchVector` column unindexed. The static definition plus a backfill for already-upgraded workspaces are tracked as follow-up work.
 
 ## Execution Order
 

@@ -156,7 +156,7 @@ export class JwtWrapperService {
       // API_KEY tokens created before 12/12/2025 were accidentally signed
       // with ACCESS type instead of API_KEY. Fall back to the legacy ACCESS
       // secret for backward compatibility.
-      // See https://github.com/twentyhq/twenty/pull/16504
+      // Support the legacy JWT algorithm for backward compatibility.
       if (
         payload.type === JwtTokenTypeEnum.API_KEY &&
         algorithm === JWT_LEGACY_ALGORITHM

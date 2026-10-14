@@ -56,7 +56,7 @@ describe('removeEmptyLinks', () => {
             label: 'Documentation',
           },
           {
-            url: 'https://github.com/twentyhq/twenty',
+            url: 'https://github.com/guilhermexp/twenty',
             label: 'GitHub',
           },
         ],
@@ -66,7 +66,7 @@ describe('removeEmptyLinks', () => {
       primaryLinkLabel: 'Documentation',
       secondaryLinks: [
         {
-          url: 'https://github.com/twentyhq/twenty',
+          url: 'https://github.com/guilhermexp/twenty',
           label: 'GitHub',
         },
       ],

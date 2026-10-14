@@ -65,7 +65,7 @@ export class TimelineCalendarEventService {
       // TODO run under the caller's role via resolveRolePermissionConfig instead
       // of bypassing, once roles that cannot read person degrade to a redacted
       // timeline rather than a denied one
-      // https://github.com/twentyhq/core-team-issues/issues/2777
+      // Keep timeline events distinct from denied events.
       const calendarEventRepository =
         this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
           'calendarEvent',

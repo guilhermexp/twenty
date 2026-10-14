@@ -5,7 +5,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 // TODO: have a better clearable settings in metadata ?
 // We might want to define what's clearable in the metadata
 // Instead of passing it in the context
-// See: https://github.com/twentyhq/twenty/issues/4403
+// Keep field clearability derived from the field context.
 export const useIsFieldClearable = (): boolean => {
   const { clearable, isLabelIdentifier } = useContext(FieldContext);
 

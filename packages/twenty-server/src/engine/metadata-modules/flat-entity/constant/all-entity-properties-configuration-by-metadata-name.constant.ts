@@ -235,7 +235,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     labelIdentifierFieldMetadataId: {
       toCompare: true,
       toStringify: false,
-      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+      // @ts-expect-error remove once the flat metadata property shape is corrected
       universalProperty: 'labelIdentifierFieldMetadataUniversalIdentifier',
     },
     overrides: {
@@ -296,7 +296,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     imageIdentifierFieldMetadataId: {
       toCompare: true,
       toStringify: false,
-      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+      // @ts-expect-error remove once the flat metadata property shape is corrected
       universalProperty: 'imageIdentifierFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },

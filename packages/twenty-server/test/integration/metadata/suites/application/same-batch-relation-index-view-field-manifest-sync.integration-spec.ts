@@ -221,7 +221,7 @@ describe('Manifest sync - INDEX view fields for relation fields created in the s
     });
   });
 
-  // Reproduces twentyhq/core-team-issues#2749: relations created in the same
+  // Reproduces a relation index-view regression in same-batch metadata sync.
   // sync as their objects get no INDEX view field at all, not even a hidden
   // one, while the same relations added in a later sync do (next test).
   it('should provision INDEX view fields for relation fields created in the same sync as their objects', async () => {

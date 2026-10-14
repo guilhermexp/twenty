@@ -127,7 +127,7 @@ export const SocialMediaLinks: Story = {
       primaryLinkUrl: 'https://www.linkedin.com/company/twenty',
       primaryLinkLabel: '',
       secondaryLinks: [
-        { url: 'https://twitter.com/twentycrm', label: null },
+        { url: 'https://twitter.com/guilhermexp', label: null },
         {
           url: 'https://www.instagram.com/twenty_hq',
           label: null,
@@ -150,11 +150,11 @@ export const SocialMediaLinks: Story = {
       'https://www.linkedin.com/company/twenty',
     );
 
-    const twitterLink = await canvas.findByText('@twentycrm');
+    const twitterLink = await canvas.findByText('@guilhermexp');
     expect(twitterLink).toBeVisible();
     expect(twitterLink).toHaveAttribute(
       'href',
-      'https://twitter.com/twentycrm',
+      'https://twitter.com/guilhermexp',
     );
 
     const instagramLink = await canvas.findByText('@twenty_hq');

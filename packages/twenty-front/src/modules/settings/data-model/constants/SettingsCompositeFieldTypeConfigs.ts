@@ -28,7 +28,7 @@ import {
 } from 'twenty-ui/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-//TODO : isIncludedInUniqueConstraint refactor - https://github.com/twentyhq/core-team-issues/issues/1097
+// TODO: Revisit unique-constraint inclusion handling.
 
 export type CompositeSubFieldConfig<T> = {
   subFieldName: keyof T;

@@ -7,7 +7,7 @@ import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-me
 
 // Resolves the object's single system TS_VECTOR field (the 'searchVector' field) that
 // every searchFieldMetadata row contributes to.
-// Could be refactored once https://github.com/twentyhq/twenty/pull/21949 has been merged.
+// Could be refactored after the centralized cache design is revisited.
 export const findTsVectorFlatFieldMetadataForObject = ({
   fieldUniversalIdentifiers,
   flatFieldMetadataMaps,

@@ -106,7 +106,7 @@ describe('Application manifest sync - search field metadata on label identifier 
     // single sync cannot both create a field and relabel the object onto it
     // yet (objectMetadata.update is ordered before fieldMetadata.create in the
     // migration runner). Tracked for a follow-up core fix:
-    // https://github.com/twentyhq/core-team-issues/issues/2655
+    // The migration runner needs a follow-up fix for this relabel path.
     await syncObjectManifest(
       buildObjectManifest({
         labelIdentifierFieldMetadataUniversalIdentifier:
