@@ -187,6 +187,9 @@ import { DropApplicationRegistrationPricingDescriptionFastInstanceCommand } from
 import { DropAgentChatThreadCreditsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1791945277928-drop-agent-chat-thread-credits';
 import { DeleteCreditMeterUsageLimitsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791945277929-delete-credit-meter-usage-limits';
 import { DeleteQuotaEngineCreditBoundFeatureFlagSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791945277930-delete-quota-engine-credit-bound-feature-flag';
+import { DropImpersonationColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1791947223402-drop-impersonation-columns';
+import { DeleteImpersonatePermissionFlagSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791947223403-delete-impersonate-permission-flag';
+import { DeleteImpersonationUserSessionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791947223404-delete-impersonation-user-sessions';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -376,4 +379,7 @@ export const INSTANCE_COMMANDS = [
   DropAgentChatThreadCreditsFastInstanceCommand,
   DeleteCreditMeterUsageLimitsSlowInstanceCommand,
   DeleteQuotaEngineCreditBoundFeatureFlagSlowInstanceCommand,
+  DropImpersonationColumnsFastInstanceCommand,
+  DeleteImpersonatePermissionFlagSlowInstanceCommand,
+  DeleteImpersonationUserSessionsSlowInstanceCommand,
 ];

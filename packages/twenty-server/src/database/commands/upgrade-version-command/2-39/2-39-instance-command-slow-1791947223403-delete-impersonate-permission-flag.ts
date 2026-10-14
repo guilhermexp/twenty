@@ -1,0 +1,23 @@
+import { type DataSource, type QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+
+@RegisteredInstanceCommand('2.39.0', 1791947223403, { type: 'slow' })
+export class DeleteImpersonatePermissionFlagSlowInstanceCommand
+  implements SlowInstanceCommand
+{
+  // rolePermissionFlag rows referencing these flags go with them through the
+  // ON DELETE CASCADE foreign key.
+  async runDataMigration(dataSource: DataSource): Promise<void> {
+    await dataSource.query(
+      `DELETE FROM "core"."permissionFlag" WHERE key = 'IMPERSONATE'`,
+    );
+  }
+
+  public async up(_queryRunner: QueryRunner): Promise<void> {}
+
+  public async down(_queryRunner: QueryRunner): Promise<void> {
+    // Impersonation was removed; IMPERSONATE rows are not restored.
+  }
+}
