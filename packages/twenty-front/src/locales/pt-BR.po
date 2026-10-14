@@ -4514,6 +4514,11 @@ msgstr "Não foi possível carregar as versões."
 msgid "Could not open the API playground"
 msgstr "Não foi possível abrir o playground da API"
 
+#. js-lingui-id: vCPW4t
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "Could not reach the workspace. Please retry the verification link."
+msgstr "Não foi possível acessar o workspace. Abra o link de verificação novamente."
+
 #. js-lingui-id: 5ngF7a
 #: src/modules/object-core/workflows/versions/hooks/useRestoreCoreWorkflowVersionAsDraft.ts
 #: src/modules/object-core/workflows/versions/hooks/useRestoreCoreWorkflowVersionAsDraft.ts
