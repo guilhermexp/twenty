@@ -264,6 +264,12 @@ export default defineConfig(({ mode }) => {
       'process.env': {
         IS_DEBUG_MODE,
         IS_DEV_ENV: mode === 'development' ? 'true' : 'false',
+        REACT_APP_SERVER_BASE_URL,
+        REACT_APP_PRIVATE_MODE: env.REACT_APP_PRIVATE_MODE,
+        REACT_APP_DEV_AUTO_LOGIN: env.REACT_APP_DEV_AUTO_LOGIN,
+        REACT_APP_DEV_AUTO_LOGIN_EMAIL: env.REACT_APP_DEV_AUTO_LOGIN_EMAIL,
+        REACT_APP_DEV_AUTO_LOGIN_PASSWORD:
+          env.REACT_APP_DEV_AUTO_LOGIN_PASSWORD,
       },
     },
     css: {
