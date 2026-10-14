@@ -92,7 +92,6 @@ describe('setFileResponseHeaders', () => {
     FileFolder.Workflow,
     FileFolder.AgentChat,
     FileFolder.EmailAttachment,
-    FileFolder.Dpa,
     FileFolder.BuiltFrontComponent,
   ])(
     'should set an immutable Cache-Control for immutable folder %s',

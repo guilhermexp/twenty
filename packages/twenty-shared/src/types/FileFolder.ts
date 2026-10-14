@@ -12,5 +12,4 @@ export enum FileFolder {
   EmailImage = 'email-image',
   AppTarball = 'app-tarball',
   GeneratedSdkClient = 'generated-sdk-client',
-  Dpa = 'dpa',
 }

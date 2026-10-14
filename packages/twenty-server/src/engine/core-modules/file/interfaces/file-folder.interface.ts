@@ -90,9 +90,4 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     cacheControl: null,
     allowedMimeTypes: ANY_MIME_TYPE,
   },
-  [FileFolder.Dpa]: {
-    ignoreExpirationToken: false,
-    cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
-    allowedMimeTypes: ANY_MIME_TYPE,
-  },
 };
