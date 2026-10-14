@@ -154,7 +154,6 @@ export class MicrosoftAPIsAuthController {
           error,
           workspace: workspace ?? {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-            customDomain: null,
           },
           pathname: AppPath.Verify,
         }),

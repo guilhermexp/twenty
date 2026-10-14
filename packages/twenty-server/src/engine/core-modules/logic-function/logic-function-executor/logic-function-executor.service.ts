@@ -28,7 +28,6 @@ import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/a
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { UsageQuotaGateService } from 'src/engine/core-modules/usage-limit/services/usage-quota-gate.service';
@@ -96,7 +95,6 @@ export class LogicFunctionExecutorService {
     private readonly usageQuotaGateService: UsageQuotaGateService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    private readonly applicationService: ApplicationService,
     private readonly applicationStopService: ApplicationStopService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -433,10 +431,7 @@ export class LogicFunctionExecutorService {
     ]);
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
-    const functionsBaseUrl = await this.buildFunctionsBaseUrl({
-      workspaceId,
-      flatApplication,
-    });
+    const functionsBaseUrl = await this.buildFunctionsBaseUrl(workspaceId);
 
     const serverVariables = await this.buildServerVariableEnvMap(
       flatApplication.applicationRegistrationId,
@@ -464,13 +459,9 @@ export class LogicFunctionExecutorService {
     };
   }
 
-  private async buildFunctionsBaseUrl({
-    workspaceId,
-    flatApplication,
-  }: {
-    workspaceId: string;
-    flatApplication: FlatApplication;
-  }): Promise<string | undefined> {
+  private async buildFunctionsBaseUrl(
+    workspaceId: string,
+  ): Promise<string | undefined> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       select: { subdomain: true },
@@ -481,16 +472,7 @@ export class LogicFunctionExecutorService {
       return undefined;
     }
 
-    const primaryPublicDomain =
-      await this.applicationService.findPrimaryPublicDomainName({
-        applicationId: flatApplication.id,
-        workspaceId,
-      });
-
-    return this.workspaceDomainsService.buildPublicFunctionBaseUrl({
-      workspace,
-      primaryPublicDomain,
-    });
+    return this.workspaceDomainsService.buildPublicFunctionBaseUrl(workspace);
   }
 
   private async buildServerVariableEnvMap(

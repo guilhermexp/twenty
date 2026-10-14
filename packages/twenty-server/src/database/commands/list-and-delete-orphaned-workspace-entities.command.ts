@@ -15,7 +15,6 @@ import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/em
 import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
@@ -100,7 +99,6 @@ const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
   MessageSuppressionEntity,
   FeatureFlagEntity,
   FileEntity,
-  PublicDomainEntity,
   WebhookEntity,
   WorkspaceSsoIdentityProviderEntity,
 ];

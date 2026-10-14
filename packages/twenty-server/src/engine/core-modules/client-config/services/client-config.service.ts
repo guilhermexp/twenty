@@ -32,13 +32,6 @@ export class ClientConfigService {
     private maintenanceModeService: MaintenanceModeService,
   ) {}
 
-  private isCloudflareIntegrationEnabled(): boolean {
-    return (
-      !!this.twentyConfigService.get('CLOUDFLARE_API_KEY') &&
-      !!this.twentyConfigService.get('CLOUDFLARE_ZONE_ID')
-    );
-  }
-
   async getClientConfig(): Promise<ClientConfig> {
     const captchaProvider = this.twentyConfigService.get('CAPTCHA_DRIVER');
     const calendarBookingPageId = this.twentyConfigService.get(
@@ -238,7 +231,6 @@ export class ClientConfigService {
         : undefined,
       isBookCallOnboardingStepEnabled,
       isCompanyEnrichmentEnabled,
-      isCloudflareIntegrationEnabled: this.isCloudflareIntegrationEnabled(),
       isClickHouseConfigured: !!this.twentyConfigService.get('CLICKHOUSE_URL'),
       isWorkspaceSchemaDDLLocked: this.twentyConfigService.get(
         'WORKSPACE_SCHEMA_DDL_LOCKED',

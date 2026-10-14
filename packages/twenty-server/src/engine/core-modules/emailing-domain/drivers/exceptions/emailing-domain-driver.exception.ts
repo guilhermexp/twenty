@@ -13,7 +13,6 @@ export enum EmailingDomainDriverExceptionCode {
   SENDING_SUSPENDED = 'SENDING_SUSPENDED',
   SANDBOX_ACCOUNT = 'SANDBOX_ACCOUNT',
   ALL_RECIPIENTS_SUPPRESSED = 'ALL_RECIPIENTS_SUPPRESSED',
-  UNSUBSCRIBE_NOT_READY = 'UNSUBSCRIBE_NOT_READY',
   UNSUBSCRIBE_MULTIPLE_RECIPIENTS = 'UNSUBSCRIBE_MULTIPLE_RECIPIENTS',
   UNKNOWN = 'UNKNOWN',
 }
@@ -34,8 +33,6 @@ const getEmailingDomainDriverExceptionUserFriendlyMessage = (
       return msg`Your AWS SES account is still in the sandbox, so this domain cannot send to unverified recipients. Request production access from AWS, then verify the domain again.`;
     case EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED:
       return msg`All recipients are suppressed for this email domain.`;
-    case EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY:
-      return msg`Marketing sending is on hold until the unsubscribe domain is verified.`;
     case EmailingDomainDriverExceptionCode.UNSUBSCRIBE_MULTIPLE_RECIPIENTS:
       return msg`A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link.`;
     case EmailingDomainDriverExceptionCode.TEMPORARY_ERROR:

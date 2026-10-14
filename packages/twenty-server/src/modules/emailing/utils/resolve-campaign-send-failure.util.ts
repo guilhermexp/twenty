@@ -58,13 +58,6 @@ export const resolveCampaignSendFailure = (
         failureReason: CAMPAIGN_FAILURE_REASON.SENDING_SUSPENDED,
         shouldRetry: true,
       };
-    case EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY:
-      return {
-        state: CAMPAIGN_DELIVERY_STATE.FAILED,
-        skipReason: null,
-        failureReason: CAMPAIGN_FAILURE_REASON.UNSUBSCRIBE_NOT_READY,
-        shouldRetry: true,
-      };
     case EmailingDomainDriverExceptionCode.NOT_FOUND:
     case EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR:
       return {

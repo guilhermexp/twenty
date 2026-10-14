@@ -26,7 +26,6 @@ import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanu
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { UpgradeStatusCommand } from 'src/engine/core-modules/upgrade/commands/upgrade-status.command';
@@ -81,9 +80,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     WorkspaceMigrationModule,
     TrashCleanupModule,
 
-
     CodeInterpreterSessionCleanupModule,
-    PublicDomainModule,
     EventLogCleanupModule,
     TwentyConfigModule,
     ApplicationInstallModule,

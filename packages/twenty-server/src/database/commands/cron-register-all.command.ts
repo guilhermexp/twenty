@@ -10,10 +10,8 @@ import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/c
 import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file-upload/crons/commands/pending-file-cleanup.cron.command';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
-import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCleanupCronCommand } from 'src/engine/core-modules/user-session/crons/commands/user-session-cleanup.cron.command';
-import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
 import { WebhookSubscriptionRenewalCronCommand } from 'src/modules/connected-account/webhook-subscription-manager/crons/commands/webhook-subscription-renewal.cron.command';
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
 import { ReconcileCampaignStatsCronCommand } from 'src/modules/emailing/crons/commands/reconcile-campaign-stats.cron.command';
@@ -63,8 +61,6 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCronCommand,
     private readonly workflowCoreConsistencyCronCommand: WorkflowCoreConsistencyCronCommand,
 
-    private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
-    private readonly checkPublicDomainsValidRecordsCronCommand: CheckPublicDomainsValidRecordsCronCommand,
     private readonly checkEmailingDomainVerificationCronCommand: CheckEmailingDomainVerificationCronCommand,
     private readonly cronTriggerCronCommand: CronTriggerCronCommand,
     private readonly cleanSuspendedWorkspacesCronCommand: CleanSuspendedWorkspacesCronCommand,
@@ -132,14 +128,6 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'ReconcileCampaignStats',
         command: this.reconcileCampaignStatsCronCommand,
-      },
-      {
-        name: 'CheckCustomDomainValidRecords',
-        command: this.checkCustomDomainValidRecordsCronCommand,
-      },
-      {
-        name: 'CheckPublicDomainsValidRecords',
-        command: this.checkPublicDomainsValidRecordsCronCommand,
       },
       {
         name: 'CheckEmailingDomainVerification',

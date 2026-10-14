@@ -95,7 +95,6 @@ export class ApplicationRegistrationClaimController {
           error,
           workspace: {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-            customDomain: null,
           },
           pathname: getSettingsPath(SettingsPath.Applications),
         }),

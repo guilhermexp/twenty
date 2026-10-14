@@ -6,5 +6,6 @@ import { type STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/t
 export const RETIRED_STANDARD_COMMAND_MENU_ITEM_NAMES: Partial<
   Record<keyof typeof STANDARD_COMMAND_MENU_ITEMS, true>
 > = {
+  goToSettingsDomains: true,
   goToSettingsUpdates: true,
 };

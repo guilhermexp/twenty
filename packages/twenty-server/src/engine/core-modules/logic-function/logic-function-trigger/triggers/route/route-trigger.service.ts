@@ -41,7 +41,6 @@ type RouteTriggerWorkspace = Pick<
 
 type RouteTriggerRequestContext = {
   workspace: RouteTriggerWorkspace;
-  applicationId: string | null;
   isIsolatedOrigin: boolean;
   authenticationContext: AuthContext | undefined;
 };
@@ -89,13 +88,8 @@ export class RouteTriggerService {
   ): Promise<RouteTriggerRequestContext> {
     const host = `${request.protocol}://${request.get('host')}`;
 
-    const {
-      workspace: workspaceFromHost,
-      publicDomain,
-      isIsolatedOrigin,
-    } = await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(
-      host,
-    );
+    const { workspace: workspaceFromHost, isIsolatedOrigin } =
+      await this.workspaceDomainsService.resolveWorkspaceFromOrigin(host);
 
     const authenticationContext =
       await this.resolveAuthenticationContextForWorkspaceFallback({
@@ -122,7 +116,6 @@ export class RouteTriggerService {
 
     return {
       workspace,
-      applicationId: publicDomain?.applicationId ?? null,
       isIsolatedOrigin,
       authenticationContext,
     };
@@ -254,19 +247,14 @@ export class RouteTriggerService {
     request: Request;
     httpMethod: HTTPMethod;
   }): Promise<{ response: RouteTriggerResponse; isIsolatedOrigin: boolean }> {
-    const {
-      workspace,
-      applicationId,
-      isIsolatedOrigin,
-      authenticationContext,
-    } = await this.resolveRouteTriggerRequestContextOrFail(request);
+    const { workspace, isIsolatedOrigin, authenticationContext } =
+      await this.resolveRouteTriggerRequestContextOrFail(request);
 
     const logicFunctionsWithHttpRouteTrigger =
       await this.logicFunctionRepository.find({
         where: {
           workspaceId: workspace.id,
           httpRouteTriggerSettings: Not(IsNull()),
-          ...(isDefined(applicationId) ? { applicationId } : {}),
         },
       });
 

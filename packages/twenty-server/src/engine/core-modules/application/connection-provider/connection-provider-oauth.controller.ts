@@ -240,7 +240,6 @@ export class ConnectionProviderOAuthController {
           subdomain:
             workspace?.subdomain ??
             this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-          customDomain: workspace?.customDomain ?? null,
         },
         pathname: getSettingsPath(SettingsPath.Accounts),
       }),

@@ -24,8 +24,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
-import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import {
@@ -106,7 +104,6 @@ export class WorkspaceService {
     PermissionFlagType
   > = {
     subdomain: PermissionFlagType.WORKSPACE,
-    customDomain: PermissionFlagType.WORKSPACE,
     displayName: PermissionFlagType.WORKSPACE,
     logo: PermissionFlagType.WORKSPACE,
     trashRetentionDays: PermissionFlagType.WORKSPACE,
@@ -142,7 +139,6 @@ export class WorkspaceService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
-    private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
     private readonly applicationService: ApplicationService,
@@ -151,7 +147,6 @@ export class WorkspaceService {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceSchemaService: WorkspaceSchemaService,
-    private readonly customDomainManagerService: CustomDomainManagerService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
@@ -198,26 +193,6 @@ export class WorkspaceService {
       await this.subdomainManagerService.validateSubdomainOrThrow(
         payload.subdomain,
       );
-    }
-
-    let customDomainRegistered = false;
-
-    if (payload.customDomain === null && isDefined(workspace.customDomain)) {
-      await this.dnsManagerService.deleteHostnameSilently(
-        workspace.customDomain,
-      );
-      workspace.isCustomDomainEnabled = false;
-    }
-
-    if (
-      payload.customDomain &&
-      workspace.customDomain !== payload.customDomain
-    ) {
-      await this.customDomainManagerService.setCustomDomain(
-        workspace,
-        payload.customDomain,
-      );
-      customDomainRegistered = true;
     }
 
     const authProvidersBySystem = {
@@ -311,23 +286,10 @@ export class WorkspaceService {
       }
     }
 
-    let updatedWorkspace: WorkspaceEntity;
-
-    try {
-      updatedWorkspace = await this.workspaceRepository.save({
-        ...workspace,
-        ...payload,
-      });
-    } catch (error) {
-      if (payload.customDomain && customDomainRegistered) {
-        this.dnsManagerService
-          .deleteHostnameSilently(payload.customDomain)
-          .catch((err) => {
-            this.exceptionHandlerService.captureExceptions([err]);
-          });
-      }
-      throw error;
-    }
+    const updatedWorkspace = await this.workspaceRepository.save({
+      ...workspace,
+      ...payload,
+    });
 
     await this.coreEntityCacheService.invalidate(
       'workspaceEntity',
@@ -640,13 +602,6 @@ export class WorkspaceService {
               ),
             },
           );
-
-          if (workspace.customDomain) {
-            await this.dnsManagerService.deleteHostnameSilently(
-              workspace.customDomain,
-            );
-            this.logger.log(`workspace ${workspace.id} custom domain deleted`);
-          }
 
           await this.workspaceRepository.delete(workspace.id);
           await this.coreEntityCacheService.invalidate(

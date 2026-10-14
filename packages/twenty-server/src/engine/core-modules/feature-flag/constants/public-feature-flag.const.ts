@@ -22,11 +22,4 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       icon: 'IconRelationManyToMany',
     },
   },
-  ...(process.env.CLOUDFLARE_API_KEY
-    ? [
-        // {
-        // Here you can add cloud only feature flags
-        // },
-      ]
-    : []),
 ];

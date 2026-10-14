@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modules/emailing-domain/crons/commands/check-emailing-domain-verification.cron.command';
 import { CheckEmailingDomainVerificationCronJob } from 'src/engine/core-modules/emailing-domain/crons/jobs/check-emailing-domain-verification.cron.job';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
@@ -22,7 +21,6 @@ import { EmailingDomainWorkspaceCleanupJob } from 'src/engine/core-modules/email
 import { EmailingDomainTenantStatusService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-tenant-status.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
-import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -36,9 +34,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     TypeOrmModule.forFeature([WorkspaceEntity, EmailingDomainEntity]),
     FeatureFlagModule,
     PermissionsModule,
-    DnsManagerModule,
     SecretEncryptionModule,
-
   ],
   exports: [
     EmailingDomainService,
@@ -56,7 +52,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EmailingDomainTenantStatusService,
     UnsubscribeTokenService,
     UnsubscribeContentService,
-    UnsubscribeHostnameService,
     EmailingDomainResolver,
     EmailingDomainDriverFactory,
     EmailingDomainWorkspaceCleanupJob,

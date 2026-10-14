@@ -20,9 +20,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
-import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
-import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag.dto';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -44,11 +41,7 @@ import { getAuthBypassProvidersByWorkspace } from 'src/engine/core-modules/works
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-  WorkspaceNotFoundDefaultError,
-} from 'src/engine/core-modules/workspace/workspace.exception';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -90,8 +83,6 @@ export class WorkspaceResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly roleService: RoleService,
     private readonly viewService: ViewService,
-    private readonly dnsManagerService: DnsManagerService,
-    private readonly customDomainManagerService: CustomDomainManagerService,
     private readonly applicationService: ApplicationService,
   ) {}
 
@@ -169,7 +160,6 @@ export class WorkspaceResolver {
     await this.workspaceService.suspendWorkspace(id);
     return this.workspaceService.deleteWorkspace(id, true);
   }
-
 
   @ResolveField(() => RoleDTO, { nullable: true })
   async defaultRole(
@@ -249,7 +239,6 @@ export class WorkspaceResolver {
 
     return flatApplications.map(fromFlatApplicationToApplicationDto);
   }
-
 
   @ResolveField(() => Number)
   async workspaceMembersCount(
@@ -336,7 +325,6 @@ export class WorkspaceResolver {
           displayName: 'Default Workspace',
           workspaceUrls: {
             subdomainUrl: originHeader,
-            customUrl: originHeader,
           },
           authProviders: systemEnabledProviders,
         };
@@ -409,31 +397,5 @@ export class WorkspaceResolver {
     } catch (err) {
       workspaceGraphqlApiExceptionHandler(err);
     }
-  }
-
-  @Mutation(() => DomainValidRecords, { nullable: true })
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
-  )
-  async checkCustomDomainValidRecords(
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<DomainValidRecords | undefined> {
-    assertIsDefinedOrThrow(
-      workspace.customDomain,
-      new WorkspaceException(
-        `Custom domain not found`,
-        WorkspaceExceptionCode.CUSTOM_DOMAIN_NOT_FOUND,
-      ),
-    );
-
-    const domainValidRecords = await this.dnsManagerService.refreshHostname(
-      workspace.customDomain,
-    );
-
-    return this.customDomainManagerService.checkCustomDomainValidRecords(
-      workspace,
-      domainValidRecords,
-    );
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { sleep } from 'cloudflare/core';
+import { setTimeout as sleep } from 'node:timers/promises';
+
 import Fuse from 'fuse.js';
 import { NavigateAppToolOutput } from 'twenty-shared/ai';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';

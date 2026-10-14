@@ -8,7 +8,6 @@ import {
   IsOptional,
   IsString,
   IsUUID,
-  Matches,
   Max,
   Min,
 } from 'class-validator';
@@ -22,14 +21,6 @@ export class UpdateWorkspaceInput {
   @IsString()
   @IsOptional()
   subdomain?: string;
-
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  @Matches(
-    /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
-  )
-  customDomain?: string;
 
   @Field({ nullable: true })
   @IsString()

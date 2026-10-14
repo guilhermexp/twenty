@@ -3,12 +3,10 @@ import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-do
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { z } from 'zod';
 
 import { MATERIALIZE_CAMPAIGN_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
-import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
@@ -251,17 +249,6 @@ export class MessageCampaignService {
       throw new EmailingDomainException(
         `No verified emailing domain matches the from address ${fromAddress}`,
         EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED,
-      );
-    }
-
-    if (
-      emailingDomain.unsubscribeHostnameStatus !==
-        UnsubscribeHostnameStatus.ACTIVE ||
-      !isNonEmptyString(emailingDomain.unsubscribeHostname)
-    ) {
-      throw new EmailingDomainException(
-        `Cannot send email for ${emailingDomain.domain}: unsubscribe domain is not active (status: ${emailingDomain.unsubscribeHostnameStatus})`,
-        EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY,
       );
     }
 

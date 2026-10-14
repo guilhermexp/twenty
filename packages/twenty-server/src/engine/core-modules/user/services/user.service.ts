@@ -549,7 +549,7 @@ export class UserService {
     }
 
     const workspaceDomainConfig =
-      this.workspaceDomainsService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+      this.workspaceDomainsService.getSubdomainFromWorkspaceFallbackOnDefaultSubdomain(
         workspace,
       );
 

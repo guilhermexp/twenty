@@ -1238,6 +1238,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
     payload: { path: '/settings/members#roles' },
   },
+  // Retired (see RETIRED_STANDARD_COMMAND_MENU_ITEM_NAMES): custom domains are
+  // gone, but committed upgrade commands still reference this identifier.
   goToSettingsDomains: {
     universalIdentifier: '2d071684-fb5e-4222-b560-4c7ab2597fb4',
     label: i18nLabel(

@@ -60,7 +60,7 @@ export class DomainServerConfigService {
     });
   }
 
-  getSubdomainAndDomainFromUrl = (url: string) => {
+  getSubdomainFromUrl = (url: string) => {
     const { hostname: originHostname } = new URL(url);
 
     const frontDomain = this.getFrontUrl().hostname;
@@ -72,7 +72,6 @@ export class DomainServerConfigService {
 
       return {
         subdomain: this.isDefaultSubdomain(subdomain) ? undefined : subdomain,
-        domain: null,
         isPublicDomainOrigin: false,
       };
     }
@@ -90,14 +89,12 @@ export class DomainServerConfigService {
 
       return {
         subdomain: this.isDefaultSubdomain(subdomain) ? undefined : subdomain,
-        domain: null,
         isPublicDomainOrigin: true,
       };
     }
 
     return {
       subdomain: undefined,
-      domain: originHostname,
       isPublicDomainOrigin: false,
     };
   };
