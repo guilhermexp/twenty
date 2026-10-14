@@ -38649,7 +38649,6 @@ __metadata:
     "@opentelemetry/exporter-prometheus": "npm:^0.219.0"
     "@opentelemetry/resources": "npm:^2.8.0"
     "@opentelemetry/sdk-metrics": "npm:^2.8.0"
-    "@react-pdf/renderer": "npm:^4.1.6"
     "@sentry/nestjs": "npm:^10.59.0"
     "@sentry/node": "npm:^10.59.0"
     "@sentry/profiling-node": "npm:^10.59.0"
