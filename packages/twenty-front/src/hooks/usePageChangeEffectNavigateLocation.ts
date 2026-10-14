@@ -129,17 +129,6 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStatus.APPS_INSTALLATION &&
-    !isMatchingLocation(location, AppPath.InstallApps)
-  ) {
-    if (REACT_APP_PRIVATE_MODE) {
-      return defaultHomePagePath;
-    }
-
-    return AppPath.InstallApps;
-  }
-
-  if (
     onboardingStatus === OnboardingStatus.INVITE_TEAM &&
     !isMatchingLocation(location, AppPath.InviteTeam)
   ) {

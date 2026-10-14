@@ -344,14 +344,6 @@ const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   ),
 );
 
-const SettingsAvailableApplicationDetails = lazy(() =>
-  import('~/pages/settings/applications/SettingsAvailableApplicationDetails').then(
-    (module) => ({
-      default: module.SettingsAvailableApplicationDetails,
-    }),
-  ),
-);
-
 const SettingsApplicationRegistrationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsApplicationRegistrationDetails').then(
     (module) => ({
@@ -1012,10 +1004,6 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ApplicationConnectionDetail}
         element={<SettingsApplicationConnectionDetail />}
-      />
-      <Route
-        path={SettingsPath.AvailableApplicationDetail}
-        element={<SettingsAvailableApplicationDetails />}
       />
       <Route
         path={SettingsPath.ApplicationRegistrationDetail}

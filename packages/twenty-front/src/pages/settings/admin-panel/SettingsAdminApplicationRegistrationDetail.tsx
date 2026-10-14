@@ -10,16 +10,10 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Avatar } from 'twenty-ui/data-display';
-import {
-  IconInfoCircle,
-  IconKey,
-  IconSettings,
-  IconWorld,
-} from 'twenty-ui/icon';
+import { IconInfoCircle, IconKey, IconSettings } from 'twenty-ui/icon';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
-import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -58,7 +52,6 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconInfoCircle },
     { id: 'oauth', title: t`OAuth`, Icon: IconKey },
-    { id: 'distribution', title: t`Distribution`, Icon: IconWorld },
     { id: 'config', title: t`Config`, Icon: IconSettings },
   ];
 
@@ -75,13 +68,6 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationOAuthTab
             registration={registration}
-          />
-        );
-      case 'distribution':
-        return (
-          <SettingsApplicationRegistrationDistributionTab
-            registration={registration}
-            fromAdmin
           />
         );
       case 'general':

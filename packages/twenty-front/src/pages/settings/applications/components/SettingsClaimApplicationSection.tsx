@@ -4,21 +4,15 @@ import { getDocumentationUrl } from '~/utils/getDocumentationUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useLazyQuery, useMutation } from '@apollo/client/react';
+import { useLazyQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/feedback';
-import { IconBrandGithub, IconRefresh, IconSearch } from 'twenty-ui/icon';
+import { IconBrandGithub, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -26,10 +20,7 @@ import { H2Title } from 'twenty-ui/typography';
 import {
   FindClaimableApplicationRegistrationDocument,
   GithubClaimAuthorizationUrlDocument,
-  PermissionFlagType,
-  SyncMarketplaceCatalogDocument,
 } from '~/generated-metadata/graphql';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { getClaimErrorContent } from '~/pages/settings/applications/utils/getClaimErrorContent';
 
 export const CLAIM_ERROR_CODE_SEARCH_PARAM = 'claimErrorCode';
@@ -57,15 +48,10 @@ const StyledResultCard = styled.div`
   padding: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledResultTitleLink = styled(Link)`
+const StyledResultTitle = styled.div`
   align-self: flex-start;
   color: ${themeCssVariables.font.color.primary};
   font-weight: ${themeCssVariables.font.weight.medium};
-  text-decoration: none;
-
-  :hover {
-    text-decoration: underline;
-  }
 `;
 
 const StyledHint = styled.div`
@@ -83,7 +69,7 @@ const StyledCalloutContainer = styled.div`
 
 export const SettingsClaimApplicationSection = () => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const [searchParams] = useSearchParams();
@@ -110,10 +96,6 @@ export const SettingsClaimApplicationSection = () => {
     ? getClaimErrorContent(claimErrorCode)
     : null;
 
-  const canSyncCatalog = useHasPermissionFlag(
-    PermissionFlagType.MARKETPLACE_APPS,
-  );
-
   const [runLookup, { data: lookupData, loading: isLookingUp }] = useLazyQuery(
     FindClaimableApplicationRegistrationDocument,
     { fetchPolicy: 'network-only' },
@@ -123,10 +105,6 @@ export const SettingsClaimApplicationSection = () => {
     useLazyQuery(GithubClaimAuthorizationUrlDocument, {
       fetchPolicy: 'network-only',
     });
-
-  const [syncCatalog, { loading: isSyncing }] = useMutation(
-    SyncMarketplaceCatalogDocument,
-  );
 
   const registration = lookupData?.findClaimableApplicationRegistration ?? null;
 
@@ -184,36 +162,12 @@ export const SettingsClaimApplicationSection = () => {
     }
   };
 
-  const handleSync = async () => {
-    try {
-      await syncCatalog();
-      enqueueSuccessSnackBar({
-        message: t`Catalog sync started. Try your lookup again in a moment.`,
-      });
-    } catch (error) {
-      enqueueErrorSnackBar({
-        message:
-          error instanceof Error
-            ? error.message
-            : t`Could not sync the catalog`,
-      });
-    }
-  };
-
-  const renderCardTitle = (app: {
-    universalIdentifier: string;
-    name: string;
-    logoUrl?: string | null;
-  }) => (
-    <StyledResultTitleLink
-      to={getSettingsPath(SettingsPath.AvailableApplicationDetail, {
-        availableApplicationId: app.universalIdentifier,
-      })}
-    >
+  const renderCardTitle = (app: { name: string; logoUrl?: string | null }) => (
+    <StyledResultTitle>
       <ApplicationDisplay
         application={{ name: app.name, logoUrl: app.logoUrl }}
       />
-    </StyledResultTitleLink>
+    </StyledResultTitle>
   );
 
   return (
@@ -261,22 +215,11 @@ export const SettingsClaimApplicationSection = () => {
           onClick={handleLookup}
           disabled={isLookingUp || lookupValue.trim().length === 0}
         />
-        {canSyncCatalog && (
-          <Button
-            title={t`Sync catalog`}
-            variant="secondary"
-            Icon={IconRefresh}
-            onClick={handleSync}
-            disabled={isSyncing}
-          />
-        )}
       </StyledRow>
 
       {notFound && (
         <StyledResultCard>
-          <StyledHint>
-            {t`No application found. If you just published it to npm with the "twenty-app" keyword, sync the catalog and try again.`}
-          </StyledHint>
+          <StyledHint>{t`No application found.`}</StyledHint>
         </StyledResultCard>
       )}
 

@@ -29,10 +29,8 @@ import {
   ChipVariant,
   Tag,
 } from 'twenty-ui/data-display';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
-import { SettingsPath } from 'twenty-shared/types';
-import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledSourceRow = styled.div`
@@ -48,12 +46,6 @@ const StyledDownloadLink = styled.a`
   &:hover {
     color: ${themeCssVariables.font.color.primary};
   }
-`;
-
-const StyledGeneralContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsApplicationRegistrationGeneralInfo = ({
@@ -92,10 +84,6 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
       skip: !registration.ownerWorkspaceId,
     },
   );
-
-  const shareLink = getSettingsPath(SettingsPath.AvailableApplicationDetail, {
-    availableApplicationId: registration.universalIdentifier,
-  });
 
   const ownerWorkspace = ownerWorkspaceData?.getPublicWorkspaceDataById;
 
@@ -198,21 +186,11 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
   return (
     <Section>
       <H2Title title={t`General`} description={t`About your app`} />
-      <StyledGeneralContainer>
-        <SettingsTableCard
-          rounded
-          items={generateItems()}
-          gridAutoColumns="3fr 8fr"
-        />
-        <SettingsApplicationRegistrationShareLinkButtons
-          shareLink={shareLink}
-          isInstalled={isApplicationInstalled}
-          universalIdentifier={registration.universalIdentifier}
-          isNpmSource={
-            registration.sourceType === ApplicationRegistrationSourceType.NPM
-          }
-        />
-      </StyledGeneralContainer>
+      <SettingsTableCard
+        rounded
+        items={generateItems()}
+        gridAutoColumns="3fr 8fr"
+      />
     </Section>
   );
 };

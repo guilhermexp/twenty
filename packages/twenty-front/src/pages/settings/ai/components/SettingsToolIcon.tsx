@@ -17,19 +17,15 @@ import {
 } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type SettingsAgentToolApplication } from '~/pages/settings/ai/types/SettingsAgentToolApplication';
-import { type SettingsAgentToolMarketplaceApp } from '~/pages/settings/ai/types/SettingsAgentToolMarketplaceApp';
 
 type SettingsToolIconProps = {
   icon?: string | null;
   toolName?: string;
   objectName?: string;
   application?: ApplicationInfo;
-  marketplaceApp?: MarketplaceAppInfo;
 };
 
-type ApplicationInfo = Pick<SettingsAgentToolApplication, 'name'>;
-
-type MarketplaceAppInfo = Pick<SettingsAgentToolMarketplaceApp, 'logoUrl'>;
+type ApplicationInfo = Pick<SettingsAgentToolApplication, 'name' | 'logoUrl'>;
 
 const getOperationIcon = (toolName: string): IconComponent | null => {
   if (toolName.startsWith('create_')) return IconPlus;
@@ -87,27 +83,15 @@ export const SettingsToolIcon = ({
   toolName,
   objectName,
   application,
-  marketplaceApp,
 }: SettingsToolIconProps) => {
   const { getIcon } = useIcons();
   const { theme } = useContext(ThemeContext);
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  if (isDefined(application) && isDefined(marketplaceApp?.logoUrl)) {
-    return (
-      <Avatar
-        avatarUrl={getAbsoluteImageUrl(marketplaceApp.logoUrl)}
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
-        size="xs"
-      />
-    );
-  }
-
   if (isDefined(application)) {
     return (
       <Avatar
+        avatarUrl={getAbsoluteImageUrl(application.logoUrl)}
         placeholder={application.name}
         placeholderColorSeed={application.name}
         type="squared"

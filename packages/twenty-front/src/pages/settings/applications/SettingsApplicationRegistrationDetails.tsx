@@ -9,15 +9,9 @@ import { FindOneApplicationRegistrationDocument } from '~/generated-metadata/gra
 import { useLingui } from '@lingui/react/macro';
 import { Avatar, Tag } from 'twenty-ui/data-display';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import {
-  IconInfoCircle,
-  IconKey,
-  IconSettings,
-  IconWorld,
-} from 'twenty-ui/icon';
+import { IconInfoCircle, IconKey, IconSettings } from 'twenty-ui/icon';
 import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
-import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -60,7 +54,6 @@ export const SettingsApplicationRegistrationDetails = () => {
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconInfoCircle },
     { id: 'oauth', title: t`OAuth`, Icon: IconKey },
-    { id: 'distribution', title: t`Distribution`, Icon: IconWorld },
     { id: 'config', title: t`Config`, Icon: IconSettings },
   ];
 
@@ -75,12 +68,6 @@ export const SettingsApplicationRegistrationDetails = () => {
       case 'oauth':
         return (
           <SettingsApplicationRegistrationOAuthTab
-            registration={registration}
-          />
-        );
-      case 'distribution':
-        return (
-          <SettingsApplicationRegistrationDistributionTab
             registration={registration}
           />
         );

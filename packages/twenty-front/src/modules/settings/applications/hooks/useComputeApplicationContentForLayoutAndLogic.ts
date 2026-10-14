@@ -23,7 +23,7 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
   const installedAppId = installedApplication?.id;
 
   // Workspace metadata covers standard + installed-app objects; the manifest
-  // fallback only matters when previewing an uninstalled marketplace app.
+  // fallback covers objects that are not in the workspace metadata.
   const resolveLabel = (uid: string | undefined | null) => {
     if (!isDefined(uid)) return undefined;
     return (

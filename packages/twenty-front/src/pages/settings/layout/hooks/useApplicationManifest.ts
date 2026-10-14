@@ -1,11 +1,11 @@
 import { useQuery } from '@apollo/client/react';
 import { type Manifest } from 'twenty-shared/application';
 import {
-  FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
+  FindOneApplicationManifestDocument,
 } from '~/generated-metadata/graphql';
 
-// Loads the app + its marketplace manifest. Both queries are cache-first since
+// Loads the app + its registration manifest. Both queries are cache-first since
 // the application detail page already issues them.
 export const useApplicationManifest = (applicationId: string) => {
   const { data: appData, loading: appLoading } = useQuery(
@@ -19,24 +19,21 @@ export const useApplicationManifest = (applicationId: string) => {
 
   const application = appData?.findOneApplication;
 
-  const { data: detailData, loading: detailLoading } = useQuery(
-    FindMarketplaceAppManifestDocument,
+  const { data: manifestData, loading: manifestLoading } = useQuery(
+    FindOneApplicationManifestDocument,
     {
-      variables: {
-        universalIdentifier: application?.universalIdentifier ?? '',
-      },
+      variables: { id: applicationId },
       fetchPolicy: 'cache-first',
-      skip: !application?.universalIdentifier,
+      skip: !applicationId,
     },
   );
 
-  const manifest = detailData?.findMarketplaceAppDetail?.manifest as
-    | Manifest
-    | undefined;
+  const manifest = manifestData?.findOneApplication?.applicationRegistration
+    ?.manifest as Manifest | undefined;
 
   return {
     application,
     manifest,
-    isLoading: appLoading || detailLoading,
+    isLoading: appLoading || manifestLoading,
   };
 };

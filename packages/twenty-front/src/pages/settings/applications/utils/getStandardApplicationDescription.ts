@@ -5,7 +5,7 @@ export const getStandardApplicationDescription =
 
 #### What "foundation" means
 
-Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.
+Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including installed apps, AI agents, and custom objects, plugs into them.
 
 #### Included objects
 - **People & Companies**: contact and account records

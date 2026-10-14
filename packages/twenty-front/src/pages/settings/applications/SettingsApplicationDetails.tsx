@@ -4,8 +4,8 @@ import { useRefetchOnApplicationLifecycleSettled } from '@/applications/hooks/us
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
+import { useUpgradeApplication } from '@/applications/hooks/useUpgradeApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -36,9 +36,9 @@ import {
   IconSettings,
 } from 'twenty-ui/icon';
 import {
-  FindMarketplaceAppDetailDocument,
-  FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
+  FindOneApplicationManifestDocument,
+  FindOneApplicationRegistrationDetailsDocument,
   IsApplicationStoppedDocument,
   PermissionFlagType,
   UninstallApplicationDocument,
@@ -79,14 +79,17 @@ export const SettingsApplicationDetails = () => {
   const { connectionProviders } =
     useFindApplicationConnectionProviders(applicationId);
 
-  const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
-    variables: { universalIdentifier: application?.universalIdentifier ?? '' },
-    skip: !application?.universalIdentifier,
-  });
+  const { data: registrationDetailsData } = useQuery(
+    FindOneApplicationRegistrationDetailsDocument,
+    {
+      variables: { id: applicationId },
+      skip: !applicationId,
+    },
+  );
 
-  const { data: manifestData } = useQuery(FindMarketplaceAppManifestDocument, {
-    variables: { universalIdentifier: application?.universalIdentifier ?? '' },
-    skip: !application?.universalIdentifier,
+  const { data: manifestData } = useQuery(FindOneApplicationManifestDocument, {
+    variables: { id: applicationId },
+    skip: !applicationId,
   });
 
   const { data: isApplicationStoppedData } = useQuery(
@@ -104,10 +107,10 @@ export const SettingsApplicationDetails = () => {
   const isApplicationStopped =
     isApplicationStoppedData?.isApplicationStopped === true;
 
-  const detail = detailData?.findMarketplaceAppDetail;
-  const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
-    | Manifest
-    | undefined;
+  const registrationDetails =
+    registrationDetailsData?.findOneApplication?.applicationRegistration;
+  const manifest = manifestData?.findOneApplication?.applicationRegistration
+    ?.manifest as Manifest | undefined;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isStandardApplication = isTwentyStandardApplication(application);
   const isCustomApplication = isWorkspaceCustomApplication(
@@ -117,12 +120,12 @@ export const SettingsApplicationDetails = () => {
 
   const resolvedDescription = useResolvedApplicationDescription(application);
 
-  const displayName =
-    detail?.name ?? application?.name ?? t`Application details`;
-  const description = detail?.description ?? resolvedDescription;
+  const displayName = application?.name ?? t`Application details`;
+  const description = registrationDetails?.description ?? resolvedDescription;
 
   const getScreenshots = () => {
-    if (detail?.galleryImages?.length) return detail.galleryImages;
+    if (registrationDetails?.galleryImageUrls?.length)
+      return registrationDetails.galleryImageUrls;
     if (isStandardApplication) return STANDARD_APPLICATION_ILLUSTRATIONS;
     if (isCustomApplication) return CUSTOM_APPLICATION_ILLUSTRATIONS;
     return undefined;
@@ -132,15 +135,14 @@ export const SettingsApplicationDetails = () => {
 
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
-  const canInstallMarketplaceApps = useHasPermissionFlag(
+  const canManageApplications = useHasPermissionFlag(
     PermissionFlagType.APPLICATIONS,
   );
 
   const sourceType = application?.applicationRegistration?.sourceType;
-  const registrationId = detail?.id ?? application?.applicationRegistration?.id;
+  const registrationId = application?.applicationRegistration?.id;
   const currentVersion = application?.version;
   const latestAvailableVersion =
-    detail?.latestAvailableVersion ??
     application?.applicationRegistration?.latestAvailableVersion;
 
   const hasUpdate =
@@ -292,26 +294,27 @@ export const SettingsApplicationDetails = () => {
           <SettingsApplicationDetailAboutTab
             displayName={displayName}
             description={description}
-            aboutDescription={detail?.aboutDescription ?? undefined}
-            pricingDescription={detail?.pricingDescription ?? undefined}
+            aboutDescription={
+              registrationDetails?.aboutDescription ?? undefined
+            }
             screenshots={screenshots}
-            author={detail?.author ?? undefined}
-            category={detail?.category ?? undefined}
+            author={registrationDetails?.author ?? undefined}
+            category={registrationDetails?.category ?? undefined}
             contentEntries={contentEntries}
             currentVersion={currentVersion ?? undefined}
             latestAvailableVersion={latestAvailableVersion ?? undefined}
             developerLinks={
-              isDefined(detail)
+              isDefined(registrationDetails)
                 ? {
-                    websiteUrl: detail.websiteUrl ?? undefined,
-                    termsUrl: detail.termsUrl ?? undefined,
-                    emailSupport: detail.emailSupport ?? undefined,
-                    issueReportUrl: detail.issueReportUrl ?? undefined,
+                    websiteUrl: registrationDetails.websiteUrl ?? undefined,
+                    termsUrl: registrationDetails.termsUrl ?? undefined,
+                    emailSupport: registrationDetails.emailSupport ?? undefined,
+                    issueReportUrl:
+                      registrationDetails.issueReportUrl ?? undefined,
                   }
                 : undefined
             }
-            isInstalled={true}
-            canInstallMarketplaceApps={canInstallMarketplaceApps}
+            canManageApplications={canManageApplications}
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}

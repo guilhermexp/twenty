@@ -23,7 +23,6 @@ type SettingsApplicationDetailAboutTabProps = {
   displayName: string;
   description?: string;
   aboutDescription?: string;
-  pricingDescription?: string;
   screenshots?: string[];
   author?: string;
   category?: string;
@@ -31,10 +30,7 @@ type SettingsApplicationDetailAboutTabProps = {
   currentVersion?: string;
   latestAvailableVersion?: string;
   developerLinks?: DeveloperLinks;
-  isInstalled: boolean;
-  canInstallMarketplaceApps?: boolean;
-  onInstall?: () => void;
-  isInstalling?: boolean;
+  canManageApplications?: boolean;
   hasUpdate?: boolean;
   onUpgrade?: () => void;
   isUpgrading?: boolean;
@@ -101,7 +97,6 @@ export const SettingsApplicationDetailAboutTab = ({
   displayName,
   description,
   aboutDescription,
-  pricingDescription,
   screenshots,
   author,
   category,
@@ -109,10 +104,7 @@ export const SettingsApplicationDetailAboutTab = ({
   currentVersion,
   latestAvailableVersion,
   developerLinks,
-  isInstalled,
-  canInstallMarketplaceApps,
-  onInstall,
-  isInstalling,
+  canManageApplications,
   hasUpdate,
   onUpgrade,
   isUpgrading,
@@ -144,7 +136,7 @@ export const SettingsApplicationDetailAboutTab = ({
   };
 
   const getActionButton = () => {
-    if (!canInstallMarketplaceApps) {
+    if (!canManageApplications) {
       return null;
     }
 
@@ -158,19 +150,6 @@ export const SettingsApplicationDetailAboutTab = ({
           variant={'secondary'}
           accent={'blue'}
           disabled={true}
-        />
-      );
-    }
-
-    if (!isInstalled) {
-      return (
-        <Button
-          Icon={IconDownload}
-          title={isInstalling ? t`Installing...` : t`Install`}
-          variant={'primary'}
-          accent={'blue'}
-          onClick={onInstall}
-          disabled={isInstalling}
         />
       );
     }
@@ -238,7 +217,6 @@ export const SettingsApplicationDetailAboutTab = ({
 
         <SettingsApplicationAboutSidebar
           actionButton={getActionButton()}
-          pricingDescription={pricingDescription}
           author={author}
           category={category}
           contentEntries={contentEntries}

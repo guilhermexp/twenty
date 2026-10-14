@@ -2,8 +2,8 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { type MockedResponse } from '@apollo/client/testing';
 import { useApplicationManifest } from '~/pages/settings/layout/hooks/useApplicationManifest';
 import {
-  FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
+  FindOneApplicationManifestDocument,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -20,16 +20,16 @@ const findOneApplicationMock = (
   result: { data: { findOneApplication: application } },
 });
 
-const findMarketplaceAppManifestMock = (
-  manifest: object | null,
+const findOneApplicationManifestMock = (
+  applicationRegistration: { id: string; manifest: object | null } | null,
 ): MockedResponse => ({
   request: {
-    query: FindMarketplaceAppManifestDocument,
-    variables: { universalIdentifier: APP_UID },
+    query: FindOneApplicationManifestDocument,
+    variables: { id: APP_ID },
   },
   result: {
     data: {
-      findMarketplaceAppDetail: manifest === null ? null : { manifest },
+      findOneApplication: { id: APP_ID, applicationRegistration },
     },
   },
 });
@@ -44,7 +44,7 @@ describe('useApplicationManifest', () => {
     expect(result.current.manifest).toBeUndefined();
   });
 
-  it('exposes an undefined manifest when findMarketplaceAppDetail returns null', async () => {
+  it('exposes an undefined manifest when the application has no registration', async () => {
     const wrapper = getJestMetadataAndApolloMocksWrapper({
       apolloMocks: [
         findOneApplicationMock({
@@ -52,7 +52,7 @@ describe('useApplicationManifest', () => {
           universalIdentifier: APP_UID,
           name: 'My App',
         }),
-        findMarketplaceAppManifestMock(null),
+        findOneApplicationManifestMock(null),
       ],
     });
 

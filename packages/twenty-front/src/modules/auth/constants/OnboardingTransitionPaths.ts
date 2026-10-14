@@ -8,6 +8,5 @@ export const ONBOARDING_TRANSITION_PATHS = [
   AppPath.WorkspaceActivation,
   AppPath.CreateProfile,
   AppPath.SyncEmails,
-  AppPath.InstallApps,
   AppPath.InviteTeam,
 ];

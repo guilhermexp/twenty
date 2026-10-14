@@ -215,7 +215,7 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
       expect(installed.result.current.agentRows[0].key).toBe('agent-1');
       expect(installed.result.current.agentRows[0].link).toBeDefined();
 
-      const marketplace = renderHook(
+      const manifestOnly = renderHook(
         () =>
           useComputeApplicationContentForLayoutAndLogic({
             manifestContent: {
@@ -227,8 +227,8 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
           }),
         { wrapper },
       );
-      expect(marketplace.result.current.agentRows[0].key).toBe('a-uid');
-      expect(marketplace.result.current.agentRows[0].link).toBeUndefined();
+      expect(manifestOnly.result.current.agentRows[0].key).toBe('a-uid');
+      expect(manifestOnly.result.current.agentRows[0].link).toBeUndefined();
     });
   });
 

@@ -17,7 +17,6 @@ import {
 } from '~/pages/settings/ai/components/SettingsToolTableRow';
 import { type SettingsAgentToolApplication } from '~/pages/settings/ai/types/SettingsAgentToolApplication';
 import { type SettingsAgentToolItem } from '~/pages/settings/ai/types/SettingsAgentToolItem';
-import { type SettingsAgentToolMarketplaceApp } from '~/pages/settings/ai/types/SettingsAgentToolMarketplaceApp';
 import { getToolApplicationId } from '~/pages/settings/ai/utils/getToolApplicationId';
 import { getToolLink } from '~/pages/settings/ai/utils/getToolLink';
 
@@ -25,10 +24,6 @@ type SettingsAgentToolsTableProps = {
   tools: SettingsAgentToolItem[];
   isLoading: boolean;
   applicationById: Map<string, SettingsAgentToolApplication>;
-  marketplaceAppByUniversalIdentifier: Map<
-    string,
-    SettingsAgentToolMarketplaceApp
-  >;
   currentWorkspace: CurrentWorkspace | null;
 };
 
@@ -40,7 +35,6 @@ export const SettingsAgentToolsTable = ({
   tools,
   isLoading,
   applicationById,
-  marketplaceAppByUniversalIdentifier,
   currentWorkspace,
 }: SettingsAgentToolsTableProps) => {
   const { theme } = useContext(ThemeContext);
@@ -70,11 +64,6 @@ export const SettingsAgentToolsTable = ({
             const application = isDefined(tool.applicationId)
               ? applicationById.get(tool.applicationId)
               : undefined;
-            const marketplaceApp = isDefined(application)
-              ? marketplaceAppByUniversalIdentifier.get(
-                  application.universalIdentifier,
-                )
-              : undefined;
 
             return (
               <SettingsToolTableRow
@@ -85,7 +74,6 @@ export const SettingsAgentToolsTable = ({
                     toolName={tool.name}
                     objectName={tool.objectName ?? undefined}
                     application={application}
-                    marketplaceApp={marketplaceApp}
                   />
                 }
                 name={tool.label ?? tool.name}

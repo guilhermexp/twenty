@@ -7,18 +7,12 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconApps,
-  IconCode,
-  IconShoppingBag,
-  IconSparkle2,
-} from 'twenty-ui/icon';
+import { IconApps, IconCode, IconSparkle2 } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
 import { SettingsApplicationsClaimErrorTabEffect } from '~/pages/settings/applications/components/SettingsApplicationsClaimErrorTabEffect';
-import { SettingsApplicationsAvailableTab } from '~/pages/settings/applications/tabs/SettingsApplicationsAvailableTab';
 import { SettingsApplicationsDeveloperTab } from '~/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab';
 import { SettingsApplicationsInstalledTab } from '~/pages/settings/applications/tabs/SettingsApplicationsInstalledTab';
 
@@ -34,7 +28,6 @@ export const SettingsApplications = () => {
   );
 
   const tabs = [
-    { id: 'marketplace', title: t`Marketplace`, Icon: IconShoppingBag },
     { id: 'installed', title: t`Installed`, Icon: IconApps },
     ...(hasDeveloperAccess
       ? [{ id: DEVELOPER_TAB_ID, title: t`Developer`, Icon: IconCode }]
@@ -48,14 +41,11 @@ export const SettingsApplications = () => {
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
-      case 'marketplace':
-        return <SettingsApplicationsAvailableTab />;
-      case 'installed':
-        return <SettingsApplicationsInstalledTab />;
       case 'developer':
         return <SettingsApplicationsDeveloperTab />;
+      case 'installed':
       default:
-        return <SettingsApplicationsAvailableTab />;
+        return <SettingsApplicationsInstalledTab />;
     }
   };
 
@@ -89,7 +79,7 @@ export const SettingsApplications = () => {
             instanceIdPrefix={APPLICATIONS_HERO_INSTANCE_ID_PREFIX}
             tabs={[
               {
-                id: 'app_marketplace_walkthrough',
+                id: 'apps_walkthrough',
                 title: t`Walkthrough`,
                 Icon: IconSparkle2,
                 vimeoId: '1217964666',

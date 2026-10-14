@@ -51,7 +51,6 @@ export enum SettingsPath {
   ApplicationTimelineActivityTypeDetail = 'applications/:applicationId/timelineActivityTypes/:timelineActivityTypeId',
   ApplicationViewDetail = 'applications/:applicationId/views/:viewUniversalIdentifier',
   ApplicationPageLayoutDetail = 'applications/:applicationId/pageLayouts/:pageLayoutUniversalIdentifier',
-  AvailableApplicationDetail = 'applications/available/:availableApplicationId',
   ApplicationRegistrationDetail = 'applications/registrations/:applicationRegistrationId',
   LogicFunctions = 'functions',
   NewLogicFunction = 'functions/new',

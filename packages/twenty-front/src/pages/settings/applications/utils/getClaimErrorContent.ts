@@ -50,7 +50,7 @@ export const getClaimErrorContent = (code: string): ClaimErrorContent => {
       };
     case 'APPLICATION_REGISTRATION_NOT_FOUND':
       return {
-        message: msg`This application could not be found. It may have been removed from the marketplace catalog.`,
+        message: msg`This application could not be found.`,
         docPath: PUBLISHING_PATH,
       };
     default:
