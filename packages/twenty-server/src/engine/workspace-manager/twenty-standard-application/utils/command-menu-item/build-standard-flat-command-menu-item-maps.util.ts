@@ -8,13 +8,19 @@ import { seedCompareObjectMetadataForNavigationPosition } from 'src/engine/metad
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RETIRED_STANDARD_COMMAND_MENU_ITEM_NAMES } from 'src/engine/workspace-manager/twenty-standard-application/constants/retired-standard-command-menu-item-names.constant';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { createStandardCommandMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/create-standard-command-menu-item-flat-metadata.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
-const STANDARD_COMMAND_MENU_ITEM_NAMES = Object.keys(
-  STANDARD_COMMAND_MENU_ITEMS,
-) as Array<keyof typeof STANDARD_COMMAND_MENU_ITEMS>;
+const STANDARD_COMMAND_MENU_ITEM_NAMES = (
+  Object.keys(STANDARD_COMMAND_MENU_ITEMS) as Array<
+    keyof typeof STANDARD_COMMAND_MENU_ITEMS
+  >
+).filter(
+  (commandMenuItemName) =>
+    RETIRED_STANDARD_COMMAND_MENU_ITEM_NAMES[commandMenuItemName] !== true,
+);
 
 export const buildStandardFlatCommandMenuItemMaps = ({
   now,

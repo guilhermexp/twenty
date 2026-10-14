@@ -1365,6 +1365,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
     payload: { path: '/settings/admin-panel' },
   },
+  // Retired (see RETIRED_STANDARD_COMMAND_MENU_ITEM_NAMES): the community page
+  // is gone, but committed upgrade commands still reference this identifier.
   goToSettingsUpdates: {
     universalIdentifier: '5d1ba354-0090-4a42-9a43-601461b26068',
     label: i18nLabel(
