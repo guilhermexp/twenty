@@ -5,4 +5,5 @@ export const ONBOARDING_PATHS = [
   AppPath.CreateProfile,
   AppPath.SyncEmails,
   AppPath.InviteTeam,
+  AppPath.BookCall,
 ];

@@ -205,6 +205,15 @@ const testCases: {
   { loc: AppPath.InviteTeam, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: undefined },
   { loc: AppPath.InviteTeam, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
 
+  { loc: AppPath.BookCall, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: undefined },
+  { loc: AppPath.BookCall, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.General) },
+  { loc: AppPath.BookCall, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.BookCall, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
+  { loc: AppPath.BookCall, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.BookCall, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.BookCall, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.BookCall, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
+
 
   { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: defaultHomePagePath },
   { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.General) },
@@ -384,6 +393,18 @@ describe('usePageChangeEffectNavigateLocation', () => {
       expect(usePageChangeEffectNavigateLocation()).toEqual(res);
     },
   );
+
+  it('redirects completed users away from the legacy book-call path', () => {
+    setupMockIsMatchingLocation('/book-call');
+    setupMockOnboardingStatus(OnboardingStatus.COMPLETED);
+    setupMockIsWorkspaceActivationStatusEqualsTo(false);
+    setupMockIsLogged(true);
+    setupMockUseQuery();
+    setupMockUseLocation('/book-call' as AppPath);
+    setupMockState();
+
+    expect(usePageChangeEffectNavigateLocation()).toEqual(defaultHomePagePath);
+  });
 
   describe('tests should be exhaustive', () => {
     it('all location, onboarding status and suspended/not suspended workspace activation status should be tested', () => {
