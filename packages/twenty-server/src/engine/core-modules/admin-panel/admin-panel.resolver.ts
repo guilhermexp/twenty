@@ -71,10 +71,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -138,8 +135,6 @@ export class AdminPanelResolver {
     private readonly upgradeStatusService: UpgradeStatusService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectMessageQueue(MessageQueue.cronQueue)
-    private readonly cronQueueService: MessageQueueService,
   ) {}
 
   @UseGuards(AdminPanelOrImpersonateGuard)
@@ -500,18 +495,6 @@ export class AdminPanelResolver {
       isListed,
       isConfigured,
     });
-  }
-
-  @UseGuards(AdminPanelGuard)
-  @Mutation(() => Boolean)
-  async syncMarketplaceCatalog(): Promise<boolean> {
-    await this.cronQueueService.add(
-      MarketplaceCatalogSyncCronJob.name,
-      {},
-      { id: 'marketplace-catalog-sync' }, // Avoids triggering multiple pending jobs
-    );
-
-    return true;
   }
 
   @UseGuards(AdminPanelGuard)

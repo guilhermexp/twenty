@@ -305,7 +305,7 @@ export class ApplicationService {
   // Number of workspaces each external (non-LOCAL) application is installed in,
   // ranked by install count. Powers the "most installed apps" gauge/leaderboard.
   // LOCAL apps (built-in Standard/Custom) exist in every workspace and are not
-  // marketplace installs, so they are excluded to keep the ranking meaningful.
+  // installed apps, so they are excluded to keep the ranking meaningful.
   async countInstalledWorkspacesByApplication({
     limit = 100,
   }: {

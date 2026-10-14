@@ -11,8 +11,6 @@ import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/ap
 import { UpgradeApplicationsJob } from 'src/engine/core-modules/application/jobs/upgrade-applications.job';
 import { InstallPreInstalledAppsJob } from 'src/engine/core-modules/application/pre-installed-apps/jobs/install-pre-installed-apps.job';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
-import { InstallOnboardingAppsJob } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job';
-import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
@@ -93,7 +91,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     ApplicationRegistrationModule,
     ApplicationUpgradeModule,
     PreInstalledAppsModule,
-    OnboardingModule,
 
 
   ],
@@ -115,7 +112,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpdateWorkspaceMemberEmailJob,
     GenerateSdkClientJob,
     UpgradeApplicationsJob,
-    InstallOnboardingAppsJob,
     InstallPreInstalledAppsJob,
   ],
 })

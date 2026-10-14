@@ -18,7 +18,6 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
-import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/stale-registration-cleanup.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -87,7 +86,6 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     PublicDomainModule,
     EventLogCleanupModule,
     TwentyConfigModule,
-    MarketplaceModule,
     ApplicationInstallModule,
     ApplicationUpgradeModule,
     StaleRegistrationCleanupModule,

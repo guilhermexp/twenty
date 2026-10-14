@@ -69,7 +69,7 @@ describe('CLI dev mode on a registration owned by another workspace', () => {
   it.each([
     { label: 'unlisted', isListed: false, isPreInstalled: false },
     {
-      label: 'listed on the marketplace',
+      label: 'listed',
       isListed: true,
       isPreInstalled: false,
     },

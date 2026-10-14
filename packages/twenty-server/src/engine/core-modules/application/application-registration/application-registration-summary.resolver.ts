@@ -21,4 +21,13 @@ export class ApplicationRegistrationSummaryResolver {
       registration,
     );
   }
+
+  @ResolveField(() => [String])
+  galleryImageUrls(
+    @Parent() registration: ApplicationRegistrationEntity,
+  ): string[] {
+    return this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
+      registration,
+    );
+  }
 }

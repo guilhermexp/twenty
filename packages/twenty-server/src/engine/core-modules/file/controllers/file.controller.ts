@@ -52,7 +52,7 @@ export class FileController {
   ) {}
 
   // Serves application registration assets (logo, gallery images) by their
-  // public folder path. These are instance-global marketplace resources, also
+  // public folder path. These are instance-global resources, also
   // displayed on the public OAuth authorize page, hence no auth token, unlike
   // the workspace-scoped /file/:folder/:id.
   @Get(

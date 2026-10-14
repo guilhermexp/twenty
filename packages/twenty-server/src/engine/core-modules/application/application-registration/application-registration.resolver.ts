@@ -253,7 +253,7 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   @Mutation(() => ApplicationRegistrationEntity)
   async uploadAppTarball(

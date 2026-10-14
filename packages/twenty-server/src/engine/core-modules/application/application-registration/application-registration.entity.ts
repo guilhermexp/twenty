@@ -85,8 +85,8 @@ export class ApplicationRegistrationEntity {
   @JoinColumn({ name: 'createdByUserId' })
   createdByUser: Relation<UserEntity> | null;
 
-  // Ownership (who can edit). Null for catalog-synced marketplace apps that
-  // have no explicit owner — these are managed via the Admin Panel.
+  // Ownership (who can edit). Null for published npm apps that have no
+  // explicit owner — these are managed via the Admin Panel.
   @Field(() => UUIDScalarType, { nullable: true })
   @Column({ name: 'workspaceId', nullable: true, type: 'uuid' })
   ownerWorkspaceId: string | null;

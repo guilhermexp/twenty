@@ -11,7 +11,6 @@ export const SystemPermissionFlag = {
   IMPERSONATE: 'dd2274d1-bbd5-551d-bcf2-3147539cef11',
   SSO_BYPASS: '2e9cfdc0-4669-58ab-b241-b6c3c14d96df',
   APPLICATIONS: '9faa55f7-2606-566b-9e1d-aefbedbd0136',
-  MARKETPLACE_APPS: '3a37e2f5-d3e4-56d6-b541-adf0237468ff',
   LAYOUTS: '458d1ee5-ba12-5f4e-9d17-6f8c11fcd7fd',
   AI_SETTINGS: 'e8cc4a30-c120-5925-8f5d-73d6a2247fee',
   AI: '1c7f09a7-367d-568b-a0e8-c274eccd6ee3',

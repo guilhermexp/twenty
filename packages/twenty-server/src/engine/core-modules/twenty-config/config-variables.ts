@@ -1330,15 +1330,6 @@ export class ConfigVariables {
   SIGNING_KEY_ROTATION_DAYS?: number;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Register the cron job that syncs the marketplace catalog from the npm registry. Disable to stop the automatic catalog import.',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  MARKETPLACE_CATALOG_SYNC_CRON_ENABLED = true;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description: 'Maximum number of records affected by mutations',
     type: ConfigVariableType.NUMBER,
@@ -2068,7 +2059,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Client ID of the GitHub OAuth app used to verify app ownership when claiming a marketplace application',
+      'Client ID of the GitHub OAuth app used to verify app ownership when claiming a published npm application',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
@@ -2080,7 +2071,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description:
-      'Client secret of the GitHub OAuth app used to verify app ownership when claiming a marketplace application',
+      'Client secret of the GitHub OAuth app used to verify app ownership when claiming a published npm application',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })

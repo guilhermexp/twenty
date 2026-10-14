@@ -9,7 +9,6 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
-import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { ApplicationInstallResolver } from 'src/engine/core-modules/application/application-install/application-install.resolver';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { InstallApplicationCommand } from 'src/engine/core-modules/application/application-install/commands/install-application.command';
@@ -31,7 +30,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationRegistrationModule,
     ApplicationManifestModule,
     ApplicationPackageModule,
-    MarketplaceModule,
     CacheLockModule,
     FeatureFlagModule,
     LogicFunctionModule,

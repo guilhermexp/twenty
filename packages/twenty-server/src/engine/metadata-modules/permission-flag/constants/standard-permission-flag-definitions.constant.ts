@@ -74,11 +74,6 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     description: 'Install and manage applications',
     icon: 'IconApps',
   },
-  [PermissionFlagType.MARKETPLACE_APPS]: {
-    label: 'Marketplace Apps',
-    description: 'Browse and install marketplace apps',
-    icon: 'IconShoppingBag',
-  },
   [PermissionFlagType.LAYOUTS]: {
     label: 'Layouts',
     description: 'Customize page layouts and UI structure',

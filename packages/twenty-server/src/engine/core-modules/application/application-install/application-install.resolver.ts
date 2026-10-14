@@ -15,9 +15,9 @@ import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/application-manifest/dtos/uninstall-application.input';
-import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { UpdateApplicationInput } from 'src/engine/core-modules/application/dtos/update-application.input';
@@ -45,7 +45,7 @@ export class ApplicationInstallResolver {
     private readonly applicationService: ApplicationService,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationSyncService: ApplicationSyncService,
-    private readonly marketplaceQueryService: MarketplaceQueryService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly metricsService: MetricsService,
   ) {}
 
@@ -75,25 +75,6 @@ export class ApplicationInstallResolver {
     });
   }
 
-  @Mutation(() => Boolean, {
-    deprecationReason: 'Use installApplication instead',
-  })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
-  async installMarketplaceApp(
-    @Args('universalIdentifier') universalIdentifier: string,
-    @Args('version', { type: () => String, nullable: true })
-    version: string | undefined,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    await this.installRegisteredApplication({
-      universalIdentifier,
-      version,
-      workspaceId: workspace.id,
-    });
-
-    return true;
-  }
-
   @Mutation(() => ApplicationDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async installApplication(
@@ -120,7 +101,7 @@ export class ApplicationInstallResolver {
     workspaceId: string;
   }): Promise<void> {
     const registration =
-      await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
+      await this.applicationRegistrationService.findOneByUniversalIdentifierGlobalOrThrow(
         params.universalIdentifier,
       );
 

@@ -10,7 +10,7 @@ import { type ApplicationEntity } from 'src/engine/core-modules/application/appl
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 
-// Shared by marketplace/tarball installs and CLI dev sync so every source
+// Shared by npm/tarball installs and CLI dev sync so every source
 // applies a manifest through the same steps with the same guards.
 @Injectable()
 export class ApplicationManifestApplyService {
@@ -82,8 +82,8 @@ export class ApplicationManifestApplyService {
     sourceType?: ApplicationRegistrationSourceType;
     latestAvailableVersion?: string;
     preventVersionDowngrade?: boolean;
-    // The registration is instance-global: for catalog-synced (npm) apps it
-    // is the marketplace entry and OAuth identity shared by every workspace.
+    // The registration is instance-global: for published (npm) apps it is
+    // the OAuth identity shared by every workspace.
     // Callers acting on behalf of a workspace (dev sync) pass their
     // workspaceId so only registrations owned by that workspace (and not
     // npm-sourced) are written.

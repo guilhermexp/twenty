@@ -7,17 +7,9 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
 import { ACQUIRE_ONBOARDING_STEP_TRANSITION_LOCK_STATEMENT } from 'src/engine/core-modules/onboarding/constants/acquire-onboarding-step-transition-lock-statement';
 import { buildOnboardingStepTransitionLockName } from 'src/engine/core-modules/onboarding/utils/build-onboarding-step-transition-lock-name.util';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
-import {
-  INSTALL_ONBOARDING_APPS_JOB_NAME,
-  type InstallOnboardingAppsJobData,
-} from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job-constants';
 import {
   OnboardingException,
   OnboardingExceptionCode,
@@ -33,7 +25,6 @@ export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
-  ONBOARDING_INSTALL_APPS_PENDING = 'ONBOARDING_INSTALL_APPS_PENDING',
   ONBOARDING_BOOK_CALL_PENDING = 'ONBOARDING_BOOK_CALL_PENDING',
   ONBOARDING_BOOK_CALL_OFFERED = 'ONBOARDING_BOOK_CALL_OFFERED',
   ONBOARDING_REVERSIBLE_STEP_HISTORY = 'ONBOARDING_REVERSIBLE_STEP_HISTORY',
@@ -43,7 +34,6 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
-  [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED]: boolean;
   [OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY]: ReversibleOnboardingStep[];
@@ -61,8 +51,6 @@ export class OnboardingService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly messageQueueService: MessageQueueService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -140,18 +128,11 @@ export class OnboardingService {
       userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING) ===
       true;
 
-    const isInstallAppsPending =
-      userVars.get(OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING) === true;
-
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
-    }
-
-    if (isInstallAppsPending) {
-      return OnboardingStatus.APPS_INSTALLATION;
     }
 
     if (isProfileCreationPending) {
@@ -369,15 +350,6 @@ export class OnboardingService {
           },
           queryRunner,
         );
-      case OnboardingStatus.APPS_INSTALLATION:
-        return this.setOnboardingInstallAppsPending(
-          {
-            userId,
-            workspaceId,
-            value: true,
-          },
-          queryRunner,
-        );
       case OnboardingStatus.PROFILE_CREATION:
         return this.setOnboardingCreateProfilePending(
           {
@@ -554,198 +526,6 @@ export class OnboardingService {
 
   private async creditImportContactsRewardForFirstWorkspaceUser(_args: {
     workspaceId: string;
-  }) {}
-
-  async setOnboardingInstallAppsPending(
-    {
-      userId,
-      workspaceId,
-      value,
-    }: {
-      userId: string;
-      workspaceId: string;
-      value: boolean;
-    },
-    queryRunner?: QueryRunner,
-  ) {
-    if (!value) {
-      await this.userVarsService.delete(
-        {
-          userId,
-          workspaceId,
-          key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
-        },
-        queryRunner,
-      );
-
-      return;
-    }
-
-    await this.userVarsService.set(
-      {
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
-        value: true,
-      },
-      queryRunner,
-    );
-  }
-
-  async triggerInstallAppsOnboardingStep({
-    userId,
-    workspaceId,
-    universalIdentifiers,
-    isAutoSkipped,
-  }: {
-    userId: string;
-    workspaceId: string;
-    universalIdentifiers: string[];
-    isAutoSkipped: boolean;
-  }) {
-    const installableUniversalIdentifiers = universalIdentifiers.filter(
-      (universalIdentifier) =>
-        ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS.includes(
-          universalIdentifier,
-        ),
-    );
-
-    if (installableUniversalIdentifiers.length === 0) {
-      await this.runStepTransitionInLockedTransaction(
-        { userId, workspaceId },
-        async (queryRunner) => {
-          const hasClaimedInstallAppsStep =
-            await this.claimInstallAppsOnboardingStep(
-              { userId, workspaceId },
-              queryRunner,
-            );
-
-          if (!hasClaimedInstallAppsStep || isAutoSkipped) {
-            return;
-          }
-
-          await this.pushReversibleOnboardingStep(
-            {
-              userId,
-              workspaceId,
-              step: OnboardingStatus.APPS_INSTALLATION,
-            },
-            queryRunner,
-          );
-        },
-      );
-
-      return;
-    }
-
-    const hasClaimedInstallAppsStep =
-      await this.runStepTransitionInLockedTransaction(
-        { userId, workspaceId },
-        async (queryRunner) =>
-          this.claimInstallAppsOnboardingStep(
-            { userId, workspaceId },
-            queryRunner,
-          ),
-      );
-
-    if (!hasClaimedInstallAppsStep) {
-      return;
-    }
-
-    try {
-      await this.messageQueueService.add<InstallOnboardingAppsJobData>(
-        INSTALL_ONBOARDING_APPS_JOB_NAME,
-        {
-          workspaceId,
-          universalIdentifiers: installableUniversalIdentifiers,
-          userId,
-        },
-        { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
-      );
-    } catch (error) {
-      const enqueueFailureMessage = `Failed to enqueue the install onboarding apps job for workspace ${workspaceId}`;
-
-      this.logger.error(enqueueFailureMessage, error);
-
-      await this.releaseInstallAppsOnboardingStepClaim({ userId, workspaceId });
-
-      throw new OnboardingException(
-        enqueueFailureMessage,
-        OnboardingExceptionCode.INSTALL_APPS_JOB_ENQUEUE_FAILED,
-      );
-    }
-  }
-
-  private async releaseInstallAppsOnboardingStepClaim({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }) {
-    try {
-      await this.runStepTransitionInLockedTransaction(
-        { userId, workspaceId },
-        async (queryRunner) =>
-          this.setOnboardingInstallAppsPending(
-            {
-              userId,
-              workspaceId,
-              value: true,
-            },
-            queryRunner,
-          ),
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to restore the pending install-apps onboarding step for workspace ${workspaceId}`,
-        error,
-      );
-    }
-  }
-
-  async clearReversibleOnboardingStepHistoryAfterAppsInstalled({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }) {
-    await this.runStepTransitionInLockedTransaction(
-      { userId, workspaceId },
-      async (queryRunner) =>
-        this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
-          { userId, workspaceId },
-          queryRunner,
-        ),
-    );
-  }
-
-  private async claimInstallAppsOnboardingStep(
-    {
-      userId,
-      workspaceId,
-    }: {
-      userId: string;
-      workspaceId: string;
-    },
-    queryRunner?: QueryRunner,
-  ): Promise<boolean> {
-    const affectedRows = await this.userVarsService.delete(
-      {
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING,
-      },
-      queryRunner,
-    );
-
-    return isDefined(affectedRows) && affectedRows > 0;
-  }
-
-  async creditInstallAppsReward(_args: {
-    workspaceId: string;
-    rewardAppsCount: number;
   }) {}
 
   async setOnboardingInviteTeamPending(

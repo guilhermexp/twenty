@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationClaimController } from 'src/engine/core-modules/application/application-registration/application-registration-claim.controller';
@@ -39,7 +38,6 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ApplicationModule,
     ApplicationPackageModule,
     CacheLockModule,
-    CoreEntityCacheModule,
     DomainServerConfigModule,
     WorkspaceDomainsModule,
     FeatureFlagModule,

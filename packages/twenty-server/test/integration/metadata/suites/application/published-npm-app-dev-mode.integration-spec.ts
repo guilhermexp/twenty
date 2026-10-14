@@ -8,14 +8,14 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { type DataSource } from 'typeorm';
 
-// A published npm app lands on an instance through the marketplace catalog
-// sync as an instance-global, unowned registration (sourceType 'npm').
+// A published npm app is registered on an instance as an instance-global,
+// unowned registration (sourceType 'npm').
 // Uploading code under an application identity is an authorship claim, so dev
 // mode requires ownership of the registration. Once the workspace owns it, the
 // dev sync must still leave the shared registration untouched, without
-// rotating the shared OAuth client secret and without delisting the app from
-// the marketplace for every workspace or fighting with the catalog sync cron.
-describe('CLI dev mode on a catalog-synced (npm) app', () => {
+// rotating the shared OAuth client secret and without delisting the app for
+// every workspace.
+describe('CLI dev mode on a published (npm) app', () => {
   const baseUrl = `http://localhost:${APP_PORT}`;
 
   const universalIdentifier = crypto.randomUUID();
@@ -45,8 +45,7 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
     jest.useRealTimers();
     ds = global.testDataSource;
 
-    // Simulate MarketplaceCatalogSyncService.upsertFromCatalog: unowned
-    // registration (workspaceId NULL), npm-sourced, no client secret.
+    // Unowned registration (workspaceId NULL), npm-sourced, no client secret.
     await ds.query(
       `INSERT INTO core."applicationRegistration"
         (id, "universalIdentifier", name, "oAuthClientId",
@@ -174,8 +173,8 @@ describe('CLI dev mode on a catalog-synced (npm) app', () => {
 
     expect(syncRes.errors).toBeUndefined();
 
-    // The shared registration is untouched: still npm-sourced, still listed in
-    // the marketplace catalog, and carrying the published name and manifest.
+    // The shared registration is untouched: still npm-sourced, still listed,
+    // and carrying the published name and manifest.
     const registrationRow = await fetchRegistrationRow();
 
     expect(registrationRow.sourceType).toBe('npm');

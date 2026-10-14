@@ -3,7 +3,6 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
-import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { StaleRegistrationCleanupCronCommand } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/commands/stale-registration-cleanup.cron.command';
 import { ApplicationVersionCheckCronCommand } from 'src/engine/core-modules/application/application-upgrade/crons/commands/application-version-check.cron.command';
 import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modules/emailing-domain/crons/commands/check-emailing-domain-verification.cron.command';
@@ -73,7 +72,6 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly trashCleanupCronCommand: TrashCleanupCronCommand,
     private readonly eventLogCleanupCronCommand: EventLogCleanupCronCommand,
     private readonly rotateSigningKeysCronCommand: RotateSigningKeysCronCommand,
-    private readonly marketplaceCatalogSyncCronCommand: MarketplaceCatalogSyncCronCommand,
     private readonly applicationVersionCheckCronCommand: ApplicationVersionCheckCronCommand,
     private readonly staleRegistrationCleanupCronCommand: StaleRegistrationCleanupCronCommand,
     private readonly pendingFileCleanupCronCommand: PendingFileCleanupCronCommand,
@@ -89,11 +87,6 @@ export class CronRegisterAllCommand extends CommandRunner {
     const isSigningKeyAutoRotationEnabled = isDefined(
       this.twentyConfigService.get('SIGNING_KEY_ROTATION_DAYS'),
     );
-
-    const isMarketplaceCatalogSyncEnabled = this.twentyConfigService.get(
-      'MARKETPLACE_CATALOG_SYNC_CRON_ENABLED',
-    );
-
 
     const allCommands = [
       {
@@ -191,11 +184,6 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'EventLogCleanup',
         command: this.eventLogCleanupCronCommand,
-      },
-      {
-        name: 'MarketplaceCatalogSync',
-        command: this.marketplaceCatalogSyncCronCommand,
-        isEnabled: isMarketplaceCatalogSyncEnabled,
       },
       {
         name: 'ApplicationVersionCheck',

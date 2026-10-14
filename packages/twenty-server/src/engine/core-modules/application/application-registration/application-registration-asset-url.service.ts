@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isAbsoluteUrl, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
+import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-registration/utils/build-registry-cdn-url.util';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';

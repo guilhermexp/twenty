@@ -177,6 +177,8 @@ import { AddLogoToConnectionProviderFastInstanceCommand } from 'src/database/com
 import { AddReadabilityToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788548844925-add-readability-to-object-metadata';
 import { DeleteBillingPermissionFlagFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1788863700362-delete-billing-permission-flag';
 import { DeleteBillingPermissionFlagSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791944404447-delete-billing-permission-flag';
+import { DeleteMarketplaceAppsPermissionFlagSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791944658391-delete-marketplace-apps-permission-flag';
+import { DeleteOnboardingInstallAppsStepUserVarsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791944891823-delete-onboarding-install-apps-step-user-vars';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -356,4 +358,6 @@ export const INSTANCE_COMMANDS = [
   AddReadabilityToObjectMetadataFastInstanceCommand,
   DeleteBillingPermissionFlagFastInstanceCommand,
   DeleteBillingPermissionFlagSlowInstanceCommand,
+  DeleteMarketplaceAppsPermissionFlagSlowInstanceCommand,
+  DeleteOnboardingInstallAppsStepUserVarsSlowInstanceCommand,
 ];

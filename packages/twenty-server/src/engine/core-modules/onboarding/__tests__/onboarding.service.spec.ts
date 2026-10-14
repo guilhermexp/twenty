@@ -4,8 +4,6 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 import { type DataSource } from 'typeorm';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -60,10 +58,6 @@ describe('OnboardingService', () => {
         { provide: TwentyConfigService, useValue: { get: getConfig } },
         { provide: getRepositoryToken(WorkspaceEntity), useValue: {} },
         { provide: getRepositoryToken(UserWorkspaceEntity), useValue: {} },
-        {
-          provide: getQueueToken(MessageQueue.workspaceQueue),
-          useValue: { add: jest.fn() },
-        },
         { provide: getDataSourceToken(), useValue: dataSource },
       ],
     }).compile();
