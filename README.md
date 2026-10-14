@@ -1,164 +1,82 @@
-<p align="center">
-  <a href="https://www.twenty.com">
-    <img src="https://twenty.com/core/logo.svg" width="100px" alt="Twenty logo" />
-  </a>
-</p>
+# Twenty (lean fork)
 
-<h2 align="center">The #1 Open-Source CRM</h2>
+A personal, lean fork of [Twenty CRM](https://github.com/twentyhq/twenty) for self-hosting a single workspace.
 
-<p align="center"><a href="https://twenty.com"><img src="https://twenty.com/readme/globe-icon.svg" width="12" height="12"/> Website</a> · <a href="https://docs.twenty.com"><img src="https://twenty.com/readme/book-icon.svg" width="12" height="12"/> Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="https://twenty.com/readme/map-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="https://twenty.com/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="https://twenty.com/readme/figma-icon.webp"  width="12" height="12"/>  Figma</a></p>
+Twenty is an open-source CRM built by the Twenty team (twentyhq). This fork keeps the CRM itself (objects, records, views, workflows, AI, email and calendar sync, the app SDK) and strips everything that only makes sense for the hosted cloud product, a multi-tenant deployment, or the upstream open-source project's community operations.
 
-<p align="center">
-  <a href="https://www.twenty.com">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://twenty.com/readme/github-cover-dark.webp" />
-      <source media="(prefers-color-scheme: light)" srcset="https://twenty.com/readme/github-cover-light.webp" />
-      <img src="https://twenty.com/readme/github-cover-light.webp" alt="Twenty banner" />
-    </picture>
-  </a>
-</p>
+It is not affiliated with or supported by Twenty. Upstream lives at https://github.com/twentyhq/twenty.
 
-<br />
+## What was removed
 
-# Why Twenty
+Compared to upstream, this fork drops:
 
-Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves. Twenty is the CRM you build, ship, and version like the rest of your stack.
+- **Billing**: Stripe, plans, trials, subscriptions, the billing UI and routes, the `BILLING` permission flag, the billing e-mail templates, and the billing plan mock generator.
+- **Enterprise license**: the licensing module and every license gate; SSO, row-level security, audit logs, SES, custom AI providers and unlimited workspaces are always allowed.
+- **Telemetry and analytics**: phone-home telemetry, enterprise seat reporting, product pageview analytics and the external support chat.
+- **Docs and website**: the public `twenty-docs` and `twenty-website` packages, along with other packages the product never imported.
+- **Locales**: every locale except `en` and `pt-BR` (plus the `pseudo-en` development locale).
+- **Cloud and community leftovers**: the Settings community page, links to Twenty's website, docs and community channels, AI credits, custom domains and Cloudflare, multi-workspace support, the app marketplace and user impersonation.
+- **Project tooling**: upstream deploy, release, merge-queue and bot workflows, contributor documents (CLA, code of conduct, contributing guide, trademark and security policies), issue templates, CODEOWNERS, Dependabot, Vale, Crowdin, danger and the cloud Docker charts.
 
-<a href="https://twenty.com/resources/why-twenty"><img src="https://twenty.com/readme/star-icon.svg" width="14" height="14"/> Learn more about why we built Twenty</a>
+Requests to `twenty-icons` (used to fetch company logos) are **off by default**. Set `ALLOW_REQUESTS_TO_TWENTY_ICONS=true` in the server environment to turn them back on.
 
-<br />
+The development seeder only creates a single structural workspace and admin user (configured through `SEED_WORKSPACE_NAME`, `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD`); it does not seed demo data.
 
-# Installation
+## Stack
 
-### <img src="https://twenty.com/readme/globe-icon.svg" width="14" height="14"/> Cloud
+Nx / Yarn 4 monorepo:
 
-The fastest way to get started. Sign up at [twenty.com](https://twenty.com) and spin up a workspace in under a minute, with no infrastructure to manage and always up to date.
+- `twenty-server`: NestJS, TypeORM, PostgreSQL, Redis, GraphQL, BullMQ
+- `twenty-front`: React 18, Jotai, Linaria, Lingui, Vite
+- `twenty-ui`, `twenty-shared`, `twenty-emails`: shared UI components, isomorphic types/utilities, e-mail templates
+- `twenty-sdk`, `twenty-client-sdk`, `twenty-front-component-renderer`: application SDK, CLI and runtime
+- `twenty-docker`: Docker image and `docker-compose.yml` for self-hosting
 
-### <img src="https://twenty.com/readme/book-icon.svg" width="14" height="14"/> Build an app
+## Running in development
 
-Scaffold a new app with the Twenty CLI:
+Prerequisites: Node 24 (see `.nvmrc`), Yarn 4 via Corepack, PostgreSQL and Redis.
 
 ```bash
-npx create-twenty-app my-app
+nvm install && nvm use              # Node 24
+corepack enable
+yarn install
 ```
 
-Define objects, fields, and views as code:
-
-```ts
-import { defineObject, FieldType } from 'twenty-sdk/define';
-
-export default defineObject({
-  nameSingular: 'deal',
-  namePlural: 'deals',
-  labelSingular: 'Deal',
-  labelPlural: 'Deals',
-  fields: [
-    { name: 'name', label: 'Name', type: FieldType.TEXT },
-    { name: 'amount', label: 'Amount', type: FieldType.CURRENCY },
-    { name: 'closeDate', label: 'Close Date', type: FieldType.DATE_TIME },
-  ],
-});
-```
-
-Then ship it to your workspace:
+Start PostgreSQL and Redis, either your own instances or with the helper script (it also initializes the database):
 
 ```bash
-npx twenty app:publish --private
+bash packages/twenty-utils/setup-dev-env.sh
 ```
 
-See the [app development guide](https://docs.twenty.com/developers/extend/apps/getting-started) for objects, views, agents, and logic functions.
+Create the environment files from the examples and fill them in:
 
-### <img src="https://twenty.com/readme/rocket-icon.svg" width="14" height="14"/> Self-hosting
+```bash
+cp packages/twenty-server/.env.example packages/twenty-server/.env
+cp packages/twenty-front/.env.example packages/twenty-front/.env
+```
 
-Run Twenty on your own infrastructure with [Docker Compose](https://docs.twenty.com/developers/self-host/capabilities/docker-compose), or contribute locally via the [local setup guide](https://docs.twenty.com/developers/contribute/capabilities/local-setup).
+At minimum, check `PG_DATABASE_URL`, `REDIS_URL`, `APP_SECRET` and the `SEED_*` variables in the server `.env`. The front listens on port 3001 unless `REACT_APP_PORT` is set; to run it on 3002, set `REACT_APP_PORT=3002` in the front `.env` and `FRONTEND_URL=http://localhost:3002` in the server `.env`.
 
-<br />
-<br />
+Reset the database and seed the development workspace:
 
-# Everything you need
+```bash
+npx nx database:reset twenty-server
+```
 
-Twenty gives you the building blocks of a modern CRM (objects, views, workflows, and agents) and lets you extend them as code. Here's a tour of what's in the box.
+Start everything:
 
-Want to go deeper? Read the <a href="https://docs.twenty.com/user-guide/introduction"><img src="https://twenty.com/readme/planner-icon.svg" width="14" height="14"/> User Guide</a> for product walkthroughs, or the <a href="https://docs.twenty.com"><img src="https://twenty.com/readme/book-icon.svg" width="14" height="14"/> Documentation</a> for developer reference.
+```bash
+yarn start
+```
 
-<table align="center">
-  <tr>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://twenty.com/readme/v2-build-apps-dark.webp" />
-        <source media="(prefers-color-scheme: light)" srcset="https://twenty.com/readme/v2-build-apps-light.webp" />
-        <img src="https://twenty.com/readme/v2-build-apps-light.webp" alt="Create your apps" />
-      </picture>
-      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/getting-started"><img src="https://twenty.com/readme/code-icon.svg" width="16" height="16"/> Learn more about apps in doc</a></p>
-    </td>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://twenty.com/readme/v2-version-control-dark.webp" />
-        <source media="(prefers-color-scheme: light)" srcset="https://twenty.com/readme/v2-version-control-light.webp" />
-        <img src="https://twenty.com/readme/v2-version-control-light.webp" alt="Stay on top with version control" />
-      </picture>
-      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/publishing"><img src="https://twenty.com/readme/monitor-icon.svg" width="16" height="16"/> Learn more about version control in doc</a></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://twenty.com/readme/v2-all-tools-dark.webp" />
-        <source media="(prefers-color-scheme: light)" srcset="https://twenty.com/readme/v2-all-tools-light.webp" />
-        <img src="https://twenty.com/readme/v2-all-tools-light.webp" alt="All the tools you need to build anything" />
-      </picture>
-      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/building"><img src="https://twenty.com/readme/rocket-icon.svg" width="16" height="16"/> Learn more about primitives in doc</a></p>
-    </td>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://twenty.com/readme/v2-tools-dark.webp" />
-        <source media="(prefers-color-scheme: light)" srcset="https://twenty.com/readme/v2-tools-light.webp" />
-        <img src="https://twenty.com/readme/v2-tools-light.webp" alt="Customize your layouts" />
-      </picture>
-      <p align="center"><a href="https://docs.twenty.com/user-guide/layout/overview"><img src="https://twenty.com/readme/planner-icon.svg" width="16" height="16"/> Learn more about layouts in doc</a></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://twenty.com/readme/v2-ai-agents-dark.webp" />
-        <source media="(prefers-color-scheme: light)" srcset="https://twenty.com/readme/v2-ai-agents-light.webp" />
-        <img src="https://twenty.com/readme/v2-ai-agents-light.webp" alt="AI agents and chats" />
-      </picture>
-      <p align="center"><a href="https://docs.twenty.com/user-guide/ai/overview"><img src="https://twenty.com/readme/message-icon.svg" width="16" height="16"/> Learn more about AI in doc</a></p>
-    </td>
-    <td width="50%">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://twenty.com/readme/v2-crm-tools-dark.webp" />
-        <source media="(prefers-color-scheme: light)" srcset="https://twenty.com/readme/v2-crm-tools-light.webp" />
-        <img src="https://twenty.com/readme/v2-crm-tools-light.webp" alt="Plus all the tools of a good CRM" />
-      </picture>
-      <p align="center"><a href="https://docs.twenty.com/user-guide/introduction"><img src="https://twenty.com/readme/star-icon.svg" width="16" height="16"/> Learn more about CRM features in doc</a></p>
-    </td>
-  </tr>
-</table>
+This runs the server on http://localhost:3000, the front on the port configured above (3002 in the setup described here) and the background worker.
 
-<br />
+See [`AGENTS.md`](AGENTS.md) for the day-to-day commands (tests, lint, typecheck, GraphQL code generation, upgrade commands) and the repository conventions.
 
-# Stack
+## Self-hosting
 
-- <a href="https://www.typescriptlang.org/"><img src="https://twenty.com/readme/stack-typescript.svg" width="14" height="14"/> TypeScript</a>
-- <a href="https://nx.dev/"><img src="https://twenty.com/readme/stack-nx.svg" width="14" height="14"/> Nx</a>
-- <a href="https://nestjs.com/"><img src="https://twenty.com/readme/stack-nestjs.svg" width="14" height="14"/> NestJS</a>, with <a href="https://bullmq.io/">BullMQ</a>, <a href="https://www.postgresql.org/"><img src="https://twenty.com/readme/stack-postgresql.svg" width="14" height="14"/> PostgreSQL</a>, <a href="https://redis.io/"><img src="https://twenty.com/readme/stack-redis.svg" width="14" height="14"/> Redis</a>
-- <a href="https://reactjs.org/"><img src="https://twenty.com/readme/stack-react.svg" width="14" height="14"/> React</a>, with <a href="https://jotai.org/">Jotai</a>, <a href="https://linaria.dev/">Linaria</a> and <a href="https://lingui.dev/">Lingui</a>
+`packages/twenty-docker` contains the Dockerfile, `docker-compose.yml` and `.env.example` used to run the server, worker, PostgreSQL and Redis in containers.
 
-# Thanks
+## License
 
-<p align="center">
-  <a href="https://greptile.com"><img src="https://twenty.com/readme/greptile.webp" height="28" alt="Greptile" /></a>
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://sentry.io/"><img src="https://twenty.com/readme/sentry.webp" height="28" alt="Sentry" /></a>
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://crowdin.com/"><img src="https://twenty.com/readme/crowdin.webp" height="28" alt="Crowdin" /></a>
-</p>
-
-Thanks to these amazing services that we use and recommend for code review (Greptile), catching bugs (Sentry) and translating (Crowdin).
-
-# Join the Community
-
-<p><a href="https://github.com/twentyhq/twenty"><img src="https://twenty.com/readme/star-icon.svg" width="12" height="12"/> Star the repo</a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="https://twenty.com/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://github.com/twentyhq/twenty/discussions"><img src="https://twenty.com/readme/message-icon.svg" width="12" height="12"/> Feature requests</a> · <a href="https://github.com/orgs/twentyhq/projects/1/views/35"><img src="https://twenty.com/readme/rocket-icon.svg" width="12" height="12"/> Releases</a> · <a href="https://twitter.com/twentycrm"><img src="https://twenty.com/readme/x-icon.svg" width="12" height="12"/> X</a> · <a href="https://www.linkedin.com/company/twenty/"><img src="https://twenty.com/readme/linkedin-icon.svg" width="12" height="12"/> LinkedIn</a> · <a href="https://twenty.crowdin.com/twenty"><img src="https://twenty.com/readme/language-icon.svg" width="12" height="12"/> Crowdin</a> · <a href="https://github.com/twentyhq/twenty/contribute"><img src="https://twenty.com/readme/code-icon.svg" width="12" height="12"/> Contribute</a></p>
+Twenty is mostly licensed under the GNU Affero General Public License v3, with some packages under MIT; see [`LICENSE`](LICENSE) for the exact terms. This fork keeps those licenses and the upstream copyright. Credit for the product goes to the Twenty team and contributors at https://github.com/twentyhq/twenty.
