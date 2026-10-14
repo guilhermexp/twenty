@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
@@ -431,81 +431,82 @@ export class SignInUpService {
     try {
       const { user, workspace } = await this.dataSource.transaction(
         async (entityManager) => {
-        const queryRunner = entityManager.queryRunner as QueryRunner;
+          const queryRunner = entityManager.queryRunner as QueryRunner;
 
-        const workspaceToCreate = this.workspaceRepository.create({
-          id: workspaceId,
-          subdomain: await this.subdomainManagerService.generateSubdomain(
-            isWorkEmailFound ? { userEmail: email } : {},
-          ),
-          workspaceCustomApplicationId,
-          displayName,
-          inviteHash: v4(),
-          activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
-        });
+          const workspaceToCreate = this.workspaceRepository.create({
+            id: workspaceId,
+            subdomain: await this.subdomainManagerService.generateSubdomain(
+              isWorkEmailFound ? { userEmail: email } : {},
+            ),
+            workspaceCustomApplicationId,
+            displayName,
+            inviteHash: v4(),
+            activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+          });
 
-        const workspace = await queryRunner.manager.save(
-          WorkspaceEntity,
-          workspaceToCreate,
-        );
-
-        const customApplication =
-          await this.applicationService.createWorkspaceCustomApplication(
-            {
-              workspaceId,
-              applicationId: workspaceCustomApplicationId,
-            },
-            queryRunner,
+          const workspace = await queryRunner.manager.save(
+            WorkspaceEntity,
+            workspaceToCreate,
           );
 
-        const isExistingUser = userData.type === 'existingUser';
-        const user = isExistingUser
-          ? userData.existingUser
-          : await this.saveNewUser(
-              userData.newUserWithPicture,
+          const customApplication =
+            await this.applicationService.createWorkspaceCustomApplication(
               {
-                canAccessFullAdminPanel: shouldGrantServerAdmin,
+                workspaceId,
+                applicationId: workspaceCustomApplicationId,
               },
               queryRunner,
             );
 
-        await this.userWorkspaceService.create(
-          {
-            userId: user.id,
-            workspaceId: workspace.id,
-            isExistingUser,
-            pictureUrl: isExistingUser
-              ? undefined
-              : userData.newUserWithPicture.picture,
-            applicationUniversalIdentifier:
-              customApplication.universalIdentifier,
-            locale: user.locale,
-          },
-          queryRunner,
-        );
+          const isExistingUser = userData.type === 'existingUser';
+          const user = isExistingUser
+            ? userData.existingUser
+            : await this.saveNewUser(
+                userData.newUserWithPicture,
+                {
+                  canAccessFullAdminPanel: shouldGrantServerAdmin,
+                },
+                queryRunner,
+              );
 
-        await this.activateOnboardingForUser(
-          {
+          await this.userWorkspaceService.create(
+            {
+              userId: user.id,
+              workspaceId: workspace.id,
+              isExistingUser,
+              pictureUrl: isExistingUser
+                ? undefined
+                : userData.newUserWithPicture.picture,
+              applicationUniversalIdentifier:
+                customApplication.universalIdentifier,
+              locale: user.locale,
+            },
+            queryRunner,
+          );
+
+          await this.activateOnboardingForUser(
+            {
+              user,
+              workspace,
+              shouldShowConnectAccountStep: true,
+            },
+            queryRunner,
+          );
+
+          await this.onboardingService.setOnboardingInviteTeamPending(
+            {
+              workspaceId: workspace.id,
+              value: true,
+            },
+            queryRunner,
+          );
+
+          return {
             user,
             workspace,
-            shouldShowConnectAccountStep: true,
-          },
-          queryRunner,
-        );
-
-        await this.onboardingService.setOnboardingInviteTeamPending(
-          {
-            workspaceId: workspace.id,
-            value: true,
-          },
-          queryRunner,
-        );
-
-        return {
-          user,
-          workspace,
-        };
-      });
+          };
+        },
+      );
 
       void this.eventLogEmitterService
         .createContext({ workspaceId })

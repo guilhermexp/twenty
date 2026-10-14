@@ -65,7 +65,6 @@ const InviteTeam = lazyWithPreload(() =>
   })),
 );
 
-
 const preloadOnboardingPages = () => {
   WorkspaceActivation.preload();
   CreateProfile.preload();

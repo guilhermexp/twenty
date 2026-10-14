@@ -2,7 +2,6 @@ import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboard
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
@@ -128,7 +127,6 @@ export const useInviteTeam = () => {
       setIsNavigating(true);
 
       try {
-
         const result = await sendInvitation({ emails });
 
         if (isDefined(result.error)) {
@@ -147,7 +145,6 @@ export const useInviteTeam = () => {
           });
         }
 
-
         setNextOnboardingStatus({
           stepHistoryEffect:
             sentInvitationsCount > 0
@@ -160,12 +157,7 @@ export const useInviteTeam = () => {
         throw error;
       }
     },
-    [
-      enqueueSuccessSnackBar,
-      sendInvitation,
-      setNextOnboardingStatus,
-      t,
-    ],
+    [enqueueSuccessSnackBar, sendInvitation, setNextOnboardingStatus, t],
   );
 
   const handleSkip = async () => {

@@ -94,12 +94,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     };
 
     void startWorkspaceSetupChat();
-  }, [
-    startWorkspaceSetupChatMutation,
-    store,
-    addToDraft,
-    applyChanges,
-  ]);
+  }, [startWorkspaceSetupChatMutation, store, addToDraft, applyChanges]);
 
   return null;
 };

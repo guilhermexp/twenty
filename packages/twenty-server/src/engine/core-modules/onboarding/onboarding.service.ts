@@ -34,7 +34,6 @@ export type OnboardingKeyValueTypeMap = {
 
 @Injectable()
 export class OnboardingService {
-
   constructor(
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
@@ -534,7 +533,6 @@ export class OnboardingService {
       queryRunner,
     );
   }
-
 
   async setOnboardingCreateProfilePending(
     {

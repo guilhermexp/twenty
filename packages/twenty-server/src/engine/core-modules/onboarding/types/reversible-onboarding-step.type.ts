@@ -3,4 +3,4 @@ import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboa
 export type ReversibleOnboardingStep =
   | OnboardingStatus.SYNC_EMAIL
   | OnboardingStatus.PROFILE_CREATION
-  | OnboardingStatus.INVITE_TEAM
+  | OnboardingStatus.INVITE_TEAM;

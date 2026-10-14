@@ -287,7 +287,6 @@ export class ClientConfig {
   @Field(() => Boolean)
   isEmailingDomainInDemoMode: boolean;
 
-
   @Field(() => Boolean)
   isClickHouseConfigured: boolean;
 

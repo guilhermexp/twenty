@@ -137,7 +137,6 @@ export const usePageChangeEffectNavigateLocation = () => {
     return AppPath.InviteTeam;
   }
 
-
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&
     someMatchingLocationOf([

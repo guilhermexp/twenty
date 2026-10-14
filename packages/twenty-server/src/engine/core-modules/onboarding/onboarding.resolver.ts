@@ -59,7 +59,6 @@ export class OnboardingResolver {
     return { success: true };
   }
 
-
   @Mutation(() => OnboardingStepNavigationDTO)
   @UseGuards(NoPermissionGuard)
   async goBackToPreviousOnboardingStep(

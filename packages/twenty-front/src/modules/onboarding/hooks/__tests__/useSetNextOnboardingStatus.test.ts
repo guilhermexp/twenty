@@ -170,7 +170,6 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
 
-
   it('should not show the welcome animation when the onboarding was already completed', () => {
     const {
       nextOnboardingStatus,
@@ -251,7 +250,6 @@ describe('useSetNextOnboardingStatus', () => {
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
-
 
   it('should still sync emails when the server status landed before advancing', () => {
     jotaiStore.set(currentUserState.atom, {

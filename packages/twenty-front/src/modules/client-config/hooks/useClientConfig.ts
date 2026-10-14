@@ -86,8 +86,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     isConfigVariablesInDbEnabledState,
   );
 
-
-
   const setIsEmailingDomainInDemoMode = useSetAtomState(
     isEmailingDomainInDemoModeState,
   );

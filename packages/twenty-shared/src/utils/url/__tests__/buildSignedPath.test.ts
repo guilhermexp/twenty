@@ -51,9 +51,7 @@ describe('buildSignedPath', () => {
         path: 'https://example.com/placeholder-images/workspaces/logo.png',
         token: 'tokenValue',
       }),
-    ).toBe(
-      'https://example.com/placeholder-images/workspaces/logo.png',
-    );
+    ).toBe('https://example.com/placeholder-images/workspaces/logo.png');
   });
 
   it('should ignore absolute http urls', () => {
@@ -62,8 +60,6 @@ describe('buildSignedPath', () => {
         path: 'http://example.com/placeholder-images/workspaces/logo.png',
         token: 'tokenValue',
       }),
-    ).toBe(
-      'http://example.com/placeholder-images/workspaces/logo.png',
-    );
+    ).toBe('http://example.com/placeholder-images/workspaces/logo.png');
   });
 });

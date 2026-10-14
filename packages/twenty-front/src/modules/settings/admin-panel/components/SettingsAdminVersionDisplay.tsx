@@ -8,7 +8,6 @@ type SettingsAdminVersionDisplayProps = {
   noVersionMessage: string;
 };
 
-
 const StyledSpan = styled.span`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.sm};
