@@ -123,8 +123,8 @@ describe('compileApplicationTranslations', () => {
 
     await mkdir(localesDir, { recursive: true });
     await writeFile(
-      join(localesDir, 'fr-FR.json'),
-      JSON.stringify({ Company: 'Entreprise', Untranslated: '' }),
+      join(localesDir, 'pt-BR.json'),
+      JSON.stringify({ Company: 'Empresa', Untranslated: '' }),
     );
     await writeFile(
       join(localesDir, 'en.json'),
@@ -134,7 +134,7 @@ describe('compileApplicationTranslations', () => {
     const result = await compileApplicationTranslations(appPath);
 
     expect(result).toEqual({
-      'fr-FR': { [generateMessageId('Company')]: 'Entreprise' },
+      'pt-BR': { [generateMessageId('Company')]: 'Empresa' },
     });
   });
 
@@ -146,16 +146,16 @@ describe('compileApplicationTranslations', () => {
 
     await mkdir(localesDir, { recursive: true });
     await writeFile(
-      join(localesDir, 'fr-FR.json'),
+      join(localesDir, 'pt-BR.json'),
       JSON.stringify({
-        door: { Open: 'Ouvrir' },
+        door: { Open: 'Abrir' },
       }),
     );
 
     const result = await compileApplicationTranslations(appPath);
 
     expect(result).toEqual({
-      'fr-FR': { [generateMessageId('Open', 'door')]: 'Ouvrir' },
+      'pt-BR': { [generateMessageId('Open', 'door')]: 'Abrir' },
     });
   });
 

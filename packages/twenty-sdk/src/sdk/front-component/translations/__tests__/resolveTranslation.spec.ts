@@ -11,31 +11,31 @@ afterEach(() => {
 describe('resolveTranslation', () => {
   it('returns the translation for the active locale', () => {
     setFrontComponentTranslations({
-      'fr-FR': { [generateMessageId('Save')]: 'Enregistrer' },
+      'pt-BR': { [generateMessageId('Save')]: 'Salvar' },
     });
 
-    expect(resolveTranslation('Save', undefined, 'fr-FR')).toBe('Enregistrer');
+    expect(resolveTranslation('Save', undefined, 'pt-BR')).toBe('Salvar');
   });
 
   it('falls back to the source message when the locale is missing', () => {
     setFrontComponentTranslations({
-      'fr-FR': { [generateMessageId('Save')]: 'Enregistrer' },
+      'pt-BR': { [generateMessageId('Save')]: 'Salvar' },
     });
 
-    expect(resolveTranslation('Save', undefined, 'de-DE')).toBe('Save');
+    expect(resolveTranslation('Save', undefined, 'pseudo-en')).toBe('Save');
   });
 
   it('falls back to the source message when the key is untranslated', () => {
-    setFrontComponentTranslations({ 'fr-FR': {} });
+    setFrontComponentTranslations({ 'pt-BR': {} });
 
-    expect(resolveTranslation('Cancel', undefined, 'fr-FR')).toBe('Cancel');
+    expect(resolveTranslation('Cancel', undefined, 'pt-BR')).toBe('Cancel');
   });
 
   it('resolves context-disambiguated messages independently', () => {
     setFrontComponentTranslations({
-      'fr-FR': {
-        [generateMessageId('Open', 'door')]: 'Ouvrir',
-        [generateMessageId('Open', 'window')]: 'Lever',
+      'pt-BR': {
+        [generateMessageId('Open', 'door')]: 'Abrir',
+        [generateMessageId('Open', 'store')]: 'Aberta',
       },
     });
 
@@ -43,28 +43,27 @@ describe('resolveTranslation', () => {
       resolveTranslation(
         { message: 'Open', context: 'door' },
         undefined,
-        'fr-FR',
+        'pt-BR',
       ),
-    ).toBe('Ouvrir');
+    ).toBe('Abrir');
     expect(
       resolveTranslation(
-        { message: 'Open', context: 'window' },
+        { message: 'Open', context: 'store' },
         undefined,
-        'fr-FR',
+        'pt-BR',
       ),
-    ).toBe('Lever');
+    ).toBe('Aberta');
   });
 
   it('interpolates values into the resolved translation', () => {
     setFrontComponentTranslations({
-      'fr-FR': {
-        [generateMessageId('Saved {count} cards')]:
-          'Cartes enregistrées : {count}',
+      'pt-BR': {
+        [generateMessageId('Saved {count} cards')]: 'Cartões salvos: {count}',
       },
     });
 
     expect(
-      resolveTranslation('Saved {count} cards', { count: 5 }, 'fr-FR'),
-    ).toBe('Cartes enregistrées : 5');
+      resolveTranslation('Saved {count} cards', { count: 5 }, 'pt-BR'),
+    ).toBe('Cartões salvos: 5');
   });
 });
