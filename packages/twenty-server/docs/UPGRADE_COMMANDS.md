@@ -134,6 +134,8 @@ Within a given version of Twenty, the upgrade pipeline runs commands in this ord
 
 Workspace commands are executed sequentially across all active/suspended workspaces.
 
+An instance command can be added to a version whose workspace commands already ran on a database. `upgrade` does not skip it: before resuming, the runner checks the instance commands that lead up to the resume point, restarts at the first one that never completed, and then runs the pending workspace commands. Instance commands that already completed are skipped.
+
 ## Interrupting a run (Ctrl+C, SIGTERM)
 
 Ctrl+C during an `upgrade` stops it gracefully: the workspace being processed finishes its commands, then the run stops instead of starting the next one. Ctrl+C again forces an immediate exit, leaving the command in progress unfinished.

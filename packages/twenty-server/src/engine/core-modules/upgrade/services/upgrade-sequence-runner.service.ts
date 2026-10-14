@@ -227,6 +227,28 @@ export class UpgradeSequenceRunnerService {
     sequence: UpgradeStep[];
     allProvisionedWorkspaceIds: string[];
   }): Promise<number> {
+    const cursorAfterLastAttempted =
+      await this.resolveCursorAfterLastAttemptedStep({
+        sequence,
+        allProvisionedWorkspaceIds,
+      });
+
+    const firstPendingInstanceCursor =
+      await this.findFirstPendingInstanceStepCursorBefore({
+        sequence,
+        cursor: cursorAfterLastAttempted,
+      });
+
+    return firstPendingInstanceCursor ?? cursorAfterLastAttempted;
+  }
+
+  private async resolveCursorAfterLastAttemptedStep({
+    sequence,
+    allProvisionedWorkspaceIds,
+  }: {
+    sequence: UpgradeStep[];
+    allProvisionedWorkspaceIds: string[];
+  }): Promise<number> {
     const lastAttempted =
       await this.upgradeMigrationService.getLastAttemptedCommandNameOrThrow(
         allProvisionedWorkspaceIds,
@@ -265,6 +287,46 @@ export class UpgradeSequenceRunnerService {
       default:
         assertUnreachable(lastAttemptedStep);
     }
+  }
+
+  // Instance commands can be added to the current version after its workspace
+  // segment already ran (or after a later instance command ran). They sort
+  // before the resume point, so resuming there would skip them forever. Scan
+  // the instance block that leads up to the resume point and restart at its
+  // first step that never completed; completed steps are skipped on rerun.
+  private async findFirstPendingInstanceStepCursorBefore({
+    sequence,
+    cursor,
+  }: {
+    sequence: UpgradeStep[];
+    cursor: number;
+  }): Promise<number | undefined> {
+    let instanceBlockStartCursor = cursor;
+
+    while (
+      instanceBlockStartCursor > 0 &&
+      sequence[instanceBlockStartCursor - 1].kind !== 'workspace'
+    ) {
+      instanceBlockStartCursor--;
+    }
+
+    for (
+      let instanceCursor = instanceBlockStartCursor;
+      instanceCursor < cursor;
+      instanceCursor++
+    ) {
+      const isCompleted =
+        await this.upgradeMigrationService.isLastAttemptCompleted({
+          name: sequence[instanceCursor].name,
+          workspaceId: null,
+        });
+
+      if (!isCompleted) {
+        return instanceCursor;
+      }
+    }
+
+    return undefined;
   }
 
   private async validateWorkspaceCursorsAreInWorkspaceSegment({
@@ -468,7 +530,12 @@ export class UpgradeSequenceRunnerService {
         cursorPosition === barrierCursor &&
         workspaceCursor.status === 'completed';
 
-      if (!isAtBarrierAndCompleted) {
+      // A workspace already inside a later segment finished the barrier
+      // segment; this happens when resuming instance steps added to a version
+      // whose workspace segment already ran.
+      const isPastBarrier = cursorPosition > barrierCursor;
+
+      if (!isAtBarrierAndCompleted && !isPastBarrier) {
         throw new Error(
           `Cannot run instance step: workspace ${workspaceId} ` +
             `has not completed "${previousWorkspaceStep.name}" ` +
