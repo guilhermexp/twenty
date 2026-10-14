@@ -1,6 +1,6 @@
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
+import { useUsageQuantityFormatter } from '@/settings/usage/hooks/useUsageQuantityFormatter';
 import { Select } from '@/ui/input/components/Select';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -9,13 +9,15 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
-import { Avatar } from 'twenty-ui/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { type UsageOperationType } from '~/generated-metadata/graphql';
+import {
+  type UsageOperationType,
+  type UsageUnit,
+} from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledSearchInputContainer = styled.div`
@@ -31,22 +33,22 @@ const GRID_TEMPLATE_COLUMNS = '1fr 120px 36px';
 type UsageByUserTableSectionProps = {
   title: string;
   description: string;
+  unit: UsageUnit;
   operationTypes?: UsageOperationType[];
   skip?: boolean;
   getDetailPath: (userWorkspaceId: string) => string;
-  showAvatar?: boolean;
 };
 
 export const UsageByUserTableSection = ({
   title,
   description,
+  unit,
   operationTypes,
   skip,
   getDetailPath,
-  showAvatar = false,
 }: UsageByUserTableSectionProps) => {
   const { theme } = useContext(ThemeContext);
-  const { formatUsageValue } = useUsageValueFormatter();
+  const { formatUsageQuantity } = useUsageQuantityFormatter();
   const [searchTerm, setSearchTerm] = useState('');
 
   const { analytics, isInitialLoading, period, setPeriod, periodOptions } =
@@ -63,7 +65,9 @@ export const UsageByUserTableSection = ({
     return null;
   }
 
-  const usageByUser = analytics.usageByUser;
+  const usageByUser = analytics.usageByUser.filter(
+    (item) => item.unit === unit,
+  );
 
   if (usageByUser.length === 0) {
     return null;
@@ -111,22 +115,11 @@ export const UsageByUserTableSection = ({
             gridTemplateColumns={GRID_TEMPLATE_COLUMNS}
             to={getDetailPath(item.key)}
           >
-            <TableCell
-              color={themeCssVariables.font.color.primary}
-              gap={showAvatar ? themeCssVariables.spacing[2] : undefined}
-            >
-              {showAvatar && (
-                <Avatar
-                  type="rounded"
-                  size="md"
-                  placeholder={item.label ?? item.key}
-                  placeholderColorSeed={item.key}
-                />
-              )}
+            <TableCell color={themeCssVariables.font.color.primary}>
               {item.label ?? item.key}
             </TableCell>
             <TableCell align="right">
-              {formatUsageValue(item.creditsUsed)}
+              {formatUsageQuantity(item.quantity, unit)}
             </TableCell>
             <TableCell align="center">
               <StyledIconChevronRightContainer>

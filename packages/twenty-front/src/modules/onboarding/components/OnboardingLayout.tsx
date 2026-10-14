@@ -15,21 +15,15 @@ type OnboardingLayoutProps = {
   children: ReactNode;
   onBack?: () => void;
   isBackDisabled?: boolean;
-  freeCredits?: number;
 };
 
 export const OnboardingLayout = ({
   children,
   onBack,
   isBackDisabled,
-  freeCredits,
 }: OnboardingLayoutProps) => (
   <StyledBackground>
-    <OnboardingHeader
-      onBack={onBack}
-      isBackDisabled={isBackDisabled}
-      freeCredits={freeCredits}
-    />
+    <OnboardingHeader onBack={onBack} isBackDisabled={isBackDisabled} />
     {children}
   </StyledBackground>
 );

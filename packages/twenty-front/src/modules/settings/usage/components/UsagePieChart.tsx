@@ -1,10 +1,11 @@
 import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
+import { useUsageQuantityFormatter } from '@/settings/usage/hooks/useUsageQuantityFormatter';
 import { styled } from '@linaria/react';
 import { ResponsivePie } from '@nivo/pie';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type UsageUnit } from '~/generated-metadata/graphql';
 
 type UsagePieChartDatum = {
   id: string;
@@ -14,6 +15,7 @@ type UsagePieChartDatum = {
 
 type UsagePieChartProps = {
   data: UsagePieChartDatum[];
+  unit: UsageUnit;
 };
 
 const StyledContainer = styled.div`
@@ -50,9 +52,9 @@ const StyledTooltipValue = styled.span`
   white-space: nowrap;
 `;
 
-export const UsagePieChart = ({ data }: UsagePieChartProps) => {
+export const UsagePieChart = ({ data, unit }: UsagePieChartProps) => {
   const { theme } = useContext(ThemeContext);
-  const { formatUsageValue } = useUsageValueFormatter();
+  const { formatUsageQuantity } = useUsageQuantityFormatter();
 
   return (
     <StyledContainer>
@@ -78,7 +80,7 @@ export const UsagePieChart = ({ data }: UsagePieChartProps) => {
               <GraphWidgetLegendDot color={datum.color} />
               <StyledTooltipLabel>{String(datum.id)}</StyledTooltipLabel>
               <StyledTooltipValue>
-                {formatUsageValue(datum.value)}
+                {formatUsageQuantity(datum.value, unit)}
               </StyledTooltipValue>
             </StyledTooltipRow>
           </StyledTooltip>

@@ -13,6 +13,7 @@ import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
+import { UsageUnit } from '~/generated-metadata/graphql';
 
 export const SettingsAiUsageUserDetail = () => {
   const { t: tLingui } = useLingui();
@@ -77,12 +78,13 @@ export const SettingsAiUsageUserDetail = () => {
 
         <UsageDailyChartSection
           title={t`Daily AI Usage`}
-          description={t`Per-day AI consumption.`}
+          description={t`Tokens consumed per day.`}
           operationTypes={AI_OPERATION_TYPES}
           userWorkspaceId={userWorkspaceId}
           skip={!userWorkspaceId}
           chartId="ai-user-daily"
-          chartLabel={t`AI Usage`}
+          chartLabel={t`Tokens`}
+          unit={UsageUnit.TOKEN}
         />
         <UsageBreakdownPieSection
           title={t`AI Usage by Type`}
@@ -90,15 +92,17 @@ export const SettingsAiUsageUserDetail = () => {
           userWorkspaceId={userWorkspaceId}
           skip={!userWorkspaceId}
           breakdownField="operationType"
+          unit={UsageUnit.TOKEN}
           sectionId="ai-user-type"
         />
         <UsageBreakdownPieSection
           title={t`AI Usage by Model`}
-          description={t`Breakdown across AI models.`}
+          description={t`Tokens consumed per AI model.`}
           operationTypes={AI_OPERATION_TYPES}
           userWorkspaceId={userWorkspaceId}
           skip={!userWorkspaceId}
           breakdownField="model"
+          unit={UsageUnit.TOKEN}
           sectionId="ai-user-model"
         />
       </SettingsPageContainer>

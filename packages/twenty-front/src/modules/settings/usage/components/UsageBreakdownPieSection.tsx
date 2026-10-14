@@ -4,7 +4,7 @@ import { SettingsInfoContainer } from '@/settings/components/SettingsInfoContain
 import { UsagePieChart } from '@/settings/usage/components/UsagePieChart';
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
+import { useUsageQuantityFormatter } from '@/settings/usage/hooks/useUsageQuantityFormatter';
 import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
@@ -13,9 +13,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-import { type UsageOperationType } from '~/generated-metadata/graphql';
+import {
+  type UsageOperationType,
+  type UsageUnit,
+} from '~/generated-metadata/graphql';
 
-type UsageBreakdownField = 'operationType' | 'application' | 'model';
+type UsageBreakdownField = 'operationType' | 'model';
 
 type UsageBreakdownPieSectionProps = {
   title: string;
@@ -24,6 +27,7 @@ type UsageBreakdownPieSectionProps = {
   userWorkspaceId?: string;
   skip?: boolean;
   breakdownField: UsageBreakdownField;
+  unit: UsageUnit;
   sectionId: string;
 };
 
@@ -34,11 +38,12 @@ export const UsageBreakdownPieSection = ({
   userWorkspaceId,
   skip,
   breakdownField,
+  unit,
   sectionId,
 }: UsageBreakdownPieSectionProps) => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const { formatUsageValue } = useUsageValueFormatter();
+  const { formatUsageQuantity } = useUsageQuantityFormatter();
   const colorRegistry = createGraphColorRegistry(theme.color);
 
   const { analytics, isInitialLoading, period, setPeriod, periodOptions } =
@@ -58,18 +63,21 @@ export const UsageBreakdownPieSection = ({
 
   const breakdownDataByField = {
     operationType: analytics.usageByOperationType,
-    application: analytics.usageByApplication,
     model: analytics.usageByModel,
   };
-  const breakdownData = breakdownDataByField[breakdownField];
+  // Quantities of different units cannot share a pie, so only the requested
+  // unit is charted.
+  const breakdownData = breakdownDataByField[breakdownField].filter(
+    (item) => item.unit === unit,
+  );
 
   if (breakdownData.length === 0) {
     return null;
   }
 
-  const total = breakdownData.reduce((sum, item) => sum + item.creditsUsed, 0);
+  const total = breakdownData.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Operation types are a fixed platform vocabulary translated here; the other
+  // Operation types are a fixed platform vocabulary translated here; model
   // breakdowns name workspace data, which only the server can resolve.
   const formatLabel = ({
     key,
@@ -89,11 +97,11 @@ export const UsageBreakdownPieSection = ({
 
   const pieData = breakdownData.map((item, index) => ({
     id: formatLabel(item),
-    value: item.creditsUsed,
+    value: item.quantity,
     color: getColorSchemeByIndex(colorRegistry, index).solid,
   }));
 
-  const resolvedDescription = description ?? formatUsageValue(total);
+  const resolvedDescription = description ?? formatUsageQuantity(total, unit);
 
   return (
     <Section>
@@ -112,7 +120,7 @@ export const UsageBreakdownPieSection = ({
         }
       />
       <SettingsInfoContainer>
-        <UsagePieChart data={pieData} />
+        <UsagePieChart data={pieData} unit={unit} />
       </SettingsInfoContainer>
     </Section>
   );

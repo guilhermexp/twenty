@@ -13,11 +13,6 @@ export const AiChatErrorRenderer = ({
   error,
   onRetry,
 }: AiChatErrorRendererProps) => {
-  if (isGraphqlErrorOfType(error, AiChatErrorCode.BILLING_CREDITS_EXHAUSTED)) {
-    // Handled when credits exhausted
-    return null;
-  }
-
   if (isGraphqlErrorOfType(error, AiChatErrorCode.API_KEY_NOT_CONFIGURED)) {
     return <AiChatApiKeyNotConfiguredMessage />;
   }

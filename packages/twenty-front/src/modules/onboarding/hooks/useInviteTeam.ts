@@ -1,14 +1,11 @@
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
@@ -32,8 +29,6 @@ export const useInviteTeam = () => {
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const isBookCallOnboardingStepEnabled = useAtomStateValue(
     isBookCallOnboardingStepEnabledState,
   );
@@ -160,14 +155,6 @@ export const useInviteTeam = () => {
         const sentInvitationsCount =
           result.data?.sendInvitations.result.length ?? 0;
 
-        const creditsRewardPerUser =
-          onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
-
-        setOnboardingFreeCredits((current) => ({
-          ...current,
-          inviteTeam: sentInvitationsCount * creditsRewardPerUser,
-        }));
-
         if (emails.length > 0) {
           enqueueSuccessSnackBar({
             message: t`Invite link sent to email addresses`,
@@ -195,10 +182,8 @@ export const useInviteTeam = () => {
       enqueueSuccessSnackBar,
       isBookCallOnboardingStepEnabled,
       isCompanyEnrichmentEnabled,
-      onboardingConfig?.inviteTeamCreditsRewardPerUser,
       sendInvitation,
       setNextOnboardingStatus,
-      setOnboardingFreeCredits,
       store,
       t,
     ],

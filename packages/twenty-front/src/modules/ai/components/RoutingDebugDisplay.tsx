@@ -9,7 +9,6 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useLingui } from '@lingui/react/macro';
 import { type DataMessagePart } from 'twenty-shared/ai';
 import { type JsonValue } from 'type-fest';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -158,15 +157,9 @@ type TimingTabProps = {
 
 const TimingTab = ({ debug }: TimingTabProps) => {
   const { t } = useLingui();
-  const { formatUsageValue } = useUsageValueFormatter();
   const totalTime =
     debug.agentExecutionStartTimeMs !== undefined
       ? `${debug.agentExecutionStartTimeMs + (debug.agentExecutionTimeMs || 0)}ms`
-      : undefined;
-
-  const totalCost =
-    debug.totalCostInCredits !== undefined
-      ? formatUsageValue(debug.totalCostInCredits)
       : undefined;
 
   return (
@@ -233,7 +226,6 @@ const TimingTab = ({ debug }: TimingTabProps) => {
             : undefined
         }
       />
-      <TimingRow label={t`Total cost`} value={totalCost} />
     </StyledTimingSection>
   );
 };

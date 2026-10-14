@@ -55,8 +55,6 @@ export const useAiChatThreadClick = (
             contextWindowTokens: thread.contextWindowTokens ?? 0,
             inputTokens: thread.totalInputTokens,
             outputTokens: thread.totalOutputTokens,
-            inputCredits: thread.totalInputCredits,
-            outputCredits: thread.totalOutputCredits,
           }
         : null,
     );

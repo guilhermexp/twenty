@@ -79,8 +79,6 @@ const buildKickoffMock = ({
                   totalOutputTokens: 0,
                   contextWindowTokens: null,
                   conversationSize: 0,
-                  totalInputCredits: 0,
-                  totalOutputCredits: 0,
                   deletedAt: null,
                   lastMessageAt: null,
                   createdAt: '2026-07-21T10:00:00.000Z',

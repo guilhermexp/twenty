@@ -1,9 +1,7 @@
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { SettingsInfoContainer } from '@/settings/components/SettingsInfoContainer';
 import { SettingsLabelValueItem } from '@/settings/components/SettingsLabelValueItem';
-import { UsageBreakdownPieSection } from '@/settings/usage/components/UsageBreakdownPieSection';
-import { UsageByUserTableSection } from '@/settings/usage/components/UsageByUserTableSection';
-import { UsageDailyChartSection } from '@/settings/usage/components/UsageDailyChartSection';
+import { UsageByOperationTypeTableSection } from '@/settings/usage/components/UsageByOperationTypeTableSection';
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -29,7 +27,7 @@ export const SettingsUsageAnalyticsSection = () => {
       <Section>
         <H2Title
           title={t`Usage Analytics`}
-          description={t`Credit usage breakdown for your workspace.`}
+          description={t`Usage breakdown for your workspace.`}
         />
         <SettingsInfoContainer>
           <SettingsLabelValueItem
@@ -56,12 +54,12 @@ export const SettingsUsageAnalyticsSection = () => {
       <Section>
         <H2Title
           title={t`Usage Analytics`}
-          description={t`Credit usage breakdown for your workspace.`}
+          description={t`Usage breakdown for your workspace.`}
         />
         <SettingsInfoContainer>
           <SettingsLabelValueItem
             label={t`No usage data yet`}
-            value={t`Usage analytics will appear here once you start using credits.`}
+            value={t`Usage analytics will appear here once your workspace starts recording usage.`}
           />
         </SettingsInfoContainer>
       </Section>
@@ -70,31 +68,10 @@ export const SettingsUsageAnalyticsSection = () => {
 
   return (
     <>
-      <UsageBreakdownPieSection
+      <UsageByOperationTypeTableSection
         title={t`Usage by Type`}
-        breakdownField="operationType"
+        description={t`Consumption per operation type, in its own unit.`}
         sectionId="usage-type"
-      />
-      <UsageBreakdownPieSection
-        title={t`Usage by App`}
-        breakdownField="application"
-        sectionId="usage-app"
-      />
-      <UsageDailyChartSection
-        title={t`Daily Usage`}
-        description={t`Credit consumption over time.`}
-        chartId="usage-daily"
-        chartLabel={t`Credits`}
-      />
-      <UsageByUserTableSection
-        title={t`Usage by User`}
-        description={t`Click a user to see their daily breakdown.`}
-        getDetailPath={(userWorkspaceId) =>
-          getSettingsPath(SettingsPath.UsageUserDetail, {
-            userWorkspaceId,
-          })
-        }
-        showAvatar
       />
       <Section>
         <Link

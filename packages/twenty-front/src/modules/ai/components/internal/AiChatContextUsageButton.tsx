@@ -101,13 +101,6 @@ export const AiChatContextUsageButton = () => {
     agentChatUsageComponentFamilyState,
     { threadId: currentAiChatThread },
   );
-  // Values from the streaming API arrive as display credits (micro-credits).
-  const formatChatCost = (displayCredits: number): string => {
-    const dollars = displayCredits / 1000;
-
-    return `$${formatNumber(dollars, { decimals: 2 })}`;
-  };
-
   const hasMessages = useAtomComponentSelectorValue(
     agentChatHasMessageComponentSelector,
   );
@@ -132,8 +125,6 @@ export const AiChatContextUsageButton = () => {
     100,
   );
   const formattedPercentage = percentage.toFixed(1);
-  const totalCredits =
-    agentChatUsage.inputCredits + agentChatUsage.outputCredits;
   const lastMessage = agentChatUsage.lastMessage;
 
   return (
@@ -202,12 +193,6 @@ export const AiChatContextUsageButton = () => {
                     decimals: 1,
                   })}
                 />
-                <SettingsLabelValueItem
-                  label={t`Cost`}
-                  value={formatChatCost(
-                    lastMessage.inputCredits + lastMessage.outputCredits,
-                  )}
-                />
               </StyledSection>
             </>
           )}
@@ -231,10 +216,6 @@ export const AiChatContextUsageButton = () => {
                 abbreviate: true,
                 decimals: 1,
               })}
-            />
-            <SettingsLabelValueItem
-              label={t`Total cost`}
-              value={formatChatCost(totalCredits)}
             />
           </StyledSection>
         </StyledHoverCard>

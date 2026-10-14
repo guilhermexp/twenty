@@ -27,8 +27,6 @@ describe('groupThreadsByDate', () => {
     totalOutputTokens: 0,
     contextWindowTokens: null,
     conversationSize: 0,
-    totalInputCredits: 0,
-    totalOutputCredits: 0,
   };
 
   const buildThread = (id: string, lastMessageAt: Date): AgentChatThread => ({

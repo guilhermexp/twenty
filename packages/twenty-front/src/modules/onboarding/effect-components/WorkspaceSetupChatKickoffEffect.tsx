@@ -90,8 +90,6 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           contextWindowTokens: thread.contextWindowTokens ?? null,
           totalInputTokens: thread.totalInputTokens,
           totalOutputTokens: thread.totalOutputTokens,
-          totalInputCredits: thread.totalInputCredits,
-          totalOutputCredits: thread.totalOutputCredits,
         };
 
         addToDraft({ key: 'agentChatThreads', items: [workspaceSetupThread] });

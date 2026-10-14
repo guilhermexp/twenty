@@ -13,15 +13,15 @@ describe('isGraphqlErrorOfType', () => {
   it('matches a subCode from an Apollo GraphQL error', () => {
     const error = createCombinedGraphQLError([
       {
-        message: 'Credits exhausted',
+        message: 'Context window exceeded',
         extensions: {
-          code: 'FORBIDDEN',
-          subCode: 'BILLING_CREDITS_EXHAUSTED',
+          code: 'BAD_USER_INPUT',
+          subCode: 'CONTEXT_WINDOW_EXCEEDED',
         },
       },
     ]);
 
-    expect(isGraphqlErrorOfType(error, 'BILLING_CREDITS_EXHAUSTED')).toBe(true);
+    expect(isGraphqlErrorOfType(error, 'CONTEXT_WINDOW_EXCEEDED')).toBe(true);
   });
 
   it('matches the GraphQL code when no subCode is present', () => {

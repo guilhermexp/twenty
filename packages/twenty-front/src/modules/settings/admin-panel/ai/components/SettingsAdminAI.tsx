@@ -28,7 +28,7 @@ import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProvide
 import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
+import { useUsageQuantityFormatter } from '@/settings/usage/hooks/useUsageQuantityFormatter';
 import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
 import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
 import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
@@ -43,20 +43,22 @@ import {
   AiModelRole,
   type AdminAiModelConfig,
 } from '~/generated-admin/graphql';
+import { type UsageUnit } from '~/generated-metadata/graphql';
 
 const USAGE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
 type UsageBreakdownItem = {
   key: string;
   label?: string | null;
-  creditsUsed: number;
+  unit: UsageUnit;
+  quantity: number;
 };
 
 export const SettingsAdminAI = () => {
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { refetch: refetchClientConfig } = useClientConfig();
-  const { formatUsageValue } = useUsageValueFormatter();
+  const { formatUsageQuantity } = useUsageQuantityFormatter();
   const [usagePeriod, setUsagePeriod] = useState<PeriodPreset>('30d');
   const periodOptions = getPeriodOptions();
   const usageDates = getPeriodDates(usagePeriod);
@@ -301,7 +303,7 @@ export const SettingsAdminAI = () => {
       <Section>
         <H2Title
           title={t`AI Usage by Workspace`}
-          description={t`AI consumption across all workspaces.`}
+          description={t`AI tokens consumed across all workspaces.`}
           adornment={
             <Select
               dropdownId="admin-ai-usage-period"
@@ -331,7 +333,7 @@ export const SettingsAdminAI = () => {
                   {item.label ?? item.key}
                 </TableCell>
                 <TableCell align="right">
-                  {formatUsageValue(item.creditsUsed)}
+                  {formatUsageQuantity(item.quantity, item.unit)}
                 </TableCell>
               </TableRow>
             ))}

@@ -7,7 +7,6 @@ import {
   type PublicFeatureFlag,
   type Sentry,
 } from '~/generated-metadata/graphql';
-import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 
 export type ClientConfig = {
   appVersion?: string;
@@ -37,7 +36,6 @@ export type ClientConfig = {
   isClickHouseConfigured: boolean;
   isWorkspaceSchemaDDLLocked: boolean;
   isOnboardingAiChatEnabled: boolean;
-  onboarding: OnboardingConfig | null;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: boolean;

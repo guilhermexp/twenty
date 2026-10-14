@@ -1,23 +1,18 @@
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
-import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/OnboardingMotionSlideOffset';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Controller } from 'react-hook-form';
-import { isDefined } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
@@ -54,8 +49,6 @@ export const InviteTeam = () => {
     isSubmitting,
     isNavigating,
   } = useInviteTeam();
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
   const transition = useOnboardingMotionTransition();
 
   const canRemoveEmailField = fields.length > 1;
@@ -71,19 +64,9 @@ export const InviteTeam = () => {
             {t`Get the most out of your workspace by inviting your team.`}
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
-        {isDefined(creditsRewardPerUser) && (
-          <OnboardingStepAnimatedItem index={2}>
-            <StyledOnboardingStepTagsRow>
-              <OnboardingCreditsRewardTag
-                amount={creditsRewardPerUser}
-                suffix={t`free credits per user`}
-              />
-            </StyledOnboardingStepTagsRow>
-          </OnboardingStepAnimatedItem>
-        )}
       </StyledOnboardingStepHeading>
 
-      <OnboardingStepAnimatedItem index={3}>
+      <OnboardingStepAnimatedItem index={2}>
         <StyledForm>
           <AnimatePresence initial={false}>
             {fields.map((field, index) => (
@@ -125,7 +108,7 @@ export const InviteTeam = () => {
         </StyledForm>
       </OnboardingStepAnimatedItem>
 
-      <OnboardingStepAnimatedItem index={4}>
+      <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
           <MainButton
             title={t`Invite`}

@@ -43,8 +43,6 @@ export const useCreateAgentChatThread = () => {
         contextWindowTokens: null,
         totalInputTokens: 0,
         totalOutputTokens: 0,
-        totalInputCredits: 0,
-        totalOutputCredits: 0,
       };
 
       addToDraft({ key: 'agentChatThreads', items: [newThread] });

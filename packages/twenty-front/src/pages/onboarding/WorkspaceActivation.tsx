@@ -10,7 +10,6 @@ import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingActivationFailedState } from '@/onboarding/states/onboardingActivationFailedState';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -55,7 +54,6 @@ export const WorkspaceActivation = () => {
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
-  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
   const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
   );
@@ -110,13 +108,8 @@ export const WorkspaceActivation = () => {
     }
 
     hasTriggeredRef.current = true;
-    setOnboardingFreeCredits({
-      importContacts: 0,
-      inviteTeam: 0,
-      installApps: 0,
-    });
     void activate();
-  }, [activate, currentWorkspace, setOnboardingFreeCredits]);
+  }, [activate, currentWorkspace]);
 
   if (!onboardingActivationFailed) {
     return null;

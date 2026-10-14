@@ -18,5 +18,4 @@ export const USAGE_OPERATION_TYPE_LABELS: Record<
   [UsageOperationType.CALL_RECORDING]: msg`Call Recording`,
   [UsageOperationType.EMAIL_SEND]: msg`Email Send`,
   [UsageOperationType.API_REQUEST]: msg`API Request`,
-  [UsageOperationType.SUBSCRIPTION]: msg`Subscription`,
 };

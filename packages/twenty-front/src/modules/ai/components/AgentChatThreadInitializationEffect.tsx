@@ -131,8 +131,6 @@ export const AgentChatThreadInitializationEffect = () => {
               contextWindowTokens: firstThread.contextWindowTokens ?? 0,
               inputTokens: firstThread.totalInputTokens,
               outputTokens: firstThread.totalOutputTokens,
-              inputCredits: firstThread.totalInputCredits,
-              outputCredits: firstThread.totalOutputCredits,
             }
           : null,
       );

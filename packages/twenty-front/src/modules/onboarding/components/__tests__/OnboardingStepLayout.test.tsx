@@ -6,15 +6,17 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
-import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
+import {
+  type CurrentUser,
+  currentUserState,
+} from '@/auth/states/currentUserState';
 import { OnboardingStepLayout } from '@/onboarding/components/OnboardingStepLayout';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 
 jest.mock('@/onboarding/effect-components/PrefetchBookCallStepEffect', () => ({
@@ -28,14 +30,6 @@ jest.mock('@/onboarding/components/OnboardingTransitionOutlet', () => ({
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const onboardingConfig: OnboardingConfig = {
-  importContactsCreditsReward: 2,
-  inviteTeamMaxCreditsReward: 9,
-  inviteTeamCreditsRewardPerUser: 3,
-  upgradeCreditsReward: 5,
-  installAppsCreditsRewardPerApp: 1,
-};
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={[]}>
     <JotaiProvider store={jotaiStore}>
@@ -48,31 +42,46 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </MockedProvider>
 );
 
+const currentUser: CurrentUser = {
+  id: 'user-id',
+  email: 'user@test.com',
+  canAccessFullAdminPanel: false,
+  onboardingStatus: OnboardingStatus.INVITE_TEAM,
+  previousOnboardingStatus: null,
+  isWorkspaceCreator: true,
+  userVars: {},
+  firstName: 'Test',
+  lastName: 'User',
+  hasPassword: true,
+};
+
 describe('OnboardingStepLayout', () => {
   beforeEach(() => {
     localStorage.clear();
     resetJotaiStore();
-    jotaiStore.set(onboardingFreeCreditsState.atom, {
-      importContacts: 2,
-      inviteTeam: 3,
-      installApps: 1,
+  });
+
+  it('should display the back button when a previous onboarding step exists', () => {
+    jotaiStore.set(currentUserState.atom, {
+      ...currentUser,
+      previousOnboardingStatus: OnboardingStatus.PROFILE_CREATION,
     });
-  });
-
-  it('should display the free credits pill when credits rewards are configured', () => {
-    jotaiStore.set(onboardingConfigState.atom, onboardingConfig);
 
     render(<OnboardingStepLayout />, { wrapper: Wrapper });
 
-    expect(screen.getByText('free credits')).toBeInTheDocument();
-    expect(screen.getByText('6')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Go back' })).toBeInTheDocument();
   });
 
-  it('should hide the free credits pill when credits rewards are not configured', () => {
-    jotaiStore.set(onboardingConfigState.atom, null);
+  it('should hide the back button when there is no previous onboarding step', () => {
+    jotaiStore.set(currentUserState.atom, {
+      ...currentUser,
+      previousOnboardingStatus: null,
+    });
 
     render(<OnboardingStepLayout />, { wrapper: Wrapper });
 
-    expect(screen.queryByText('free credits')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Go back' }),
+    ).not.toBeInTheDocument();
   });
 });

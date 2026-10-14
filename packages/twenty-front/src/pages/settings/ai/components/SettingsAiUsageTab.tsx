@@ -13,6 +13,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
+import { UsageUnit } from '~/generated-metadata/graphql';
 
 export const SettingsAiUsageTab = () => {
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
@@ -73,27 +74,31 @@ export const SettingsAiUsageTab = () => {
     <>
       <UsageDailyChartSection
         title={t`Daily AI Usage`}
-        description={t`AI consumption over time.`}
+        description={t`Tokens consumed over time.`}
         operationTypes={AI_OPERATION_TYPES}
         chartId="ai-usage-daily"
-        chartLabel={t`AI Usage`}
+        chartLabel={t`Tokens`}
+        unit={UsageUnit.TOKEN}
       />
       <UsageBreakdownPieSection
         title={t`AI Usage by Type`}
         operationTypes={AI_OPERATION_TYPES}
         breakdownField="operationType"
+        unit={UsageUnit.TOKEN}
         sectionId="ai-usage-type"
       />
       <UsageBreakdownPieSection
         title={t`AI Usage by Model`}
-        description={t`Breakdown across AI models.`}
+        description={t`Tokens consumed per AI model.`}
         operationTypes={AI_OPERATION_TYPES}
         breakdownField="model"
+        unit={UsageUnit.TOKEN}
         sectionId="ai-usage-model"
       />
       <UsageByUserTableSection
         title={t`AI Usage by User`}
         description={t`Click a user to see their daily breakdown.`}
+        unit={UsageUnit.TOKEN}
         operationTypes={AI_OPERATION_TYPES}
         getDetailPath={(userWorkspaceId) =>
           getSettingsPath(SettingsPath.AiUsageUserDetail, {

@@ -23,7 +23,6 @@ import { agentChatStreamLastEventTimestampState } from '@/ai/states/agentChatStr
 import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStreamResubscribeNonceState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
-import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { createStreamChunkSequencer } from '@/ai/utils/createStreamChunkSequencer';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -239,8 +238,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
                 inputTokens: number;
                 outputTokens: number;
                 cachedInputTokens: number;
-                inputCredits: number;
-                outputCredits: number;
                 conversationSize: number;
               };
               model?: {
@@ -264,15 +261,11 @@ export const useAgentChatSubscription = (threadId: string | null) => {
               inputTokens: usage.inputTokens,
               outputTokens: usage.outputTokens,
               cachedInputTokens: usage.cachedInputTokens,
-              inputCredits: usage.inputCredits,
-              outputCredits: usage.outputCredits,
             },
             conversationSize: usage.conversationSize,
             contextWindowTokens: model.contextWindowTokens,
             inputTokens: (prev?.inputTokens ?? 0) + usage.inputTokens,
             outputTokens: (prev?.outputTokens ?? 0) + usage.outputTokens,
-            inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
-            outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
           }));
         }
 
@@ -369,22 +362,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           );
 
           resetStreamProcessing();
-          store.set(isStreamingAtom, false);
-          break;
-        }
-
-        case 'credits-exhausted': {
-          store.set(
-            errorAtom,
-            createAiChatCodedError(
-              'Chat stopped: no more available credits.',
-              AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
-            ),
-          );
-
-          resetStreamProcessing();
-          store.set(isAwaitingPersistedRefetchAtom, true);
-          dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           store.set(isStreamingAtom, false);
           break;
         }

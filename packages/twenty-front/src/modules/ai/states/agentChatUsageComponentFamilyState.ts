@@ -5,8 +5,6 @@ export type AgentChatLastMessageUsage = {
   inputTokens: number;
   outputTokens: number;
   cachedInputTokens: number;
-  inputCredits: number;
-  outputCredits: number;
 };
 
 export type AgentChatUsageState = {
@@ -15,8 +13,6 @@ export type AgentChatUsageState = {
   contextWindowTokens: number;
   inputTokens: number;
   outputTokens: number;
-  inputCredits: number;
-  outputCredits: number;
 };
 
 export const agentChatUsageComponentFamilyState =

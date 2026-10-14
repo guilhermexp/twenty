@@ -438,12 +438,6 @@ const SettingsUsage = lazy(() =>
   })),
 );
 
-const SettingsUsageUserDetail = lazy(() =>
-  import('~/pages/settings/usage/SettingsUsageUserDetail').then((module) => ({
-    default: module.SettingsUsageUserDetail,
-  })),
-);
-
 const SettingsObjects = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjects').then((module) => ({
     default: module.SettingsObjects,
@@ -753,10 +747,6 @@ const createSettingsRouteElements = ({
         element={<SettingsWorkspaceUnsubscribe />}
       />
       <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
-      <Route
-        path={SettingsPath.UsageUserDetail}
-        element={<SettingsUsageUserDetail />}
-      />
       <Route
         path={SettingsPath.Subdomain}
         element={<SettingsSubdomainPage />}

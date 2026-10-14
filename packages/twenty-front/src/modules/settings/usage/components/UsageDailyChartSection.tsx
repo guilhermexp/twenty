@@ -4,12 +4,15 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { SettingsInfoContainer } from '@/settings/components/SettingsInfoContainer';
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
+import { useUsageQuantityFormatter } from '@/settings/usage/hooks/useUsageQuantityFormatter';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
-import { type UsageOperationType } from '~/generated-metadata/graphql';
+import {
+  type UsageOperationType,
+  type UsageUnit,
+} from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
 
 const StyledLineChartContainer = styled.div`
@@ -22,6 +25,7 @@ type UsageDailyChartSectionProps = {
   description: string;
   chartId: string;
   chartLabel: string;
+  unit: UsageUnit;
   operationTypes?: UsageOperationType[];
   userWorkspaceId?: string;
   skip?: boolean;
@@ -32,6 +36,7 @@ export const UsageDailyChartSection = ({
   description,
   chartId,
   chartLabel,
+  unit,
   operationTypes,
   userWorkspaceId,
   skip,
@@ -43,7 +48,7 @@ export const UsageDailyChartSection = ({
       skip,
     });
 
-  const { formatUsageValue } = useUsageValueFormatter();
+  const { formatUsageQuantity } = useUsageQuantityFormatter();
 
   if (isInitialLoading) {
     return <UsageSectionSkeleton />;
@@ -53,9 +58,13 @@ export const UsageDailyChartSection = ({
     return null;
   }
 
-  const timeSeries = userWorkspaceId
-    ? (analytics.userDailyUsage?.dailyUsage ?? [])
-    : analytics.timeSeries;
+  // The server returns one gap-filled series per unit; only the requested
+  // unit can be plotted on a single axis.
+  const timeSeries = (
+    userWorkspaceId
+      ? (analytics.userDailyUsage?.dailyUsage ?? [])
+      : analytics.timeSeries
+  ).filter((point) => point.unit === unit);
 
   if (timeSeries.length === 0) {
     return null;
@@ -67,7 +76,7 @@ export const UsageDailyChartSection = ({
       label: chartLabel,
       data: timeSeries.map((point) => ({
         x: formatDate(point.date, 'MMM d'),
-        y: point.creditsUsed,
+        y: point.quantity,
       })),
     },
   ];
@@ -100,7 +109,7 @@ export const UsageDailyChartSection = ({
               showLegend={false}
               enableArea
               displayType="custom"
-              customFormatter={formatUsageValue}
+              customFormatter={(value) => formatUsageQuantity(value, unit)}
             />
           </WidgetComponentInstanceContext.Provider>
         </StyledLineChartContainer>

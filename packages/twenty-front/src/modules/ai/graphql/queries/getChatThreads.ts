@@ -9,8 +9,6 @@ export const GET_CHAT_THREADS = gql`
       totalOutputTokens
       contextWindowTokens
       conversationSize
-      totalInputCredits
-      totalOutputCredits
       deletedAt
       lastMessageAt
       createdAt
