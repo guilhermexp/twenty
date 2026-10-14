@@ -88,11 +88,6 @@ msgstr "{fieldType} fields cannot have a default value."
 msgid "{fullMessage}"
 msgstr "{fullMessage}"
 
-#. js-lingui-id: iEZavm
-#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
-msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
-msgstr "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
-
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -154,11 +149,6 @@ msgctxt "objectMetadata.description"
 msgid "A dashboard"
 msgstr "A dashboard"
 
-#. js-lingui-id: ixdsnM
-#: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
-msgid "A DNS manager error occurred."
-msgstr "A DNS manager error occurred."
-
 #. js-lingui-id: Hjj8vT
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "A duplicate entry was detected."
@@ -184,11 +174,6 @@ msgstr "A function with this name already exists."
 msgctxt "objectMetadata.description"
 msgid "A hand-picked audience of people"
 msgstr "A hand-picked audience of people"
-
-#. js-lingui-id: TF/ZV2
-#: src/engine/core-modules/billing/reminders/services/billing-reminder.service.ts
-msgid "A heads up before your Twenty trial ends"
-msgstr "A heads up before your Twenty trial ends"
 
 #. js-lingui-id: 6yZjO1
 #: src/engine/core-modules/application/application.exception.ts
@@ -263,12 +248,6 @@ msgstr "A path segment contains invalid characters. Only alphanumeric, dots, das
 #: src/engine/core-modules/file-storage/utils/validate-path-segments-safety.util.ts
 msgid "A path segment exceeds the maximum length of 255 characters"
 msgstr "A path segment exceeds the maximum length of 255 characters"
-
-#. js-lingui-id: W6LTzL
-#: src/engine/core-modules/billing/billing.exception.ts
-#: src/engine/core-modules/billing/utils/billing-graphql-api-exception-handler.util.ts
-msgid "A payment processing error occurred."
-msgstr "A payment processing error occurred."
 
 #. js-lingui-id: K1qNjB
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -765,16 +744,6 @@ msgctxt "objectMetadata.description"
 msgid "An opportunity"
 msgstr "An opportunity"
 
-#. js-lingui-id: Tstlpf
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "An unexpected billing error occurred."
-msgstr "An unexpected billing error occurred."
-
-#. js-lingui-id: U8C7oj
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "An unexpected billing error occurred. Please contact support."
-msgstr "An unexpected billing error occurred. Please contact support."
-
 #. js-lingui-id: acTNEg
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "An unexpected configuration error occurred."
@@ -871,11 +840,6 @@ msgstr "Application ID"
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application is not installed in this workspace. Install it first."
 msgstr "Application is not installed in this workspace. Install it first."
-
-#. js-lingui-id: t77Ey9
-#: src/engine/core-modules/public-domain/public-domain.exception.ts
-msgid "Application not found in this workspace."
-msgstr "Application not found in this workspace."
 
 #. js-lingui-id: ltvmAF
 #: src/engine/core-modules/application/application.exception.ts
@@ -1137,11 +1101,6 @@ msgctxt "fieldMetadata.description"
 msgid "Audio-only recording"
 msgstr "Audio-only recording"
 
-#. js-lingui-id: aepsXP
-#: src/engine/core-modules/event-logs/event-logs.exception.ts
-msgid "Audit logs require an Enterprise subscription."
-msgstr "Audit logs require an Enterprise subscription."
-
 #. js-lingui-id: PKMDuT
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "Audit logs require ClickHouse to be configured."
@@ -1219,37 +1178,6 @@ msgstr "Avatar Url"
 msgctxt "fieldMetadata.label"
 msgid "Bcc"
 msgstr "Bcc"
-
-#. js-lingui-id: 8mCUlb
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Billing"
-msgstr "Billing"
-
-#. js-lingui-id: rkIGWa
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Billing customer not found."
-msgstr "Billing customer not found."
-
-#. js-lingui-id: HVTHL6
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Billing meter not found."
-msgstr "Billing meter not found."
-
-#. js-lingui-id: FNftTK
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Billing plan not found."
-msgstr "Billing plan not found."
-
-#. js-lingui-id: LI7tcn
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Billing price not found."
-msgstr "Billing price not found."
-
-#. js-lingui-id: DDKhmc
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Billing product not found."
-msgstr "Billing product not found."
 
 #. js-lingui-id: /q4AFh
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1766,11 +1694,6 @@ msgstr "Campaigns sent to this list"
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
 msgstr "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
 
-#. js-lingui-id: 2oVE+z
-#: src/engine/guards/impersonate-permission.guard.ts
-msgid "Can't impersonate user via api key"
-msgstr "Can't impersonate user via api key"
-
 #. js-lingui-id: PpmWQv
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -1953,16 +1876,6 @@ msgstr "Cannot modify predicate to change its role from {existingRoleIdentifier}
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Cannot remove the last admin from the workspace."
-
-#. js-lingui-id: wNJvot
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Cannot switch subscription interval."
-msgstr "Cannot switch subscription interval."
-
-#. js-lingui-id: U/P/gT
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Cannot switch subscription plan."
-msgstr "Cannot switch subscription plan."
 
 #. js-lingui-id: jNnzPT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
@@ -2719,21 +2632,6 @@ msgctxt "pageLayout.name"
 msgid "Creation Form"
 msgstr "Creation Form"
 
-#. js-lingui-id: oB7ed5
-#: src/engine/core-modules/usage-limit/services/usage-limit-quota.service.ts
-msgid "Credit allowance exhausted for this billing period."
-msgstr "Credit allowance exhausted for this billing period."
-
-#. js-lingui-id: iMikvq
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Credit grant must expire after it becomes effective."
-msgstr "Credit grant must expire after it becomes effective."
-
-#. js-lingui-id: J0OIhA
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Credit grant not found."
-msgstr "Credit grant not found."
-
 #. js-lingui-id: OZIOad
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -2749,16 +2647,6 @@ msgstr "Cron pattern '{pattern}' is invalid"
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Custom command menu item cannot be reset to default."
 msgstr "Custom command menu item cannot be reset to default."
-
-#. js-lingui-id: 8vxOU0
-#: src/engine/core-modules/workspace/workspace.exception.ts
-msgid "Custom domain not found."
-msgstr "Custom domain not found."
-
-#. js-lingui-id: zsYQk/
-#: src/engine/core-modules/workspace/workspace.exception.ts
-msgid "Custom domains are disabled for this workspace."
-msgstr "Custom domains are disabled for this workspace."
 
 #. js-lingui-id: qHZppf
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -3228,21 +3116,6 @@ msgctxt "fieldMetadata.label"
 msgid "Display Name"
 msgstr "Display Name"
 
-#. js-lingui-id: IymH4t
-#: src/engine/core-modules/public-domain/public-domain.service.ts
-msgid "Domain already used for workspace custom domain"
-msgstr "Domain already used for workspace custom domain"
-
-#. js-lingui-id: 2sIVDj
-#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
-msgid "Domain is already registered"
-msgstr "Domain is already registered"
-
-#. js-lingui-id: PfJswy
-#: src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service.ts
-msgid "Domain is already registered as public domain"
-msgstr "Domain is already registered as public domain"
-
 #. js-lingui-id: NViwRM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -3557,11 +3430,6 @@ msgstr "Entity not found."
 msgid "Enum operation failed."
 msgstr "Enum operation failed."
 
-#. js-lingui-id: EzGlkq
-#: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
-msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
-
 #. js-lingui-id: SlfejT
 #: src/engine/core-modules/feature-flag/validates/feature-flag.validate.spec.ts
 #: src/engine/core-modules/feature-flag/validates/feature-flag.validate.spec.ts
@@ -3821,11 +3689,6 @@ msgstr "Failed to load queue jobs. Please try again later."
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "Failed to receive real time updates."
 msgstr "Failed to receive real time updates."
-
-#. js-lingui-id: /E7MoD
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Failed to record billing event."
-msgstr "Failed to record billing event."
 
 #. js-lingui-id: eQmx6a
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -4203,6 +4066,11 @@ msgstr "File not found in SDK client archive."
 msgid "File not found."
 msgstr "File not found."
 
+#. js-lingui-id: eAFKw+
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
+msgid "File storage did not confirm the processed file. Please retry."
+msgstr "File storage did not confirm the processed file. Please retry."
+
 #. js-lingui-id: MtzD8b
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "File storage took too long to respond. Please retry."
@@ -4500,12 +4368,6 @@ msgstr "Go to AI Settings"
 msgctxt "commandMenuItem.label"
 msgid "Go to Apps Settings"
 msgstr "Go to Apps Settings"
-
-#. js-lingui-id: tlIbgN
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Billing Settings"
-msgstr "Go to Billing Settings"
 
 #. js-lingui-id: BKhayt
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5005,11 +4867,6 @@ msgstr "Invalid connected account input."
 msgid "Invalid country code {countryCode}"
 msgstr "Invalid country code {countryCode}"
 
-#. js-lingui-id: vplJ+F
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Invalid credit amount."
-msgstr "Invalid credit amount."
-
 #. js-lingui-id: egz9rA
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid data format."
@@ -5306,16 +5163,6 @@ msgstr "Invalid phone country code."
 msgid "Invalid phone number."
 msgstr "Invalid phone number."
 
-#. js-lingui-id: r+9b/a
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Invalid price."
-msgstr "Invalid price."
-
-#. js-lingui-id: tkzFzG
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Invalid pricing tiers."
-msgstr "Invalid pricing tiers."
-
 #. js-lingui-id: XBYAgs
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
@@ -5376,26 +5223,6 @@ msgstr "Invalid skill input."
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Invalid string format."
 msgstr "Invalid string format."
-
-#. js-lingui-id: lpSAqb
-#: src/engine/core-modules/workspace/workspace.exception.ts
-msgid "Invalid subdomain."
-msgstr "Invalid subdomain."
-
-#. js-lingui-id: SFQl8b
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Invalid subscription interval."
-msgstr "Invalid subscription interval."
-
-#. js-lingui-id: Do5gvp
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Invalid subscription item."
-msgstr "Invalid subscription item."
-
-#. js-lingui-id: mDAXg+
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Invalid subscription."
-msgstr "Invalid subscription."
 
 #. js-lingui-id: WreNd7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
@@ -5990,11 +5817,6 @@ msgstr "Layout is required for bar chart"
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr "Layout is required for bar chart widget \"{widgetTitle}\""
 
-#. js-lingui-id: cI7XDa
-#: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
-msgid "Limits scoped below the workspace require the Organization plan."
-msgstr "Limits scoped below the workspace require the Organization plan."
-
 #. js-lingui-id: sAG9OB
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
 msgctxt "timelineActivityType.label"
@@ -6192,12 +6014,6 @@ msgstr "Many validation errors"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
 msgstr "March"
-
-#. js-lingui-id: 6lmi/1
-#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
-#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
-msgid "Marketing sending is on hold until the unsubscribe domain is verified."
-msgstr "Marketing sending is on hold until the unsubscribe domain is verified."
 
 #. js-lingui-id: Dq8Em0
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
@@ -6669,11 +6485,6 @@ msgstr "Missing decorator configuration."
 msgid "Missing main alias target."
 msgstr "Missing main alias target."
 
-#. js-lingui-id: W5hpOP
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Missing request body."
-msgstr "Missing request body."
-
 #. js-lingui-id: SzCMUQ
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
@@ -6710,11 +6521,6 @@ msgstr "Multi-select field default value must be an array"
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
-
-#. js-lingui-id: B9dbXq
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Multiple subscriptions found where one was expected."
-msgstr "Multiple subscriptions found where one was expected."
 
 #. js-lingui-id: egii0n
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
@@ -6891,11 +6697,6 @@ msgstr "New email must be different from current email"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "No"
 msgstr "No"
-
-#. js-lingui-id: LnV8zi
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "No active subscription found."
-msgstr "No active subscription found."
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -7399,11 +7200,6 @@ msgstr "One or more requested scopes are invalid."
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Only a campaign that is currently sending can be canceled."
 msgstr "Only a campaign that is currently sending can be canceled."
-
-#. js-lingui-id: NYONBC
-#: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
-msgid "Only administrators can impersonate users with admin privileges."
-msgstr "Only administrators can impersonate users with admin privileges."
 
 #. js-lingui-id: JzXn58
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -8028,10 +7824,10 @@ msgstr "Please choose an end date and time after the start date and time."
 msgid "Please confirm your updated email"
 msgstr "Please confirm your updated email"
 
-#. js-lingui-id: Zm9s4F
+#. js-lingui-id: 6FZR/z
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
-msgid "Please enter a domain name, like twenty.com"
-msgstr "Please enter a domain name, like twenty.com"
+msgid "Please enter a domain name, like example.com"
+msgstr "Please enter a domain name, like example.com"
 
 #. js-lingui-id: qgasuj
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -8237,21 +8033,6 @@ msgstr "Provided country code and calling code are conflicting"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Provided phone number is invalid {number}"
 msgstr "Provided phone number is invalid {number}"
-
-#. js-lingui-id: OL88cI
-#: src/engine/core-modules/public-domain/public-domain.service.ts
-msgid "Public domain already registered"
-msgstr "Public domain already registered"
-
-#. js-lingui-id: Vr4xfK
-#: src/engine/core-modules/public-domain/public-domain.exception.ts
-msgid "Public domain not found."
-msgstr "Public domain not found."
-
-#. js-lingui-id: Capzni
-#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
-msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
-msgstr "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 
 #. js-lingui-id: vVCf2E
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
@@ -8964,11 +8745,6 @@ msgstr "Search field metadata with id {searchFieldMetadataId} already exists"
 msgid "Search field metadata with same fieldMetadataId and objectMetadataId already exists"
 msgstr "Search field metadata with same fieldMetadataId and objectMetadataId already exists"
 
-#. js-lingui-id: K3jNeK
-#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
-msgid "Search Help Center"
-msgstr "Search Help Center"
-
 #. js-lingui-id: PdVIJC
 #: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Search vector"
@@ -9212,16 +8988,6 @@ msgstr "Server logic function not found."
 msgid "Server logic function requires authentication."
 msgstr "Server logic function requires authentication."
 
-#. js-lingui-id: OUDI/C
-#: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
-msgid "Server-level impersonation is not enabled for this user or workspace."
-msgstr "Server-level impersonation is not enabled for this user or workspace."
-
-#. js-lingui-id: U1u0hG
-#: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
-msgid "Set up two-factor authentication before impersonating users in another workspace."
-msgstr "Set up two-factor authentication before impersonating users in another workspace."
-
 #. js-lingui-id: vGWuPM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -9298,11 +9064,6 @@ msgstr "Some workspace memberships could not be found. They may no longer have a
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "Something went wrong while saving your onboarding progress."
 msgstr "Something went wrong while saving your onboarding progress."
-
-#. js-lingui-id: RjTo7h
-#: src/engine/core-modules/onboarding/onboarding.exception.ts
-msgid "Something went wrong while starting the app installation. Please try again."
-msgstr "Something went wrong while starting the app installation. Please try again."
 
 #. js-lingui-id: fWsBTs
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
@@ -9494,11 +9255,6 @@ msgctxt "fieldMetadata.label"
 msgid "Stopping"
 msgstr "Stopping"
 
-#. js-lingui-id: An2IAh
-#: src/engine/core-modules/workspace/workspace.exception.ts
-msgid "Subdomain not found."
-msgstr "Subdomain not found."
-
 #. js-lingui-id: 2OlYO4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
@@ -9513,26 +9269,6 @@ msgstr "Subject"
 msgctxt "fieldMetadata.label"
 msgid "Subject"
 msgstr "Subject"
-
-#. js-lingui-id: x0Vn7k
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Subscription is not in trial period."
-msgstr "Subscription is not in trial period."
-
-#. js-lingui-id: nnWIIb
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Subscription item not found."
-msgstr "Subscription item not found."
-
-#. js-lingui-id: uo7UmH
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Subscription not found."
-msgstr "Subscription not found."
-
-#. js-lingui-id: VNohoc
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Subscription phase not found."
-msgstr "Subscription phase not found."
 
 #. js-lingui-id: RUXdNM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -10060,6 +9796,11 @@ msgstr "The field configured for this widget could not be found."
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "The field you are trying to set permissions for could not be found. It may have been deleted."
 
+#. js-lingui-id: APJkak
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+msgid "The file changed while it was being processed."
+msgstr "The file changed while it was being processed."
+
 #. js-lingui-id: bAGU1r
 #: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
@@ -10487,11 +10228,6 @@ msgstr "This application is already owned by a workspace."
 msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
 msgstr "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
 
-#. js-lingui-id: F0NM9B
-#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
-msgid "This campaign needs more email credits than your workspace has left. Top up your credits or send to a smaller list."
-msgstr "This campaign needs more email credits than your workspace has left. Top up your credits or send to a smaller list."
-
 #. js-lingui-id: ZyEq3L
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign no longer exists."
@@ -10527,21 +10263,11 @@ msgstr "This domain has already been validated."
 msgid "This domain has already been verified."
 msgstr "This domain has already been verified."
 
-#. js-lingui-id: 3eKCDz
-#: src/engine/core-modules/public-domain/public-domain.exception.ts
-msgid "This domain is already registered as a custom domain."
-msgstr "This domain is already registered as a custom domain."
-
 #. js-lingui-id: s6batt
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This domain is already registered."
 msgstr "This domain is already registered."
-
-#. js-lingui-id: 8sTsIR
-#: src/engine/core-modules/workspace/workspace.exception.ts
-msgid "This domain is already taken."
-msgstr "This domain is already taken."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -10604,6 +10330,11 @@ msgstr "This file format is not supported."
 msgid "This file has already been uploaded."
 msgstr "This file has already been uploaded."
 
+#. js-lingui-id: VGePIR
+#: src/engine/core-modules/file/file-upload/services/file-upload-target.service.ts
+msgid "This file path is too long to upload."
+msgstr "This file path is too long to upload."
+
 #. js-lingui-id: 6ekAtL
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
@@ -10623,11 +10354,6 @@ msgstr "This identifier is reserved by the system"
 #: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
 msgid "This index does not exist or has already been deleted."
 msgstr "This index does not exist or has already been deleted."
-
-#. js-lingui-id: wQ3edW
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "This kind of credit grant cannot be created by hand."
-msgstr "This kind of credit grant cannot be created by hand."
 
 #. js-lingui-id: AFqkCe
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
@@ -10699,11 +10425,6 @@ msgstr "This permission is already set for the role"
 msgid "This provider is not supported."
 msgstr "This provider is not supported."
 
-#. js-lingui-id: 8achGR
-#: src/engine/core-modules/public-domain/public-domain.exception.ts
-msgid "This public domain is already registered."
-msgstr "This public domain is already registered."
-
 #. js-lingui-id: z7QJbR
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This question has already been answered."
@@ -10770,11 +10491,6 @@ msgstr "This role cannot be modified because it is a system role. Only custom ro
 msgid "This server key is already claimed by another workspace."
 msgstr "This server key is already claimed by another workspace."
 
-#. js-lingui-id: nFIPim
-#: src/engine/core-modules/workspace/workspace.exception.ts
-msgid "This subdomain is already taken."
-msgstr "This subdomain is already taken."
-
 #. js-lingui-id: dZF5Gw
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
@@ -10800,6 +10516,11 @@ msgstr "This type of record cannot be merged."
 msgid "This universal identifier is already claimed by another registration."
 msgstr "This universal identifier is already claimed by another registration."
 
+#. js-lingui-id: xL5g9G
+#: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts
+msgid "This upload expired before it was confirmed. Please upload the file again."
+msgstr "This upload expired before it was confirmed. Please upload the file again."
+
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "This user is already a member of the workspace."
@@ -10819,22 +10540,6 @@ msgstr "This version is not higher than the currently deployed version. Please b
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "This version of the application is already installed in this workspace."
-
-#. js-lingui-id: o/Kt/Y
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "This workspace already has a subscription."
-msgstr "This workspace already has a subscription."
-
-#. js-lingui-id: aJq3VL
-#: src/engine/core-modules/billing/billing.exception.ts
-#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
-msgid "This workspace has no active subscription."
-msgstr "This workspace has no active subscription."
-
-#. js-lingui-id: ChHeV3
-#: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
-msgid "This workspace is suspended."
-msgstr "This workspace is suspended."
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
@@ -11383,11 +11088,6 @@ msgstr "URL must be a string"
 msgid "URL must be a string for widget \"{widgetTitle}\""
 msgstr "URL must be a string for widget \"{widgetTitle}\""
 
-#. js-lingui-id: P7NKk0
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Usage could not be read. Please try again later."
-msgstr "Usage could not be read. Please try again later."
-
 #. js-lingui-id: tGvlMG
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Usage quota exhausted for this period."
@@ -11488,7 +11188,6 @@ msgstr "User was not created with email/password"
 
 #. js-lingui-id: lUEEso
 #: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -11556,11 +11255,6 @@ msgstr "Value \"{stringifiedValue}\" resolves to no record for operand \"{operan
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-
-#. js-lingui-id: NzhR7p
-#: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
-msgid "Verify your two-factor authentication before impersonating users in another workspace."
-msgstr "Verify your two-factor authentication before impersonating users in another workspace."
 
 #. js-lingui-id: q1On37
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -12464,23 +12158,6 @@ msgctxt "fieldMetadata.label"
 msgid "Workspace"
 msgstr "Workspace"
 
-#. js-lingui-id: bK8AyJ
-#: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
-#: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
-#: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
-msgid "Workspace {workspaceId} is not found."
-msgstr "Workspace {workspaceId} is not found."
-
-#. js-lingui-id: lNgTSN
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Workspace cannot be deleted: subscription is not yet canceled."
-msgstr "Workspace cannot be deleted: subscription is not yet canceled."
-
-#. js-lingui-id: XsSVrR
-#: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Workspace creation is restricted to admins"
-msgstr "Workspace creation is restricted to admins"
-
 #. js-lingui-id: qSQPRS
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Workspace does not exist."
@@ -12501,11 +12178,6 @@ msgstr "Workspace is not ready to welcome new members"
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "Workspace is suspended."
 msgstr "Workspace is suspended."
-
-#. js-lingui-id: iN7doz
-#: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
-msgstr "Workspace limit reached. A valid enterprise key is required to create more workspaces."
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -12589,16 +12261,6 @@ msgstr "Workspace name is required"
 #: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
 msgid "Workspace not found"
 msgstr "Workspace not found"
-
-#. js-lingui-id: eQwIyW
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Workspace not found for customer event."
-msgstr "Workspace not found for customer event."
-
-#. js-lingui-id: 5Io9Sh
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Workspace not found for subscription event."
-msgstr "Workspace not found for subscription event."
 
 #. js-lingui-id: EhVOPs
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -12823,16 +12485,6 @@ msgstr "You do not have permission to delete this user from the workspace. Pleas
 msgid "You do not have permission to delete workspace-level navigation menu items. Please contact your workspace administrator for access."
 msgstr "You do not have permission to delete workspace-level navigation menu items. Please contact your workspace administrator for access."
 
-#. js-lingui-id: +wZ6RO
-#: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
-msgid "You do not have permission to impersonate users in this workspace."
-msgstr "You do not have permission to impersonate users in this workspace."
-
-#. js-lingui-id: +2vVRB
-#: src/engine/guards/impersonate-permission.guard.ts
-msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
-msgstr "You do not have permission to impersonate users. Please contact your workspace administrator for access."
-
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -12881,11 +12533,6 @@ msgstr "You don't have permission to create workspace-level views."
 msgid "You don't have permission to modify this view."
 msgstr "You don't have permission to modify this view."
 
-#. js-lingui-id: hMX1AE
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "You have exhausted your credits. Please upgrade your plan to continue."
-msgstr "You have exhausted your credits. Please upgrade your plan to continue."
-
 #. js-lingui-id: WCKl4k
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "You have reached the maximum number of invitations for this step."
@@ -12918,11 +12565,6 @@ msgstr "Your application's production dependencies are too large to install. Mov
 msgid "Your AWS SES account is still in the sandbox, so this domain cannot send to unverified recipients. Request production access from AWS, then verify the domain again."
 msgstr "Your AWS SES account is still in the sandbox, so this domain cannot send to unverified recipients. Request production access from AWS, then verify the domain again."
 
-#. js-lingui-id: J5Vm4Q
-#: src/engine/core-modules/billing/billing.validate.ts
-msgid "Your billing subscription is corrupted. Please contact support."
-msgstr "Your billing subscription is corrupted. Please contact support."
-
 #. js-lingui-id: K48BuZ
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Your GitHub account does not own the organization that publishes this package. If you are an owner, make sure you granted this app access to the organization on GitHub's authorization screen (Organization access section)."
@@ -12932,11 +12574,6 @@ msgstr "Your GitHub account does not own the organization that publishes this pa
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
 msgstr "Your Password Has Been Successfully Changed"
-
-#. js-lingui-id: AKLZnk
-#: src/engine/core-modules/billing/billing.exception.ts
-msgid "Your payment method was declined. Please update it and try again."
-msgstr "Your payment method was declined. Please update it and try again."
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts
@@ -12951,16 +12588,6 @@ msgctxt "fieldMetadata.description"
 msgid "Your team member responsible for managing the company account"
 msgstr "Your team member responsible for managing the company account"
 
-#. js-lingui-id: sOfbGC
-#: src/engine/core-modules/billing/reminders/services/billing-reminder.service.ts
-msgid "Your Twenty plan renews soon"
-msgstr "Your Twenty plan renews soon"
-
-#. js-lingui-id: qW+K5e
-#: src/engine/core-modules/billing/reminders/services/billing-reminder.service.ts
-msgid "Your Twenty trial is ending soon"
-msgstr "Your Twenty trial is ending soon"
-
 #. js-lingui-id: ej/tZF
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
@@ -12970,4 +12597,3 @@ msgstr "Your workspace has been updated with a new data model. Please refresh th
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
 msgid "Your workspace is paused — reactivate to keep your data"
 msgstr "Your workspace is paused — reactivate to keep your data"
-
