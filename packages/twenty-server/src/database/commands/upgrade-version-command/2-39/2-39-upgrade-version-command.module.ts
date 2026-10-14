@@ -9,7 +9,6 @@ import { CreateMessageListMemberViewCommand } from 'src/database/commands/upgrad
 import { MarkPlatformOwnedStandardObjectsSystemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1788616958245-mark-platform-owned-standard-objects-system.command';
 import { DeleteCommunitySettingsCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1791944154579-delete-community-settings-command-menu-item.command';
 import { DeleteDomainsSettingsCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1791944918555-delete-domains-settings-command-menu-item.command';
-import { DeleteBookCallOnboardingUserVarsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791993080000-delete-book-call-onboarding-user-vars';
 import { GateAdminPanelCommandMenuItemOnFullAdminCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-workspace-command-1791947223405-gate-admin-panel-command-menu-item-on-full-admin.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -43,7 +42,6 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     DeleteCommunitySettingsCommandMenuItemCommand,
     DeleteDomainsSettingsCommandMenuItemCommand,
     GateAdminPanelCommandMenuItemOnFullAdminCommand,
-    DeleteBookCallOnboardingUserVarsSlowInstanceCommand,
   ],
 })
 export class V2_39_UpgradeVersionCommandModule {}
