@@ -110,8 +110,8 @@ const addAction = async (options: {
       if (!detectedUrl) {
         console.error(
           chalk.red(
-            'No local Twenty server found.\n' +
-              'Start one with: yarn twenty docker:start',
+            'No local fork server found.\n' +
+              'Start this repository with: yarn start',
           ),
         );
         process.exit(1);

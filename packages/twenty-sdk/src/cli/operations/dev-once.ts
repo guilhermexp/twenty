@@ -135,10 +135,10 @@ const innerAppDevOnce = async (
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
         message:
-          'Cannot reach Twenty server.\n\n' +
-          '  Start a local server:\n' +
-          '    yarn twenty docker:start\n\n' +
-          '  Check server status:\n' +
+          'Cannot reach the fork server.\n\n' +
+          '  Start this repository:\n' +
+          '    yarn start\n\n' +
+          '  Or check the configured local server:\n' +
           '    yarn twenty docker:status',
       },
     };

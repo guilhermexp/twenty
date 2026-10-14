@@ -2,7 +2,6 @@ import { appInstall } from '@/cli/operations/install';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
-import { checkServerVersionCompatibility } from '@/cli/utilities/version/check-server-version-compatibility';
 import chalk from 'chalk';
 
 export type AppInstallCommandOptions = {
@@ -15,7 +14,6 @@ export class AppInstallCommand {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
     await checkSdkVersionCompatibility(appPath);
-    await checkServerVersionCompatibility();
 
     const remoteName = options.remote ?? ConfigService.getActiveRemote();
 
