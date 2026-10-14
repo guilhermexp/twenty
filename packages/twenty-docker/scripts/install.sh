@@ -24,7 +24,12 @@ fi
 
 if [ ! -f "$env_file" ]; then
   cp "$env_example" "$env_file"
-  echo "Created $env_file; review its values before production use."
+  {
+    printf '\n# Generated automatically for the local fork\n'
+    printf 'ENCRYPTION_KEY=%s\n' "$(openssl rand -hex 32)"
+    printf 'APP_SECRET=%s\n' "$(openssl rand -hex 32)"
+  } >>"$env_file"
+  echo "Created $env_file with generated secrets; review its values before production use."
 fi
 
 echo "Building the fork image from $repo_root"
