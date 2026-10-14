@@ -96,7 +96,6 @@ const EventRelationFieldDiffValuesWithFetch = ({
       return getObjectRecordIdentifier({
         objectMetadataItem: relationTargetObjectMetadataItem,
         record: relatedRecord,
-        allowRequestsToTwentyIcons: false,
       }).name;
     }
 

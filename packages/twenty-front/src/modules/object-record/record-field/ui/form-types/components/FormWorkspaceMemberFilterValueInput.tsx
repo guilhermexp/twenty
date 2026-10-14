@@ -92,7 +92,6 @@ export const FormWorkspaceMemberFilterValueInput = ({
       selectedIds: selectedRecordIds,
       objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
       limit: 10,
-      allowRequestsToTwentyIcons: false,
     });
 
   const emitChange = useCallback(

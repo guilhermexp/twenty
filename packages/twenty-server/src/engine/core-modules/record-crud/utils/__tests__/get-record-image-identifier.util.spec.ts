@@ -20,7 +20,6 @@ const buildFieldMaps = (
   return {
     byUniversalIdentifier,
     universalIdentifierById,
-    universalIdentifiersByApplicationId: {},
   };
 };
 
@@ -28,7 +27,7 @@ const signUrl = (fileId: string, fileFolder: FileFolder) =>
   `signed:${fileFolder}:${fileId}`;
 
 describe('getRecordImageIdentifier', () => {
-  it('resolves a LINKS image identifier to a favicon url', async () => {
+  it('returns null for a LINKS image identifier', async () => {
     const domainNameField = getFlatFieldMetadataMock({
       universalIdentifier: 'domain-ui',
       objectMetadataId: 'company-id',
@@ -44,35 +43,9 @@ describe('getRecordImageIdentifier', () => {
     });
 
     const result = await getRecordImageIdentifier({
-      record: { domainName: { primaryLinkUrl: 'twenty.com' } },
+      record: { domainName: { primaryLinkUrl: 'example.com' } },
       flatObjectMetadata: company,
       flatFieldMetadataMaps: buildFieldMaps([domainNameField]),
-      allowRequestsToTwentyIcons: true,
-    });
-
-    expect(result).toBe('https://twenty-icons.com/twenty.com');
-  });
-
-  it('returns null for a LINKS image identifier when twenty-icons requests are disabled', async () => {
-    const domainNameField = getFlatFieldMetadataMock({
-      universalIdentifier: 'domain-ui',
-      objectMetadataId: 'company-id',
-      id: 'domain-id',
-      name: 'domainName',
-      type: FieldMetadataType.LINKS,
-    });
-    const company = getFlatObjectMetadataMock({
-      universalIdentifier: 'company-ui',
-      id: 'company-id',
-      nameSingular: 'company',
-      imageIdentifierFieldMetadataId: 'domain-id',
-    });
-
-    const result = await getRecordImageIdentifier({
-      record: { domainName: { primaryLinkUrl: 'twenty.com' } },
-      flatObjectMetadata: company,
-      flatFieldMetadataMaps: buildFieldMaps([domainNameField]),
-      allowRequestsToTwentyIcons: false,
     });
 
     expect(result).toBe(null);
@@ -97,7 +70,6 @@ describe('getRecordImageIdentifier', () => {
       record: { avatarFile: [{ fileId: 'file-1' }] },
       flatObjectMetadata: person,
       flatFieldMetadataMaps: buildFieldMaps([avatarFileField]),
-      allowRequestsToTwentyIcons: true,
       signUrl,
     });
 
@@ -123,13 +95,12 @@ describe('getRecordImageIdentifier', () => {
       record: { avatarFile: [{ fileId: 'file-1' }] },
       flatObjectMetadata: person,
       flatFieldMetadataMaps: buildFieldMaps([avatarFileField]),
-      allowRequestsToTwentyIcons: true,
     });
 
     expect(result).toBe(null);
   });
 
-  it('prefers the overrides column over the base image identifier', async () => {
+  it('returns null for a LINKS override image identifier', async () => {
     const baseTextField = getFlatFieldMetadataMock({
       universalIdentifier: 'text-ui',
       objectMetadataId: 'custom-id',
@@ -155,14 +126,13 @@ describe('getRecordImageIdentifier', () => {
     const result = await getRecordImageIdentifier({
       record: {
         baseText: 'ignored',
-        domainName: { primaryLinkUrl: 'acme.com' },
+        domainName: { primaryLinkUrl: 'example.com' },
       },
       flatObjectMetadata: customObject,
       flatFieldMetadataMaps: buildFieldMaps([baseTextField, domainNameField]),
-      allowRequestsToTwentyIcons: true,
     });
 
-    expect(result).toBe('https://twenty-icons.com/acme.com');
+    expect(result).toBe(null);
   });
 
   it('respects an explicit null override (cleared image identifier)', async () => {
@@ -182,10 +152,9 @@ describe('getRecordImageIdentifier', () => {
     });
 
     const result = await getRecordImageIdentifier({
-      record: { domainName: { primaryLinkUrl: 'acme.com' } },
+      record: { domainName: { primaryLinkUrl: 'example.com' } },
       flatObjectMetadata: customObject,
       flatFieldMetadataMaps: buildFieldMaps([domainNameField]),
-      allowRequestsToTwentyIcons: true,
     });
 
     expect(result).toBe(null);
@@ -203,7 +172,6 @@ describe('getRecordImageIdentifier', () => {
       record: {},
       flatObjectMetadata: customObject,
       flatFieldMetadataMaps: buildFieldMaps([]),
-      allowRequestsToTwentyIcons: true,
     });
 
     expect(result).toBe(null);
@@ -223,7 +191,6 @@ describe('getRecordImageIdentifier', () => {
       },
       flatObjectMetadata: workspaceMember,
       flatFieldMetadataMaps: buildFieldMaps([]),
-      allowRequestsToTwentyIcons: true,
       signUrl,
     });
 

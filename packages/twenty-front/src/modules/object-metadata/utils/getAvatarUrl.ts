@@ -10,7 +10,6 @@ export const getAvatarUrl = (
   objectNameSingular: string,
   record: ObjectRecord,
   imageIdentifierFieldMetadataItem: FieldMetadataItem | undefined,
-  allowRequestsToTwentyIcons?: boolean | undefined,
 ) => {
   if (objectNameSingular === CoreObjectNameSingular.WorkspaceMember) {
     return record.avatarUrl ?? undefined;
@@ -19,7 +18,6 @@ export const getAvatarUrl = (
   const imageIdentifierFieldValue = getImageIdentifierFieldValue(
     record,
     imageIdentifierFieldMetadataItem,
-    allowRequestsToTwentyIcons,
   );
 
   if (isDefined(imageIdentifierFieldValue)) {

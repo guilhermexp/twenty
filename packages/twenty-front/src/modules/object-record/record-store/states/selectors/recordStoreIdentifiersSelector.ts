@@ -7,14 +7,11 @@ import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
 export const recordStoreIdentifiersFamilySelector = createAtomFamilySelector<
   ObjectRecordIdentifier[],
-  {
-    recordIds: string[];
-    allowRequestsToTwentyIcons: boolean;
-  }
+  { recordIds: string[] }
 >({
   key: 'recordStoreIdentifiersFamilySelector',
   get:
-    ({ recordIds, allowRequestsToTwentyIcons }) =>
+    ({ recordIds }) =>
     ({ get }) => {
       const objectMetadataItems = get(objectMetadataItemsSelector);
 
@@ -34,9 +31,8 @@ export const recordStoreIdentifiersFamilySelector = createAtomFamilySelector<
           }
 
           return getObjectRecordIdentifier({
-            objectMetadataItem: objectMetadataItem,
+            objectMetadataItem,
             record: recordFromStore,
-            allowRequestsToTwentyIcons,
           });
         })
         .filter(isDefined);

@@ -104,7 +104,6 @@ export const NavigationMenuItemIcon = ({
     });
     return (
       <LinkIconWithLinkOverlay
-        link={computedLink}
         LinkIcon={IconLink}
         DefaultIcon={IconWorld}
         color={getNavigationMenuItemColor(navigationMenuItem)}

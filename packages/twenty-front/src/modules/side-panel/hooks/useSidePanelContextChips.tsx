@@ -3,7 +3,6 @@ import { SidePanelContextRecordChipAvatars } from '@/side-panel/components/SideP
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
@@ -20,10 +19,6 @@ export const useSidePanelContextChips = () => {
   const iconSizeSm = theme.icon.size.sm;
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
-  );
-
-  const allowRequestsToTwentyIcons = useAtomStateValue(
-    allowRequestsToTwentyIconsState,
   );
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
@@ -48,7 +43,6 @@ export const useSidePanelContextChips = () => {
     recordStoreIdentifiersFamilySelector,
     {
       recordIds: allRecordIds,
-      allowRequestsToTwentyIcons,
     },
   );
   const records = useAtomFamilySelectorValue(recordStoreRecordsSelector, {

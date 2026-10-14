@@ -75,7 +75,7 @@ describe('getActivitySummary', () => {
         props: {
           backgroundColor: 'default',
           textAlignment: 'left',
-          url: 'https://twenty-icons.com/anthropic.com',
+          url: 'https://example.com/anthropic.com',
           caption: '',
           width: 230,
         },

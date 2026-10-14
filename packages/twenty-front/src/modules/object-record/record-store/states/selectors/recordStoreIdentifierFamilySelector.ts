@@ -7,7 +7,6 @@ import { uncapitalize } from 'twenty-shared/utils';
 
 type RecordStoreIdentifierFamilyKey = {
   recordId: string;
-  allowRequestsToTwentyIcons: boolean;
 };
 
 export const recordStoreIdentifierFamilySelector = createAtomFamilySelector<
@@ -16,10 +15,7 @@ export const recordStoreIdentifierFamilySelector = createAtomFamilySelector<
 >({
   key: 'recordStoreIdentifierFamilySelector',
   get:
-    ({
-      recordId,
-      allowRequestsToTwentyIcons,
-    }: RecordStoreIdentifierFamilyKey) =>
+    ({ recordId }: RecordStoreIdentifierFamilyKey) =>
     ({ get }) => {
       const recordFromStore = get(recordStoreFamilyState, recordId);
       const objectNameSingular = uncapitalize(
@@ -37,9 +33,8 @@ export const recordStoreIdentifierFamilySelector = createAtomFamilySelector<
       }
 
       return getObjectRecordIdentifier({
-        objectMetadataItem: objectMetadataItem,
+        objectMetadataItem,
         record: recordFromStore,
-        allowRequestsToTwentyIcons,
       });
     },
 });

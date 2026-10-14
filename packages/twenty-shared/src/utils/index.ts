@@ -194,11 +194,6 @@ export {
   getGroupByConnectionTypename,
 } from './graphql/graphql-get-typename.util';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
-export { getLinkFaviconUrl } from './image/getLinkFaviconUrl';
-export {
-  sanitizeURL,
-  getLogoUrlFromDomainName,
-} from './image/getLogoUrlFromDomainName';
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
 export { isAutoSelectModelId } from './isAutoSelectModelId';
 export { isFieldValueRestricted } from './isFieldValueRestricted';

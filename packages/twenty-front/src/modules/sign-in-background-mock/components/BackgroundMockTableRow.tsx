@@ -4,7 +4,6 @@ import { useContext } from 'react';
 import { type BackgroundMockCompany } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
 import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import {
   Avatar,
   Chip,
@@ -15,7 +14,6 @@ import {
 import { IconLink } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { Checkbox } from 'twenty-ui/input';
-import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 
 const StyledRow = styled.div`
   display: flex;
@@ -108,8 +106,6 @@ export const BackgroundMockTableRow = ({
 }: BackgroundMockTableRowProps) => {
   const { theme } = useContext(ThemeContext);
 
-  const logoUrl = getLogoUrlFromDomainName(company.domainName);
-
   return (
     <StyledRow>
       <StyledDragHandleColumn />
@@ -126,7 +122,6 @@ export const BackgroundMockTableRow = ({
           leftComponent={
             <Avatar
               type="squared"
-              avatarUrl={getAbsoluteImageUrl(logoUrl)}
               placeholder={company.name}
               placeholderColorSeed={company.id}
               size="md"

@@ -7,7 +7,6 @@ import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { getAvatarUrl } from '@/object-metadata/utils/getAvatarUrl';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-types/display/utils/isFieldIdentifierDisplay';
 import { type RecordChipData } from '@/object-record/record-field/ui/types/RecordChipData';
@@ -17,7 +16,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getRecordChipGenerators = (
   objectMetadataItems: EnrichedObjectMetadataItem[],
-  allowRequestsToTwentyIcons?: boolean,
 ) => {
   const chipGeneratorPerObjectPerField: ChipGeneratorPerObjectNameSingularPerFieldName =
     {};
@@ -90,7 +88,6 @@ export const getRecordChipGenerators = (
                   objectMetadataItemToUse.nameSingular,
                   record,
                   imageIdentifierFieldMetadataToUse,
-                  allowRequestsToTwentyIcons,
                 ),
                 avatarType,
                 isLabelIdentifier,

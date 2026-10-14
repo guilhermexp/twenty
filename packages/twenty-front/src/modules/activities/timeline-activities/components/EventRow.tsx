@@ -23,7 +23,6 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { frontComponentsSelector } from '@/front-components/states/frontComponentsSelector';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -107,10 +106,6 @@ export const EventRow = ({
 }: EventRowProps) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const allowRequestsToTwentyIcons = useAtomStateValue(
-    allowRequestsToTwentyIconsState,
-  );
-
   const { recordId } = useContext(TimelineActivityContext);
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
@@ -167,7 +162,6 @@ export const EventRow = ({
   const labelIdentifier = getObjectRecordIdentifier({
     objectMetadataItem: mainObjectMetadataItem,
     record: recordStore,
-    allowRequestsToTwentyIcons,
   });
 
   const authorFullName = getTimelineActivityAuthorFullName(

@@ -5,8 +5,6 @@ import { MAX_RECORDS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/c
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import {
   arrayOfUuidOrVariableSchema,
@@ -22,9 +20,6 @@ type UseComputeRecordRelationFilterDisplayValueParams = {
 export const useComputeRecordRelationFilterDisplayValue = ({
   recordFilter,
 }: UseComputeRecordRelationFilterDisplayValueParams) => {
-  const allowRequestsToTwentyIcons = useAtomStateValue(
-    allowRequestsToTwentyIconsState,
-  );
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -75,7 +70,6 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     selectedIds: selectedRecordIds,
     objectNameSingular: relationObjectMetadataNameSingular,
     limit: 10,
-    allowRequestsToTwentyIcons,
   });
 
   if (loading) {

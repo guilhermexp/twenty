@@ -33,7 +33,6 @@ export const RecordTableWidgetNestedRelationPickerDropdownContent = ({
     selectedIds: [],
     objectNameSingular:
       nestedRelationCreateThrough.relationObjectMetadataNameSingular,
-    allowRequestsToTwentyIcons: true,
     filter: nestedRelationCreateThrough.relationRecordsFilter,
   });
 

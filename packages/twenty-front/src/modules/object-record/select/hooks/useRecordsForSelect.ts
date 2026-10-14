@@ -21,7 +21,6 @@ export const useRecordsForSelect = ({
   limit,
   excludedRecordIds = [],
   objectNameSingular,
-  allowRequestsToTwentyIcons,
   filter,
 }: {
   searchFilterText: string;
@@ -30,12 +29,10 @@ export const useRecordsForSelect = ({
   limit?: number;
   excludedRecordIds?: string[];
   objectNameSingular: string;
-  allowRequestsToTwentyIcons: boolean;
   filter?: RecordGqlOperationFilter;
 }) => {
   const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
     objectNameSingular,
-    allowRequestsToTwentyIcons,
   });
 
   const filters = [

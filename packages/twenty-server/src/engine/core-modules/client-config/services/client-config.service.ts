@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { readIsCompanyEnrichmentEnabled } from 'src/engine/core-modules/company-enrichment/utils/read-is-company-enrichment-enabled.util';
-import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import {
@@ -34,15 +31,6 @@ export class ClientConfigService {
 
   async getClientConfig(): Promise<ClientConfig> {
     const captchaProvider = this.twentyConfigService.get('CAPTCHA_DRIVER');
-    const calendarBookingPageId = this.twentyConfigService.get(
-      'CALENDAR_BOOKING_PAGE_ID',
-    );
-    const isBookCallOnboardingStepEnabled = isDefined(
-      readBookCallStepMinEmployeeCount(this.twentyConfigService),
-    );
-    const isCompanyEnrichmentEnabled = readIsCompanyEnrichmentEnabled(
-      this.twentyConfigService,
-    );
 
     const isEmailingDomainInDemoMode =
       this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
@@ -216,14 +204,6 @@ export class ClientConfigService {
         'IS_IMAP_SMTP_CALDAV_ENABLED',
       ),
       isEmailingDomainInDemoMode,
-      allowRequestsToTwentyIcons: this.twentyConfigService.get(
-        'ALLOW_REQUESTS_TO_TWENTY_ICONS',
-      ),
-      calendarBookingPageId: isNonEmptyString(calendarBookingPageId)
-        ? calendarBookingPageId
-        : undefined,
-      isBookCallOnboardingStepEnabled,
-      isCompanyEnrichmentEnabled,
       isClickHouseConfigured: !!this.twentyConfigService.get('CLICKHOUSE_URL'),
       isWorkspaceSchemaDDLLocked: this.twentyConfigService.get(
         'WORKSPACE_SCHEMA_DDL_LOCKED',

@@ -57,7 +57,6 @@ export const SidePanelLinkInfo = () => {
     <HeaderIdentifier
       icon={
         <LinkIconWithLinkOverlay
-          link={selectedItem.link}
           LinkIcon={IconLink}
           DefaultIcon={IconWorld}
           color={selectedItem.color}

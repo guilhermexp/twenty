@@ -24,9 +24,8 @@ import {
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/icon';
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,
   selectedRecordIds: [],
@@ -54,10 +53,6 @@ const ObjectFilterDropdownRecordSelectContent = ({
 }: ObjectFilterDropdownRecordSelectContentProps) => {
   const fieldMetadataItemUsedInFilterDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
-  );
-
-  const allowRequestsToTwentyIcons = useAtomStateValue(
-    allowRequestsToTwentyIconsState,
   );
 
   const { objectFilterDropdownFilterValue } =
@@ -123,7 +118,6 @@ const ObjectFilterDropdownRecordSelectContent = ({
       selectedIds: selectedRecordIds,
       objectNameSingular,
       limit: 10,
-      allowRequestsToTwentyIcons,
     });
 
   const currentWorkspaceMemberSelectableItem: SelectableItem = {

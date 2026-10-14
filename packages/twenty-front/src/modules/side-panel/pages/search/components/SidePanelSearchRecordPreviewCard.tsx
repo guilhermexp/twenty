@@ -1,4 +1,3 @@
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -129,13 +128,9 @@ export const SidePanelSearchRecordPreviewCard = ({
     recordId,
   });
 
-  const allowRequestsToTwentyIcons = useAtomStateValue(
-    allowRequestsToTwentyIconsState,
-  );
-
   const recordIdentifier = useAtomFamilySelectorValue(
     recordStoreIdentifierFamilySelector,
-    { recordId, allowRequestsToTwentyIcons },
+    { recordId },
   );
 
   // Collapsed shows at most a handful of the view's visible columns; everything
@@ -231,18 +226,17 @@ export const SidePanelSearchRecordPreviewCard = ({
 
         <StyledFieldList>
           {displayedFields.map(renderFieldRow)}
-          {!areAllFieldsVisible &&
-            remainingFieldCount > 0 && (
-              // Keeping focus on the search input so arrow keys still move through results
-              <StyledShowMoreContainer
-                onMouseDown={(event) => event.preventDefault()}
-              >
-                <FieldWidgetShowMoreButton
-                  remainingCount={remainingFieldCount}
-                  onClick={() => setAreAllFieldsVisible(true)}
-                />
-              </StyledShowMoreContainer>
-            )}
+          {!areAllFieldsVisible && remainingFieldCount > 0 && (
+            // Keeping focus on the search input so arrow keys still move through results
+            <StyledShowMoreContainer
+              onMouseDown={(event) => event.preventDefault()}
+            >
+              <FieldWidgetShowMoreButton
+                remainingCount={remainingFieldCount}
+                onClick={() => setAreAllFieldsVisible(true)}
+              />
+            </StyledShowMoreContainer>
+          )}
         </StyledFieldList>
       </StyledCard>
     </SkeletonTheme>

@@ -1,8 +1,6 @@
 import { IMPORT_CONTACTS_PREVIEW_COMPANIES } from '@/onboarding/constants/ImportContactsPreviewCompanies';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 import {
   Avatar,
   Chip,
@@ -85,9 +83,6 @@ export const OnboardingImportPreviewCompanies = () => {
                 size="md"
                 placeholder={company.name}
                 placeholderColorSeed={company.id}
-                avatarUrl={getAbsoluteImageUrl(
-                  getLogoUrlFromDomainName(company.domainName),
-                )}
               />
             }
           />

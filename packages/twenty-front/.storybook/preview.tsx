@@ -52,7 +52,6 @@ const respondWithMockImage = () =>
 
 const remoteImageMockHandlers = [
   http.get('https://picsum.photos/*', respondWithMockImage),
-  http.get('https://twenty-icons.com/*', respondWithMockImage),
   http.get('https://twentyhq.github.io/*', respondWithMockImage),
   http.get('https://via.placeholder.com/*', respondWithMockImage),
   http.get(

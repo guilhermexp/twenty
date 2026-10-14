@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { getLinkFaviconUrl, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -13,7 +13,6 @@ type GetRecordImageIdentifierOptions = {
   record: Record<string, unknown>;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  allowRequestsToTwentyIcons: boolean;
   signUrl?: (
     fileId: string,
     fileFolder: FileFolder,
@@ -24,7 +23,6 @@ export const getRecordImageIdentifier = async ({
   record,
   flatObjectMetadata,
   flatFieldMetadataMaps,
-  allowRequestsToTwentyIcons,
   signUrl,
 }: GetRecordImageIdentifierOptions): Promise<string | null> => {
   if (
@@ -76,20 +74,8 @@ export const getRecordImageIdentifier = async ({
 
       return signUrl(fileId, FileFolder.FilesField);
     }
-    case FieldMetadataType.LINKS: {
-      if (!allowRequestsToTwentyIcons) {
-        return null;
-      }
-
-      const primaryLinkUrl =
-        typeof imageValue === 'object' && 'primaryLinkUrl' in imageValue
-          ? imageValue.primaryLinkUrl
-          : undefined;
-
-      return isNonEmptyString(primaryLinkUrl)
-        ? getLinkFaviconUrl(primaryLinkUrl) || null
-        : null;
-    }
+    case FieldMetadataType.LINKS:
+      return null;
     default: {
       return null;
     }

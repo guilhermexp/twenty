@@ -14,9 +14,6 @@ export type ClientConfig = {
   analyticsEnabled: boolean;
   api: ApiConfig;
   authProviders: AuthProviders;
-  calendarBookingPageId?: string;
-  isBookCallOnboardingStepEnabled: boolean;
-  isCompanyEnrichmentEnabled: boolean;
   canManageFeatureFlags: boolean;
   captcha: Captcha;
   publicFunctionDomain?: string | null;
@@ -36,6 +33,5 @@ export type ClientConfig = {
   sentry: Sentry;
   signInPrefilled: boolean;
   isTwoFactorAuthenticationEnabled: boolean;
-  allowRequestsToTwentyIcons: boolean;
   maintenance?: ClientConfigMaintenanceMode;
 };

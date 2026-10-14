@@ -9,11 +9,7 @@ import {
   FileFolder,
   ObjectRecord,
 } from 'twenty-shared/types';
-import {
-  escapeForIlike,
-  getLinkFaviconUrl,
-  isDefined,
-} from 'twenty-shared/utils';
+import { escapeForIlike, isDefined } from 'twenty-shared/utils';
 import { Brackets, type ObjectLiteral } from 'typeorm';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
@@ -707,31 +703,8 @@ export class SearchService {
           workspaceId,
         );
       }
-      case FieldMetadataType.LINKS: {
-        if (!this.twentyConfigService.get('ALLOW_REQUESTS_TO_TWENTY_ICONS')) {
-          return '';
-        }
-
-        const primaryLinkUrlProperty = compositeTypeDefinitions
-          .get(FieldMetadataType.LINKS)
-          ?.properties.find((property) => property.name === 'primaryLinkUrl');
-
-        if (!isDefined(primaryLinkUrlProperty)) {
-          return '';
-        }
-
-        const primaryLinkUrl =
-          record[
-            computeCompositeColumnName(
-              imageIdentifierField.name,
-              primaryLinkUrlProperty,
-            )
-          ];
-
-        return isNonEmptyString(primaryLinkUrl)
-          ? getLinkFaviconUrl(primaryLinkUrl) || ''
-          : '';
-      }
+      case FieldMetadataType.LINKS:
+        return '';
       default: {
         return '';
       }
