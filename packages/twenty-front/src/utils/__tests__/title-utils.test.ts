@@ -43,9 +43,16 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/settings/accounts/emails/:accountUuid')).toBe(
       'Account - Settings',
     );
-    expect(getPageTitleFromPath('/settings/billing/plans')).toBe(
-      'Billing - Settings',
+    expect(getPageTitleFromPath('/settings/mcp-apis/apis/new')).toBe(
+      'MCP & APIs - Settings',
     );
+    expect(getPageTitleFromPath('/settings/functions/new')).toBe(
+      'Functions - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/integrations')).toBe(
+      'Integrations - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/billing/plans')).toBe('Twenty');
     expect(getPageTitleFromPath('/settings/members')).toBe(
       'Members - Settings',
     );
