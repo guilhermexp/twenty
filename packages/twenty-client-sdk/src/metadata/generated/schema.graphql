@@ -21,6 +21,16 @@ type ApplicationRegistrationSummary {
   latestAvailableVersion: String
   sourceType: ApplicationRegistrationSourceType!
   logoUrl: String
+  description: String
+  author: String
+  category: String
+  websiteUrl: String
+  aboutDescription: String
+  termsUrl: String
+  emailSupport: String
+  issueReportUrl: String
+  galleryImageUrls: [String!]
+  manifest: JSON
 }
 
 enum ApplicationRegistrationSourceType {
@@ -29,6 +39,11 @@ enum ApplicationRegistrationSourceType {
   LOCAL
   OAUTH_ONLY
 }
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
 type ApplicationVariable {
   id: UUID!
@@ -41,11 +56,6 @@ type ApplicationVariable {
   type: String!
   options: JSON
 }
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
 
 type Agent {
   id: UUID!
@@ -571,7 +581,6 @@ type UserWorkspace {
   objectPermissions: [ObjectPermission!]
   objectsPermissions: [ObjectPermission!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
-  isImpersonating: Boolean
 }
 
 enum PermissionFlagType {
@@ -582,10 +591,8 @@ enum PermissionFlagType {
   DATA_MODEL
   SECURITY
   WORKFLOWS
-  IMPERSONATE
   SSO_BYPASS
   APPLICATIONS
-  MARKETPLACE_APPS
   LAYOUTS
   AI_SETTINGS
   AI
@@ -813,9 +820,7 @@ type Workspace {
   deletedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
-  allowImpersonation: Boolean!
   isPublicInviteLinkEnabled: Boolean!
-  workspaceDiscoverability: WorkspaceDiscoverability!
   trashRetentionDays: Float!
   eventLogRetentionDays: Float!
   workspaceMembersCount: Float
@@ -829,7 +834,6 @@ type Workspace {
   metadataVersion: Float! @deprecated(reason: "No longer used for metadata cache invalidation, will be removed")
   databaseSchema: String
   subdomain: String!
-  customDomain: String
   isGoogleAuthEnabled: Boolean!
   isGoogleAuthBypassEnabled: Boolean!
   isTwoFactorAuthenticationEnforced: Boolean!
@@ -837,7 +841,6 @@ type Workspace {
   isPasswordAuthBypassEnabled: Boolean!
   isMicrosoftAuthEnabled: Boolean!
   isMicrosoftAuthBypassEnabled: Boolean!
-  isCustomDomainEnabled: Boolean!
   isInternalMessagesImportEnabled: Boolean!
   editableProfileFields: [String!]
   defaultRole: Role
@@ -852,12 +855,6 @@ type Workspace {
   installedApplications: [Application!]!
   workspaceUrls: WorkspaceUrls!
   workspaceCustomApplicationId: String!
-}
-
-enum WorkspaceDiscoverability {
-  PUBLIC
-  MEMBERS_AND_INVITEES
-  HIDDEN
 }
 
 enum WorkspaceActivationStatus {
@@ -876,7 +873,6 @@ type User {
   email: String!
   isEmailVerified: Boolean!
   disabled: Boolean
-  canImpersonate: Boolean!
   canAccessFullAdminPanel: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -894,7 +890,6 @@ type User {
   hasPassword: Boolean!
   isWorkspaceCreator: Boolean
   workspaces: [UserWorkspace!]!
-  availableWorkspaces: AvailableWorkspaces!
 }
 
 """Onboarding status"""
@@ -903,7 +898,6 @@ enum OnboardingStatus {
   WORKSPACE_ACTIVATION
   PROFILE_CREATION
   SYNC_EMAIL
-  APPS_INSTALLATION
   INVITE_TEAM
   BOOK_CALL
   COMPLETED
@@ -1541,7 +1535,6 @@ type UserSession {
   id: UUID!
   workspaceId: UUID
   authProvider: String!
-  isImpersonating: Boolean!
   userAgent: String
   ipAddress: String
   createdAt: DateTime!
@@ -1553,12 +1546,21 @@ type UserSession {
 type UsageBreakdownItem {
   key: String!
   label: String
-  creditsUsed: Float!
+  unit: UsageUnit!
+  quantity: Float!
+}
+
+enum UsageUnit {
+  TOKEN
+  INVOCATION
+  MILLISECOND
+  REQUEST
 }
 
 type UsageTimeSeries {
   date: String!
-  creditsUsed: Float!
+  unit: UsageUnit!
+  quantity: Float!
 }
 
 type UsageUserDaily {
@@ -1569,63 +1571,11 @@ type UsageUserDaily {
 type UsageAnalytics {
   usageByUser: [UsageBreakdownItem!]!
   usageByOperationType: [UsageBreakdownItem!]!
-  usageByApplication: [UsageBreakdownItem!]!
   usageByModel: [UsageBreakdownItem!]!
   timeSeries: [UsageTimeSeries!]!
   periodStart: DateTime!
   periodEnd: DateTime!
   userDailyUsage: UsageUserDaily
-}
-
-type UsageLimit {
-  id: UUID!
-  resourceType: UsageResourceType!
-  operationType: UsageOperationType!
-  spenderType: String!
-  spenderId: String
-  limitKind: String!
-  periodCount: Int!
-  periodUnit: String!
-  meter: String!
-  limitValue: BigInt!
-  burstValue: BigInt
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-enum UsageResourceType {
-  AI
-  WORKFLOW
-  APP
-  STORAGE
-  API
-  LOGIC_FUNCTION
-  EMAIL
-}
-
-enum UsageOperationType {
-  ALL
-  AI_CHAT_TOKEN
-  AI_WORKFLOW_TOKEN
-  WORKFLOW_EXECUTION
-  CODE_EXECUTION
-  WEB_SEARCH
-  CALL_RECORDING
-  EMAIL_SEND
-  API_REQUEST
-  SUBSCRIPTION
-}
-
-"""
-The `BigInt` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
-
-type ApprovedAccessDomain {
-  id: UUID!
-  domain: String!
-  isValidated: Boolean!
-  createdAt: DateTime!
 }
 
 type InviteSuggestion {
@@ -1699,6 +1649,49 @@ type ConnectedAccountPublicDTO {
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
 }
 
+type UsageLimit {
+  id: UUID!
+  resourceType: UsageResourceType!
+  operationType: UsageOperationType!
+  spenderType: String!
+  spenderId: String
+  limitKind: String!
+  periodCount: Int!
+  periodUnit: String!
+  meter: String!
+  limitValue: BigInt!
+  burstValue: BigInt
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum UsageResourceType {
+  AI
+  WORKFLOW
+  APP
+  STORAGE
+  API
+  LOGIC_FUNCTION
+  EMAIL
+}
+
+enum UsageOperationType {
+  ALL
+  AI_CHAT_TOKEN
+  AI_WORKFLOW_TOKEN
+  WORKFLOW_EXECUTION
+  CODE_EXECUTION
+  WEB_SEARCH
+  CALL_RECORDING
+  EMAIL_SEND
+  API_REQUEST
+}
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
 type FeatureFlag {
   key: FeatureFlagKey!
   value: Boolean!
@@ -1714,11 +1707,9 @@ enum FeatureFlagKey {
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
   IS_API_RATE_LIMIT_V2_ENABLED
   IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED
-  IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
 }
 
 type WorkspaceUrls {
-  customUrl: String
   subdomainUrl: String!
 }
 
@@ -1872,10 +1863,7 @@ type ClientConfig {
   authProviders: AuthProviders!
   aiModels: [ClientAiModelConfig!]!
   signInPrefilled: Boolean!
-  isMultiWorkspaceEnabled: Boolean!
   isEmailVerificationRequired: Boolean!
-  defaultSubdomain: String
-  frontDomain: String!
   publicFunctionDomain: String
   analyticsEnabled: Boolean!
   isAttachmentPreviewEnabled: Boolean!
@@ -1896,7 +1884,6 @@ type ClientConfig {
   calendarBookingPageId: String
   isBookCallOnboardingStepEnabled: Boolean!
   isCompanyEnrichmentEnabled: Boolean!
-  isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
   isWorkspaceSchemaDDLLocked: Boolean!
   isOnboardingAiChatEnabled: Boolean!
@@ -1982,106 +1969,12 @@ type SetupSso {
   status: SSOIdentityProviderStatus!
 }
 
-type SSOConnection {
-  type: IdentityProviderType!
-  id: UUID!
-  issuer: String!
-  name: String!
-  status: SSOIdentityProviderStatus!
-}
-
-type AvailableWorkspace {
-  id: UUID!
-  displayName: String
-  loginToken: String
-  personalInviteToken: String
-  inviteHash: String
-  workspaceUrls: WorkspaceUrls!
-  logo: String
-  sso: [SSOConnection!]!
-}
-
-type AvailableWorkspaces {
-  availableWorkspacesForSignIn: [AvailableWorkspace!]!
-  availableWorkspacesForSignUp: [AvailableWorkspace!]!
-}
-
 type DeletedWorkspaceMember {
   id: UUID!
   name: FullName!
   userEmail: String!
   avatarUrl: String
   userWorkspaceId: UUID
-}
-
-type MarketplaceApp {
-  id: String!
-  name: String!
-  description: String!
-  author: String!
-  category: String!
-  logoUrl: String
-  sourcePackage: String
-  isVetted: Boolean!
-}
-
-type MarketplaceAppRoleObjectPermission {
-  universalIdentifier: String!
-  objectUniversalIdentifier: String!
-  canReadObjectRecords: Boolean
-  canUpdateObjectRecords: Boolean
-  canSoftDeleteObjectRecords: Boolean
-  canDestroyObjectRecords: Boolean
-}
-
-type MarketplaceAppRoleFieldPermission {
-  universalIdentifier: String!
-  objectUniversalIdentifier: String!
-  fieldUniversalIdentifier: String!
-  canReadFieldValue: Boolean
-  canUpdateFieldValue: Boolean
-}
-
-type MarketplaceAppRole {
-  universalIdentifier: String!
-  label: String!
-  description: String
-  icon: String
-  canUpdateAllSettings: Boolean
-  canAccessAllTools: Boolean
-  canReadAllObjectRecords: Boolean
-  canUpdateAllObjectRecords: Boolean
-  canSoftDeleteAllObjectRecords: Boolean
-  canDestroyAllObjectRecords: Boolean
-  permissionFlagUniversalIdentifiers: [String!]
-  objectPermissions: [MarketplaceAppRoleObjectPermission!]
-  fieldPermissions: [MarketplaceAppRoleFieldPermission!]
-}
-
-type MarketplaceAppDetail {
-  universalIdentifier: String!
-  id: String!
-  name: String!
-  sourceType: ApplicationRegistrationSourceType!
-  sourcePackage: String
-  latestAvailableVersion: String
-  isListed: Boolean!
-  isVetted: Boolean!
-  description: String
-  author: String
-  category: String
-  logoUrl: String
-  websiteUrl: String
-  aboutDescription: String
-  pricingDescription: String
-  termsUrl: String
-  emailSupport: String
-  issueReportUrl: String
-  screenshots: [String!]! @deprecated(reason: "Use galleryImages instead")
-  galleryImages: [String!]!
-  defaultRoleUniversalIdentifier: String
-  roles: [MarketplaceAppRole!]
-  manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
 }
 
 type WorkspaceCompanyEnrichmentResult {
@@ -2287,21 +2180,6 @@ type SearchField {
   updatedAt: DateTime!
 }
 
-type DomainRecord {
-  validationType: String!
-  type: String!
-  status: String!
-  key: String!
-  value: String!
-}
-
-type DomainValidRecords {
-  id: UUID!
-  domain: String!
-  records: [DomainRecord!]!
-  isCustomDomainEnabled: Boolean
-}
-
 type UpsertRowLevelPermissionPredicatesResult {
   predicates: [RowLevelPermissionPredicate!]!
   predicateGroups: [RowLevelPermissionPredicateGroup!]!
@@ -2327,16 +2205,6 @@ type VerifyTwoFactorAuthenticationMethod {
 
 type AuthorizeApp {
   redirectUrl: String!
-}
-
-type AuthTokenPair {
-  accessOrWorkspaceAgnosticToken: AuthToken!
-  refreshToken: AuthToken!
-}
-
-type AvailableWorkspacesAndAccessTokens {
-  tokens: AuthTokenPair!
-  availableWorkspaces: AvailableWorkspaces!
 }
 
 type EmailPasswordResetLink {
@@ -2380,20 +2248,17 @@ type VerifyEmailAndGetLoginToken {
   workspaceUrls: WorkspaceUrls!
 }
 
-type SubdomainAvailabilityDTO {
-  isValid: Boolean!
-  available: Boolean!
-  suggestedSubdomain: String!
-  suggestedSubdomains: [String!]!
-}
-
 type WorkspaceCreationDefaultsDTO {
   displayName: String!
-  subdomain: String!
 }
 
 type ApiKeyToken {
   token: String!
+}
+
+type AuthTokenPair {
+  accessOrWorkspaceAgnosticToken: AuthToken!
+  refreshToken: AuthToken!
 }
 
 type AuthTokens {
@@ -2406,21 +2271,11 @@ type LoginToken {
 
 type CheckUserExist {
   exists: Boolean!
-  availableWorkspacesCount: Float!
   isEmailVerified: Boolean!
 }
 
 type WorkspaceInviteHashValid {
   isValid: Boolean!
-}
-
-type Impersonate {
-  loginToken: AuthToken!
-  workspace: WorkspaceUrlsAndId!
-}
-
-type StopImpersonation {
-  canRestoreImpersonatorSession: Boolean!
 }
 
 type ApplicationAuthorization {
@@ -2509,7 +2364,6 @@ enum FileFolder {
   EmailImage
   AppTarball
   GeneratedSdkClient
-  Dpa
 }
 
 type ApplicationFileUploadError {
@@ -2533,11 +2387,10 @@ type WorkspaceMigration {
   actions: JSON!
 }
 
-type PublicDomain {
+type ApprovedAccessDomain {
   id: UUID!
   domain: String!
   isValidated: Boolean!
-  applicationId: UUID
   createdAt: DateTime!
 }
 
@@ -2556,7 +2409,6 @@ type EmailingDomain {
   domain: String!
   status: EmailingDomainStatus!
   tenantStatus: EmailingDomainTenantStatus!
-  unsubscribeHostnameStatus: UnsubscribeHostnameStatus
   verificationRecords: [VerificationRecord!]
   verifiedAt: DateTime
 }
@@ -2572,12 +2424,6 @@ enum EmailingDomainTenantStatus {
   ACTIVE
   PAUSED
   SANDBOX
-}
-
-enum UnsubscribeHostnameStatus {
-  PENDING
-  ACTIVE
-  FAILED
 }
 
 type MessageChannel {
@@ -2967,8 +2813,6 @@ type AgentChatThread {
   totalOutputTokens: Int!
   contextWindowTokens: Int
   conversationSize: Int!
-  totalInputCredits: Float!
-  totalOutputCredits: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
@@ -3279,7 +3123,6 @@ type Query {
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getInviteSuggestions: [InviteSuggestion!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
-  getApprovedAccessDomains: [ApprovedAccessDomain!]!
   getPageLayoutTabs(pageLayoutId: String!): [PageLayoutTab!]!
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
@@ -3323,10 +3166,6 @@ type Query {
   githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
-  findManyMarketplaceApps(universalIdentifiers: [String!]): [MarketplaceApp!]!
-  findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
-  publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
-  publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   fields(
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
@@ -3375,7 +3214,6 @@ type Query {
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
-  checkWorkspaceSubdomainAvailability(subdomain: String!): SubdomainAvailabilityDTO!
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
   currentUser: User!
@@ -3384,7 +3222,7 @@ type Query {
   getConnectedImapSmtpCaldavAccount(id: UUID!): ConnectedImapSmtpCaldavAccount!
   getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
-  findManyPublicDomains: [PublicDomain!]!
+  getApprovedAccessDomains: [ApprovedAccessDomain!]!
   exportApplication(universalIdentifier: UUID!): ApplicationExport!
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
@@ -3545,14 +3383,10 @@ type Mutation {
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   goBackToPreviousOnboardingStep: OnboardingStepNavigation!
   deleteWorkspaceInvitation(appTokenId: String!): String!
   resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
   sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
-  createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
-  deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
-  validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   createPageLayoutTab(input: CreatePageLayoutTabInput!): PageLayoutTab!
   updatePageLayoutTab(id: String!, input: UpdatePageLayoutTabInput!): PageLayoutTab!
   destroyPageLayoutTab(id: String!): Boolean!
@@ -3588,7 +3422,6 @@ type Mutation {
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
-  checkCustomDomainValidRecords: DomainValidRecords
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
@@ -3600,12 +3433,9 @@ type Mutation {
   deleteApplicationRegistrationVariable(id: String!): Boolean!
   uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
-  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
-  installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
-  syncMarketplaceCatalog: Boolean!
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!
@@ -3676,11 +3506,11 @@ type Mutation {
   duplicateDashboard(id: UUID!): DuplicatedDashboard!
   getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
   getLoginTokenFromCredentials(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String, origin: String!): LoginToken!
-  signIn(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
+  signIn(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AuthTokens!
   verifyEmailAndGetLoginToken(emailVerificationToken: String!, email: String!, captchaToken: String, origin: String!): VerifyEmailAndGetLoginToken!
-  verifyEmailAndGetWorkspaceAgnosticToken(emailVerificationToken: String!, email: String!, captchaToken: String): AvailableWorkspacesAndAccessTokens!
+  verifyEmailAndGetWorkspaceAgnosticToken(emailVerificationToken: String!, email: String!, captchaToken: String): AuthTokens!
   getAuthTokensFromOTP(otp: String!, loginToken: String!, captchaToken: String, origin: String!): AuthTokens!
-  signUp(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
+  signUp(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AuthTokens!
   signUpInWorkspace(email: String!, password: String!, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String, captchaToken: String, locale: String, verifyEmailRedirectPath: String): SignUp!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
   uploadNewWorkspaceLogo(workspaceId: String!, file: Upload!): FileWithSignedUrl!
@@ -3702,21 +3532,19 @@ type Mutation {
   deleteUserFromWorkspace(workspaceMemberIdToDelete: String!): UserWorkspace!
   updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
-  resendEmailVerificationToken(email: String!, origin: String!): ResendEmailVerificationToken!
+  resendEmailVerificationToken(email: String!): ResendEmailVerificationToken!
   createOIDCIdentityProvider(input: SetupOIDCSsoInput!): SetupSso!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
-  impersonate(userId: UUID!, workspaceId: UUID!): Impersonate!
-  stopImpersonation: StopImpersonation!
   createCalendarEvent(input: CreateCalendarEventInput!): CreateCalendarEventOutput!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   saveImapSmtpCaldavAccount(handle: String!, connectionParameters: EmailAccountConnectionParameters!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
-  createPublicDomain(domain: String!, applicationId: String!): PublicDomain!
-  deletePublicDomain(domain: String!): Boolean!
-  checkPublicDomainValidRecords(domain: String!): DomainValidRecords
+  createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
+  deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
+  validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   syncApplication(manifest: JSON!, dryRun: Boolean, inferDeletionFromMissingEntities: Boolean): WorkspaceMigration!
   uploadApplicationFile(file: Upload!, applicationUniversalIdentifier: String!, fileFolder: FileFolder!, filePath: String!): File!
@@ -4128,20 +3956,6 @@ input RevokeApiKeyInput {
   id: UUID!
 }
 
-input CreateApprovedAccessDomainInput {
-  domain: String!
-  email: String!
-}
-
-input DeleteApprovedAccessDomainInput {
-  id: UUID!
-}
-
-input ValidateApprovedAccessDomainInput {
-  validationToken: String!
-  approvedAccessDomainId: UUID!
-}
-
 input CreatePageLayoutTabInput {
   title: String!
   position: Float
@@ -4430,14 +4244,10 @@ input ActivateWorkspaceInput {
 }
 
 input UpdateWorkspaceInput {
-  subdomain: String
-  customDomain: String
   displayName: String
   logo: String
   inviteHash: String
   isPublicInviteLinkEnabled: Boolean
-  workspaceDiscoverability: WorkspaceDiscoverability
-  allowImpersonation: Boolean
   isGoogleAuthEnabled: Boolean
   isMicrosoftAuthEnabled: Boolean
   isPasswordAuthEnabled: Boolean
@@ -4903,7 +4713,6 @@ input GetAuthorizationUrlForSSOInput {
 
 input SignUpInNewWorkspaceInput {
   displayName: String
-  subdomain: String
 }
 
 input UpdateWorkspaceMemberSettingsInput {
@@ -4986,6 +4795,20 @@ input ConnectionParametersInput {
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
+}
+
+input CreateApprovedAccessDomainInput {
+  domain: String!
+  email: String!
+}
+
+input DeleteApprovedAccessDomainInput {
+  id: UUID!
+}
+
+input ValidateApprovedAccessDomainInput {
+  validationToken: String!
+  approvedAccessDomainId: UUID!
 }
 
 input ApplicationFileUploadRequestInput {

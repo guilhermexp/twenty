@@ -206,60 +206,6 @@ export type DeleteWorkflowVersionStepInput = {
   workflowVersionId: Scalars['UUID']['input'];
 };
 
-export type DpaAgreement = {
-  __typename?: 'DpaAgreement';
-  acceptedAt: Scalars['DateTime']['output'];
-  acceptedByEmail?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  customerLegalEntityName?: Maybe<Scalars['String']['output']>;
-  downloadUrl?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  processorEntity: Scalars['String']['output'];
-  region: DpaRegion;
-  signatoryName?: Maybe<Scalars['String']['output']>;
-  signatoryTitle?: Maybe<Scalars['String']['output']>;
-  signedFileId?: Maybe<Scalars['String']['output']>;
-  templateVersion: Scalars['String']['output'];
-  type: DpaAgreementType;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export enum DpaAgreementType {
-  CLICK_THROUGH = 'CLICK_THROUGH',
-  SIGNED = 'SIGNED'
-}
-
-export type DpaDocument = {
-  __typename?: 'DpaDocument';
-  blocks: Array<DpaDocumentBlock>;
-  lastUpdatedLabel: Scalars['String']['output'];
-  notice?: Maybe<Scalars['String']['output']>;
-  processorEntity: Scalars['String']['output'];
-  region: DpaRegion;
-  sccSectionActive: Scalars['Boolean']['output'];
-  templateVersion: Scalars['String']['output'];
-  title: Scalars['String']['output'];
-};
-
-export type DpaDocumentBlock = {
-  __typename?: 'DpaDocumentBlock';
-  kind: DpaDocumentBlockKind;
-  label?: Maybe<Scalars['String']['output']>;
-  text: Scalars['String']['output'];
-  value?: Maybe<Scalars['String']['output']>;
-};
-
-export enum DpaDocumentBlockKind {
-  Heading = 'Heading',
-  Paragraph = 'Paragraph',
-  SignatureField = 'SignatureField'
-}
-
-export enum DpaRegion {
-  EU = 'EU',
-  US = 'US'
-}
-
 export type DuplicateWorkflowInput = {
   /** Workflow ID to duplicate */
   workflowIdToDuplicate: Scalars['UUID']['input'];
@@ -276,18 +222,6 @@ export enum FilterIs {
   NotNull = 'NotNull',
   Null = 'Null'
 }
-
-export type GenerateSignedDpaInput = {
-  customerLegalEntityName: Scalars['String']['input'];
-  signatoryName: Scalars['String']['input'];
-  signatoryTitle: Scalars['String']['input'];
-};
-
-export type GenerateSignedDpaResult = {
-  __typename?: 'GenerateSignedDpaResult';
-  agreement: DpaAgreement;
-  downloadUrl: Scalars['String']['output'];
-};
 
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
@@ -322,7 +256,6 @@ export type Mutation = {
   dismissReconnectAccountBanner: Scalars['Boolean']['output'];
   duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
-  generateSignedDpa: GenerateSignedDpaResult;
   retryWorkflowRun: WorkflowRun;
   runWorkflowVersion: RunWorkflowVersion;
   stopWorkflowRun: WorkflowRun;
@@ -390,11 +323,6 @@ export type MutationDuplicateWorkflowVersionStepArgs = {
 };
 
 
-export type MutationGenerateSignedDpaArgs = {
-  input: GenerateSignedDpaInput;
-};
-
-
 export type MutationRetryWorkflowRunArgs = {
   workflowRunId: Scalars['UUID']['input'];
 };
@@ -454,8 +382,6 @@ export type Query = {
   coreWorkflowVersion?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersions: Array<CoreWorkflowVersionDto>;
   coreWorkflows: CoreWorkflowConnection;
-  dpaAgreements: Array<DpaAgreement>;
-  dpaPreview: DpaDocument;
   /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromObjectRecord: TimelineCalendarEventsWithTotal;
