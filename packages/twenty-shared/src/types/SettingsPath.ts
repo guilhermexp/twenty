@@ -33,7 +33,6 @@ export enum SettingsPath {
   Unsubscribe = 'communications/unsubscribe',
   PublicDomain = 'applications/public-domain',
   NewApprovedAccessDomain = 'security/approved-access-domain/new',
-  Community = 'community',
   AI = 'ai',
   AiUsageUserDetail = 'ai/usage/user/:userWorkspaceId',
   AiPrompts = 'ai/prompts',
