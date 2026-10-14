@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useStore } from 'jotai';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client/react';
 import { isErrorLike } from '@apollo/client/errors';
@@ -6,6 +7,7 @@ import { AppPath } from 'twenty-shared/types';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { hasAttemptedPrivateModeAutoLoginState } from '@/auth/states/hasAttemptedPrivateModeAutoLoginState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   REACT_APP_DEV_AUTO_LOGIN,
@@ -27,14 +29,14 @@ export const PrivateModeAutoLoginEffect = ({
   const [signIn] = useMutation(SignInDocument);
   const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigate();
-  const hasAttemptedAutoLoginRef = useRef(false);
+  const store = useStore();
 
   useEffect(() => {
     if (
       !REACT_APP_PRIVATE_MODE ||
       !REACT_APP_DEV_AUTO_LOGIN ||
       isLogged ||
-      hasAttemptedAutoLoginRef.current
+      store.get(hasAttemptedPrivateModeAutoLoginState.atom)
     ) {
       return;
     }
@@ -47,7 +49,7 @@ export const PrivateModeAutoLoginEffect = ({
       return;
     }
 
-    hasAttemptedAutoLoginRef.current = true;
+    store.set(hasAttemptedPrivateModeAutoLoginState.atom, true);
 
     void signIn({
       variables: { email, password },
@@ -76,6 +78,11 @@ export const PrivateModeAutoLoginEffect = ({
             : { message: 'Dev auto-login failed' }),
         });
         onError();
+      })
+      // The flag only guards the in-flight request (StrictMode re-runs the
+      // effect); a later mount, e.g. after sign-out, must be able to retry.
+      .finally(() => {
+        store.set(hasAttemptedPrivateModeAutoLoginState.atom, false);
       });
   }, [
     enqueueErrorSnackBar,
@@ -83,6 +90,7 @@ export const PrivateModeAutoLoginEffect = ({
     navigate,
     onError,
     signIn,
+    store,
     getAuthTokensFromLoginToken,
   ]);
 
