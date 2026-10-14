@@ -29,7 +29,6 @@ export class EmailVerificationResolver {
   async resendEmailVerificationToken(
     @Args()
     resendEmailVerificationTokenInput: ResendEmailVerificationTokenInput,
-    @Args('origin') _origin: string,
     @Context() context: I18nContext,
   ): Promise<ResendEmailVerificationTokenDTO> {
     return await this.emailVerificationService.resendEmailVerificationToken(

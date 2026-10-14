@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 
-import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
@@ -12,7 +11,6 @@ export const useHandleResendEmailVerificationToken = () => {
   const [resendEmailVerificationToken, { loading }] = useMutation(
     ResendEmailVerificationTokenDocument,
   );
-  const { origin } = useOrigin();
 
   const handleResendEmailVerificationToken = useCallback(
     (email: string | null) => {
@@ -28,7 +26,6 @@ export const useHandleResendEmailVerificationToken = () => {
           const { data } = await resendEmailVerificationToken({
             variables: {
               email,
-              origin,
             },
           });
 
@@ -52,7 +49,6 @@ export const useHandleResendEmailVerificationToken = () => {
       enqueueErrorSnackBar,
       enqueueSuccessSnackBar,
       resendEmailVerificationToken,
-      origin,
     ],
   );
 
