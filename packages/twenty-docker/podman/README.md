@@ -1,48 +1,32 @@
-# How to deploy twenty on podman
+# Deploy the fork on Podman
 
-DISCLAIMER: The k8s and podman deployments are not maintained by the core team.
-These files are provided and maintained by the community. Twenty core team
-maintains support for docker deployment.
-
+These files provide a Podman Compose deployment that builds the image from this
+repository.
 
 ## How to use
 
-1. Edit `.env` file. At the minimum set `POSTGRES_PASSWORD`, `SERVER_URL`, and `APP_SECRET`.
-2. Start twenty by running `podman-compose up -d`.
+1. Copy `.env.example` to `.env`.
+2. Set `POSTGRES_PASSWORD`, `SERVER_URL`, and `APP_SECRET`.
+3. Build and start the fork with `podman-compose up -d --build`.
 
-If you need to stop twenty, you can do so by running `podman-compose down`.
-
+If you need to stop the fork, run `podman-compose down`.
 
 ### Install systemd service (optional)
 
-If you want to install a systemd service to run twenty, you can use the provided systemd service. 
+To install a systemd service, edit `twenty.service` and change these variables:
 
-Edit `twentycrm.service` and change these two variables:
+```ini
+WorkingDirectory=/opt/apps/twenty
+EnvironmentFile=/opt/apps/twenty/.env
+```
 
+`WorkingDirectory` should point to the directory containing
+`podman-compose.yml`. `EnvironmentFile` should point to its `.env` file.
 
-	WorkingDirectory=/opt/apps/twenty
-	EnvironmentFile=/opt/apps/twenty/.env
-
-`WorkingDirectory` should be changed to the path in which `podman-compose.yml` is located.
-
-`EnvironmentFile` should be changed to the path in which your `.env`file is located.
-
-You can run the script `install-systemd-user-service` to install the systemd service under the current user.
-
-
-	./install-systemd-user-service
-
-Note: this script will enable the service and also start it. So it will assume that twenty is not currently running.
-If you started it previously, bring it down using:
-
-	podman-compose down
-
-
+Run `./install-systemd-user-service` to install and start the service for the
+current user. If the stack is already running, stop it first with
+`podman-compose down`.
 
 ## Compatibility
 
-These files should be compatible with podman 4.3+.
-
-I have tested this on Debian GNU/Linux 12 (bookworm) and with the podman that is distributed with the official Debian stable mirrors (podman v4.3.1+ds1-8+deb12u1, podman-compose v1.0.3-3).
-
-
+These files should be compatible with Podman 4.3+ and Podman Compose 1.0+.

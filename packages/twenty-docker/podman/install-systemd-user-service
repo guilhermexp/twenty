@@ -2,10 +2,10 @@
 set -e
 
 mkdir -p ~/.config/systemd/user
-[ -f twentycrm.service ] || { echo "Error: twentycrm.service not found"; exit 1; }
-cp twentycrm.service ~/.config/systemd/user
+[ -f twenty.service ] || { echo "Error: twenty.service not found"; exit 1; }
+cp twenty.service ~/.config/systemd/user/
 
 
 systemctl --user daemon-reload
-systemctl --user enable twentycrm.service
-systemctl --user start twentycrm.service
+systemctl --user enable twenty.service
+systemctl --user start twenty.service

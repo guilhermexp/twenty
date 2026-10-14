@@ -1,20 +1,24 @@
-#!/bin/bash
-set -e
-if [ ! -f "$(dirname "$0")/.env" ]; then
-    echo "Error: .env file not found"
-    exit 1
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd -- "$script_dir/../../.." && pwd)"
+
+if [ ! -f "$script_dir/.env" ]; then
+  echo "Error: .env file not found in $script_dir" >&2
+  exit 1
 fi
-source "$(dirname "$0")/.env"
 
-## steps to cleanup and start over from scratch - useful when testing
-#podman pod stop twenty-pod
-#podman pod rm twenty-pod
-#podman volume rm twenty-db-data twenty-server-data twenty-redis-data
-# end of cleanup
+source "$script_dir/.env"
 
-podman volume create twenty-db-data
-podman volume create twenty-server-data
-podman volume create twenty-redis-data
+podman build \
+  --tag twenty:local \
+  --file "$repo_root/packages/twenty-docker/twenty/Dockerfile" \
+  "$repo_root"
+
+podman volume create twenty-db-data >/dev/null
+podman volume create twenty-server-data >/dev/null
+podman volume create twenty-redis-data >/dev/null
 
 podman pod create --name twenty-pod -p 127.0.0.1:8080:3000
 
@@ -38,7 +42,7 @@ podman run -d --pod twenty-pod --name twenty-server \
   -e NODE_ENV=production \
   -e LOG_LEVEL=info \
   -v twenty-server-data:/app/docker-data:Z \
-  docker.io/twentycrm/twenty:latest
+  twenty:local
 
 podman run -d --pod twenty-pod --name twenty-worker \
   --init \
@@ -50,22 +54,19 @@ podman run -d --pod twenty-pod --name twenty-worker \
   -e NODE_ENV=production \
   -e LOG_LEVEL=info \
   -v twenty-server-data:/app/docker-data:Z \
-  docker.io/twentycrm/twenty:latest \
+  twenty:local \
   yarn worker:prod
 
-# wait some time, check status
 sleep 30
 podman ps --pod -f name=twenty-pod
 
-
 mkdir -p ~/.config/systemd/user
-if [ ! -f "twentycrm.service" ]; then
-    echo "Error: twentycrm.service file not found"
-    exit 1
+if [ ! -f "$script_dir/twenty.service" ]; then
+  echo "Error: twenty.service not found in $script_dir" >&2
+  exit 1
 fi
-cp twentycrm.service ~/.config/systemd/user
+cp "$script_dir/twenty.service" ~/.config/systemd/user/
 
 systemctl --user daemon-reload
-systemctl --user enable twentycrm.service
-systemctl --user start twentycrm.service
-
+systemctl --user enable twenty.service
+systemctl --user start twenty.service
