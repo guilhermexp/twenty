@@ -638,7 +638,7 @@ export interface User {
 
 
 /** Onboarding status */
-export type OnboardingStatus = 'PLAN_REQUIRED' | 'WORKSPACE_ACTIVATION' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'INVITE_TEAM' | 'BOOK_CALL' | 'COMPLETED'
+export type OnboardingStatus = 'PLAN_REQUIRED' | 'WORKSPACE_ACTIVATION' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'INVITE_TEAM' | 'COMPLETED'
 
 export interface ApplicationRegistration {
     id: Scalars['UUID']
@@ -1513,10 +1513,6 @@ export interface ClientConfig {
     isConfigVariablesInDbEnabled: Scalars['Boolean']
     isImapSmtpCaldavEnabled: Scalars['Boolean']
     isEmailingDomainInDemoMode: Scalars['Boolean']
-    allowRequestsToTwentyIcons: Scalars['Boolean']
-    calendarBookingPageId?: Scalars['String']
-    isBookCallOnboardingStepEnabled: Scalars['Boolean']
-    isCompanyEnrichmentEnabled: Scalars['Boolean']
     isClickHouseConfigured: Scalars['Boolean']
     isWorkspaceSchemaDDLLocked: Scalars['Boolean']
     isOnboardingAiChatEnabled: Scalars['Boolean']
@@ -1622,19 +1618,6 @@ export interface DeletedWorkspaceMember {
     userWorkspaceId?: Scalars['UUID']
     __typename: 'DeletedWorkspaceMember'
 }
-
-export interface WorkspaceCompanyEnrichmentResult {
-    outcome: WorkspaceCompanyEnrichmentOutcome
-    enrichment?: Scalars['JSON']
-    personOutcome: WorkspacePersonEnrichmentOutcome
-    personEnrichment?: Scalars['JSON']
-    isBookCallOnboardingStepPending: Scalars['Boolean']
-    __typename: 'WorkspaceCompanyEnrichmentResult'
-}
-
-export type WorkspaceCompanyEnrichmentOutcome = 'matched' | 'unavailable' | 'transientError'
-
-export type WorkspacePersonEnrichmentOutcome = 'matched' | 'unavailable' | 'transientError'
 
 export interface Field {
     id: Scalars['UUID']
@@ -2834,7 +2817,6 @@ export interface Mutation {
     deleteConnectedAccount: ConnectedAccountPublicDTO
     updateOneApplicationVariable: Scalars['Boolean']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
-    completeBookCallOnboardingStep: OnboardingStepSuccess
     goBackToPreviousOnboardingStep: OnboardingStepNavigation
     deleteWorkspaceInvitation: Scalars['String']
     resendWorkspaceInvitation: SendInvitations
@@ -2874,7 +2856,6 @@ export interface Mutation {
     activateWorkspace: Workspace
     updateWorkspace: Workspace
     deleteCurrentWorkspace: Workspace
-    enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult
     upgradeApplication: Scalars['Boolean']
     createApplicationRegistration: CreateApplicationRegistration
     updateApplicationRegistration: ApplicationRegistration
@@ -4566,10 +4547,6 @@ export interface ClientConfigGenqlSelection{
     isConfigVariablesInDbEnabled?: boolean | number
     isImapSmtpCaldavEnabled?: boolean | number
     isEmailingDomainInDemoMode?: boolean | number
-    allowRequestsToTwentyIcons?: boolean | number
-    calendarBookingPageId?: boolean | number
-    isBookCallOnboardingStepEnabled?: boolean | number
-    isCompanyEnrichmentEnabled?: boolean | number
     isClickHouseConfigured?: boolean | number
     isWorkspaceSchemaDDLLocked?: boolean | number
     isOnboardingAiChatEnabled?: boolean | number
@@ -4685,16 +4662,6 @@ export interface DeletedWorkspaceMemberGenqlSelection{
     userEmail?: boolean | number
     avatarUrl?: boolean | number
     userWorkspaceId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface WorkspaceCompanyEnrichmentResultGenqlSelection{
-    outcome?: boolean | number
-    enrichment?: boolean | number
-    personOutcome?: boolean | number
-    personEnrichment?: boolean | number
-    isBookCallOnboardingStepPending?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5992,7 +5959,6 @@ export interface MutationGenqlSelection{
     deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
-    completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
     goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection
     deleteWorkspaceInvitation?: { __args: {appTokenId: Scalars['String']} }
     resendWorkspaceInvitation?: (SendInvitationsGenqlSelection & { __args: {appTokenId: Scalars['String']} })
@@ -6032,7 +5998,6 @@ export interface MutationGenqlSelection{
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
     updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
     deleteCurrentWorkspace?: WorkspaceGenqlSelection
-    enrichWorkspaceCompany?: WorkspaceCompanyEnrichmentResultGenqlSelection
     upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
     createApplicationRegistration?: (CreateApplicationRegistrationGenqlSelection & { __args: {input: CreateApplicationRegistrationInput} })
     updateApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {input: UpdateApplicationRegistrationInput} })
@@ -6103,7 +6068,7 @@ export interface MutationGenqlSelection{
     unarchiveChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteChatThread?: { __args: {id: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
-    startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
+    startWorkspaceSetupChat?: StartWorkspaceSetupChatResultGenqlSelection
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7652,14 +7617,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const WorkspaceCompanyEnrichmentResult_possibleTypes: string[] = ['WorkspaceCompanyEnrichmentResult']
-    export const isWorkspaceCompanyEnrichmentResult = (obj?: { __typename?: any } | null): obj is WorkspaceCompanyEnrichmentResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCompanyEnrichmentResult"')
-      return WorkspaceCompanyEnrichmentResult_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const Field_possibleTypes: string[] = ['Field']
     export const isField = (obj?: { __typename?: any } | null): obj is Field => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isField"')
@@ -8867,7 +8824,6 @@ export const enumOnboardingStatus = {
    PROFILE_CREATION: 'PROFILE_CREATION' as const,
    SYNC_EMAIL: 'SYNC_EMAIL' as const,
    INVITE_TEAM: 'INVITE_TEAM' as const,
-   BOOK_CALL: 'BOOK_CALL' as const,
    COMPLETED: 'COMPLETED' as const
 }
 
@@ -9103,18 +9059,6 @@ export const enumModelFamily = {
 export const enumCaptchaDriverType = {
    GOOGLE_RECAPTCHA: 'GOOGLE_RECAPTCHA' as const,
    TURNSTILE: 'TURNSTILE' as const
-}
-
-export const enumWorkspaceCompanyEnrichmentOutcome = {
-   matched: 'matched' as const,
-   unavailable: 'unavailable' as const,
-   transientError: 'transientError' as const
-}
-
-export const enumWorkspacePersonEnrichmentOutcome = {
-   matched: 'matched' as const,
-   unavailable: 'unavailable' as const,
-   transientError: 'transientError' as const
 }
 
 export const enumFieldMetadataType = {

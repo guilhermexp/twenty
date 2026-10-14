@@ -899,7 +899,6 @@ enum OnboardingStatus {
   PROFILE_CREATION
   SYNC_EMAIL
   INVITE_TEAM
-  BOOK_CALL
   COMPLETED
 }
 
@@ -1880,10 +1879,6 @@ type ClientConfig {
   isConfigVariablesInDbEnabled: Boolean!
   isImapSmtpCaldavEnabled: Boolean!
   isEmailingDomainInDemoMode: Boolean!
-  allowRequestsToTwentyIcons: Boolean!
-  calendarBookingPageId: String
-  isBookCallOnboardingStepEnabled: Boolean!
-  isCompanyEnrichmentEnabled: Boolean!
   isClickHouseConfigured: Boolean!
   isWorkspaceSchemaDDLLocked: Boolean!
   isOnboardingAiChatEnabled: Boolean!
@@ -1975,26 +1970,6 @@ type DeletedWorkspaceMember {
   userEmail: String!
   avatarUrl: String
   userWorkspaceId: UUID
-}
-
-type WorkspaceCompanyEnrichmentResult {
-  outcome: WorkspaceCompanyEnrichmentOutcome!
-  enrichment: JSON
-  personOutcome: WorkspacePersonEnrichmentOutcome!
-  personEnrichment: JSON
-  isBookCallOnboardingStepPending: Boolean!
-}
-
-enum WorkspaceCompanyEnrichmentOutcome {
-  matched
-  unavailable
-  transientError
-}
-
-enum WorkspacePersonEnrichmentOutcome {
-  matched
-  unavailable
-  transientError
 }
 
 type Field {
@@ -3382,7 +3357,6 @@ type Mutation {
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   goBackToPreviousOnboardingStep: OnboardingStepNavigation!
   deleteWorkspaceInvitation(appTokenId: String!): String!
   resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
@@ -3422,7 +3396,6 @@ type Mutation {
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
-  enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
   updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
@@ -3492,7 +3465,7 @@ type Mutation {
   unarchiveChatThread(id: UUID!): AgentChatThread!
   deleteChatThread(id: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
-  startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
+  startWorkspaceSetupChat: StartWorkspaceSetupChatResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
   deleteSkill(id: UUID!): Skill!
