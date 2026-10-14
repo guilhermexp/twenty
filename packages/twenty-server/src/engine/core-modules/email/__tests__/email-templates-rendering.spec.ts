@@ -1,9 +1,6 @@
 import { createElement } from 'react';
 
 import {
-  BillingSubscriptionRenewingEmail,
-  BillingTrialConvertingEmail,
-  BillingTrialEndingEmail,
   CleanSuspendedWorkspaceEmail,
   PasswordResetLinkEmail,
   PasswordUpdateNotifyEmail,
@@ -24,41 +21,6 @@ const SENDER = {
 };
 
 const TEMPLATES = [
-  {
-    name: 'BillingSubscriptionRenewingEmail',
-    element: BillingSubscriptionRenewingEmail({
-      userName: 'Tim',
-      workspaceDisplayName: 'Acme Inc',
-      renewsAt: new Date('2026-01-01'),
-      link: 'https://app.twenty.com/settings/billing',
-      locale: 'en',
-    }),
-    expectedContent: 'https://app.twenty.com/settings/billing',
-  },
-  {
-    name: 'BillingTrialConvertingEmail',
-    element: BillingTrialConvertingEmail({
-      userName: 'Tim',
-      workspaceDisplayName: 'Acme Inc',
-      trialEndsAt: new Date('2026-01-01'),
-      interval: 'month',
-      link: 'https://app.twenty.com/settings/billing',
-      locale: 'en',
-    }),
-    expectedContent: 'https://app.twenty.com/settings/billing',
-  },
-  {
-    name: 'BillingTrialEndingEmail',
-    element: BillingTrialEndingEmail({
-      userName: 'Tim',
-      workspaceDisplayName: 'Acme Inc',
-      trialEndsAt: new Date('2026-01-01'),
-      dataRetentionDays: 30,
-      link: 'https://app.twenty.com/settings/billing',
-      locale: 'en',
-    }),
-    expectedContent: 'https://app.twenty.com/settings/billing',
-  },
   {
     name: 'CleanSuspendedWorkspaceEmail',
     element: CleanSuspendedWorkspaceEmail({
