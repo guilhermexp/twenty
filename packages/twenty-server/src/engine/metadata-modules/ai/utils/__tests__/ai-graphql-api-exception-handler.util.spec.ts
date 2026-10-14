@@ -33,7 +33,6 @@ describe('aiGraphqlApiExceptionHandler', () => {
     expect(graphqlError.extensions.userFriendlyMessage).toBeDefined();
   });
 
-
   it('maps THREAD_NOT_FOUND to NOT_FOUND', () => {
     const error = new AiException(
       'Thread not found',

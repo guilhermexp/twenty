@@ -52,12 +52,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      WorkspaceEntity,
-
-
-
-    ]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     ObjectMetadataModule,
     TypeORMModule,
     UserModule,
@@ -91,12 +86,8 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     ApplicationRegistrationModule,
     ApplicationUpgradeModule,
     PreInstalledAppsModule,
-
-
   ],
   providers: [
-
-
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,

@@ -18,10 +18,7 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      WorkspaceEntity,
-      UserWorkspaceEntity,
-    ]),
+    TypeOrmModule.forFeature([WorkspaceEntity, UserWorkspaceEntity]),
     WorkspaceModule,
     UserVarsModule,
     UserModule,

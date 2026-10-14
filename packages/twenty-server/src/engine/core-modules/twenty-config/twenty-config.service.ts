@@ -201,7 +201,6 @@ export class TwentyConfigService {
     return this.get('TYPEORM_LOGGING');
   }
 
-
   private validateNotEnvOnly<T extends keyof ConfigVariables>(
     key: T,
     operation: string,

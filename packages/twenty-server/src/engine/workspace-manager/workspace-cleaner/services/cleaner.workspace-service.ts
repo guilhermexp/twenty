@@ -316,11 +316,9 @@ export class CleanerWorkspaceService {
               );
             }
 
-
             await this.workspaceService.deleteWorkspace(workspace.id, true);
           }
         } else {
-
           this.logger.log(
             `${dryRun ? 'DRY RUN - ' : ''}Hard deleting onboarding workspace ${workspace.id}`,
           );
@@ -496,7 +494,6 @@ export class CleanerWorkspaceService {
 
         continue;
       }
-
 
       this.logger.log(
         `${dryRun ? 'DRY RUN - ' : ''}Destroying workspace ${workspace.id}`,

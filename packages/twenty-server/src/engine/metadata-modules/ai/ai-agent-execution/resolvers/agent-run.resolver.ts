@@ -20,9 +20,7 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
-@UseFilters(
-  UsageLimitGraphqlApiExceptionFilter,
-)
+@UseFilters(UsageLimitGraphqlApiExceptionFilter)
 @MetadataResolver()
 export class AgentRunResolver {
   constructor(private readonly agentRunService: AgentRunService) {}

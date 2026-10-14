@@ -10,7 +10,6 @@ import { OnboardingInviteSuggestionsModule } from 'src/modules/onboarding-invite
 
 @Module({
   imports: [
-
     UserVarsModule,
     OnboardingInviteSuggestionsModule,
     TypeOrmModule.forFeature([WorkspaceEntity, UserWorkspaceEntity]),

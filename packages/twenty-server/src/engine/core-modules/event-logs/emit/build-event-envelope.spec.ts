@@ -12,5 +12,4 @@ describe('build-event-envelope', () => {
       expect(computeEventContextFields()).toEqual({});
     });
   });
-
 });
