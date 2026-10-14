@@ -89,7 +89,6 @@ const TEMPLATES = [
       targetName: 'Jony',
       targetEmail: 'jony@twenty.com',
       canAccessFullAdminPanel: true,
-      canImpersonate: false,
       locale: 'en',
     }),
     expectedContent: 'jony@twenty.com',

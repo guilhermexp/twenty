@@ -146,7 +146,7 @@ export class AdminPanelGlobalChatThreadsService {
       .innerJoin(
         'thread.workspace',
         'workspace',
-        '"workspace"."allowImpersonation" = true AND "workspace"."deletedAt" IS NULL',
+        '"workspace"."deletedAt" IS NULL',
       )
       .leftJoin('thread.userWorkspace', 'userWorkspace')
       .leftJoin('userWorkspace.user', 'user')

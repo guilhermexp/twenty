@@ -111,7 +111,6 @@ export class WorkspaceService {
     inviteHash: PermissionFlagType.WORKSPACE_MEMBERS,
     isPublicInviteLinkEnabled: PermissionFlagType.SECURITY,
     workspaceDiscoverability: PermissionFlagType.SECURITY,
-    allowImpersonation: PermissionFlagType.SECURITY,
     isGoogleAuthEnabled: PermissionFlagType.SECURITY,
     isMicrosoftAuthEnabled: PermissionFlagType.SECURITY,
     isPasswordAuthEnabled: PermissionFlagType.SECURITY,

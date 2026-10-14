@@ -103,7 +103,6 @@ export class AdminPanelUserLookupService {
             (await this.fileUrlService.signWorkspaceLogoUrl(
               userWorkspace.workspace,
             )) ?? undefined,
-          allowImpersonation: userWorkspace.workspace.allowImpersonation,
           workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(
             userWorkspace.workspace,
           ),
@@ -182,7 +181,6 @@ export class AdminPanelUserLookupService {
       logo:
         (await this.fileUrlService.signWorkspaceLogoUrl(workspace)) ??
         undefined,
-      allowImpersonation: workspace.allowImpersonation,
       workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       users: definedWorkspaceUsers.map((wu) => ({
         id: wu.user.id,

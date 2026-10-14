@@ -35,7 +35,6 @@ const buildAccessTokenPayload = (payload: AccessTokenJwtPayload) => ({
   workspaceMemberId: payload.workspaceMemberId,
   userWorkspaceId: payload.userWorkspaceId,
   authProvider: payload.authProvider,
-  isImpersonating: false,
   type: JwtTokenTypeEnum.ACCESS,
 });
 

@@ -27,18 +27,18 @@ describe('updateWorkspace while the workspace is pending creation', () => {
   let originalDisplayName: string;
   let originalSubdomain: string;
   let originalLogo: string | null;
-  let originalAllowImpersonation: boolean;
+  let originalIsPublicInviteLinkEnabled: boolean;
 
   beforeAll(async () => {
     const [workspace] = await testDataSource.query(
-      'SELECT "displayName", "subdomain", "logo", "allowImpersonation" FROM core.workspace WHERE id = $1',
+      'SELECT "displayName", "subdomain", "logo", "isPublicInviteLinkEnabled" FROM core.workspace WHERE id = $1',
       [SEED_APPLE_WORKSPACE_ID],
     );
 
     originalDisplayName = workspace.displayName;
     originalSubdomain = workspace.subdomain;
     originalLogo = workspace.logo;
-    originalAllowImpersonation = workspace.allowImpersonation;
+    originalIsPublicInviteLinkEnabled = workspace.isPublicInviteLinkEnabled;
 
     await setActivationStatus(WorkspaceActivationStatus.PENDING_CREATION);
   });
@@ -59,7 +59,7 @@ describe('updateWorkspace while the workspace is pending creation', () => {
 
   it('rejects security sensitive fields', async () => {
     const { data, errors } = await updateWorkspace({
-      data: { allowImpersonation: !originalAllowImpersonation },
+      data: { isPublicInviteLinkEnabled: !originalIsPublicInviteLinkEnabled },
       expectToFail: true,
     });
 
@@ -67,11 +67,13 @@ describe('updateWorkspace while the workspace is pending creation', () => {
     expectOneNotInternalServerErrorSnapshot({ errors });
 
     const [workspace] = await testDataSource.query(
-      'SELECT "allowImpersonation" FROM core.workspace WHERE id = $1',
+      'SELECT "isPublicInviteLinkEnabled" FROM core.workspace WHERE id = $1',
       [SEED_APPLE_WORKSPACE_ID],
     );
 
-    expect(workspace.allowImpersonation).toBe(originalAllowImpersonation);
+    expect(workspace.isPublicInviteLinkEnabled).toBe(
+      originalIsPublicInviteLinkEnabled,
+    );
   });
 
   it('rejects the whole update when a setup field is mixed with a security sensitive one', async () => {

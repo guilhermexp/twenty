@@ -100,7 +100,6 @@ describe('successful user session creation on auth exchanges (integration)', () 
       // half of workspace scoping, alongside the host-only cookie.
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userWorkspaceId: expect.any(String),
-      isImpersonating: false,
       revokedAt: null,
       revokedReason: null,
       // expect.any(Date) would fail: the entity's Date comes from the app's

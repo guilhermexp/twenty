@@ -297,7 +297,6 @@ export class SignInUpService {
 
       const user = await this.saveNewUser(userData.newUserWithPicture, {
         canAccessFullAdminPanel: false,
-        canImpersonate: false,
       });
 
       await this.activateOnboardingForUser({
@@ -367,17 +366,14 @@ export class SignInUpService {
   private async saveNewUser(
     newUserWithPicture: PartialUserWithPicture,
     {
-      canImpersonate,
       canAccessFullAdminPanel,
     }: {
-      canImpersonate: boolean;
       canAccessFullAdminPanel: boolean;
     },
     queryRunner?: QueryRunner,
   ) {
     const userCreated = this.userRepository.create({
       ...newUserWithPicture,
-      canImpersonate,
       canAccessFullAdminPanel,
     });
 
@@ -683,7 +679,6 @@ export class SignInUpService {
             : await this.saveNewUser(
                 userData.newUserWithPicture,
                 {
-                  canImpersonate: shouldGrantServerAdmin,
                   canAccessFullAdminPanel: shouldGrantServerAdmin,
                 },
                 queryRunner,
@@ -815,7 +810,6 @@ export class SignInUpService {
     return this.saveNewUser(
       await this.computePartialUserFromUserPayload(newUserParams, authParams),
       {
-        canImpersonate: shouldGrantServerAdmin,
         canAccessFullAdminPanel: shouldGrantServerAdmin,
       },
     );

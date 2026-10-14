@@ -16,10 +16,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
-import {
-  type AuthContext,
-  type AuthContextUser,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -48,7 +45,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthAuthenticatedAt } from 'src/engine/decorators/auth/auth-authenticated-at.decorator';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
-import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
 import { canCredentialAutoLoginIntoWorkspaces } from 'src/engine/core-modules/auth/utils/can-credential-auto-login-into-workspaces.util';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -120,8 +116,6 @@ export class UserResolver {
   async currentUser(
     @AuthUser() { id: userId }: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace: WorkspaceEntity,
-    @AuthImpersonationContext()
-    impersonationContext: AuthContext['impersonationContext'],
   ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: {
@@ -179,7 +173,6 @@ export class UserResolver {
         ...currentUserWorkspace,
         ...userWorkspacePermissions,
         twoFactorAuthenticationMethodSummary,
-        isImpersonating: isDefined(impersonationContext),
       },
       currentWorkspace: refreshedWorkspace,
     };

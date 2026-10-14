@@ -70,10 +70,6 @@ export class UserEntity {
 
   @Field()
   @Column({ default: false })
-  canImpersonate: boolean;
-
-  @Field()
-  @Column({ default: false })
   canAccessFullAdminPanel: boolean;
 
   @Field()

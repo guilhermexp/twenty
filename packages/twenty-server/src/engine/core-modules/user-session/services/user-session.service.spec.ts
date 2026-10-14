@@ -86,3 +86,36 @@ describe('UserSessionService.issueSessionForTokenPair', () => {
     expect(userSessionRepository.save).not.toHaveBeenCalled();
   });
 });
+
+describe('UserSessionService.resolveSession', () => {
+  it('rejects a session whose auth provider is no longer supported', async () => {
+    const now = new Date();
+    const cacheStorageService = {
+      get: jest.fn().mockResolvedValue({
+        sessionId: 'session-id',
+        userId: 'user-id',
+        workspaceId: 'workspace-id',
+        userWorkspaceId: 'user-workspace-id',
+        authProvider: 'impersonation',
+        expiresAt: new Date(now.getTime() + 60_000).toISOString(),
+        lastActiveAt: now.toISOString(),
+        authenticatedAt: now.toISOString(),
+      }),
+      set: jest.fn(),
+      del: jest.fn(),
+    };
+    const service = new UserSessionService(
+      {} as never,
+      {} as never,
+      cacheStorageService as never,
+      { get: jest.fn().mockReturnValue('30d') } as never,
+      {} as never,
+      {} as never,
+      {} as never,
+    );
+
+    await expect(service.resolveSession('session-token')).rejects.toThrow(
+      'Session is invalid or has expired.',
+    );
+  });
+});

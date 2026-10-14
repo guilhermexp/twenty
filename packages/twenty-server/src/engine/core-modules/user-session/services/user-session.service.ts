@@ -37,11 +37,10 @@ import { type UserSessionCreationOrigin } from 'src/engine/core-modules/user-ses
 import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/utils/is-request-origin-allowed.util';
 import { generateUserSessionToken } from 'src/engine/core-modules/user-session/utils/generate-user-session-token.util';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
+import { isKnownAuthProvider } from 'src/engine/core-modules/auth/utils/is-known-auth-provider.util';
 
 const USER_SESSION_CACHE_TTL_MS = 60 * 1000;
 const USER_SESSION_MAX_TOUCH_INTERVAL_MS = 5 * 60 * 1000;
-
-const IMPERSONATION_SESSION_LIFETIME = '1d';
 
 const buildInvalidSessionException = () =>
   new AuthException(
@@ -146,18 +145,6 @@ export class UserSessionService {
         return;
       }
 
-      if (sessionInput.isImpersonating === true) {
-        // The one sign-in that must not revoke what it replaces: parking the
-        // impersonator's session lets stopImpersonation hand back the credential
-        // they already held.
-        this.userSessionCookieService.attachImpersonatorSessionTokenToResponse(
-          response,
-          presentedSessionToken,
-        );
-
-        return;
-      }
-
       try {
         await this.revokeSessionByToken(
           presentedSessionToken,
@@ -206,8 +193,7 @@ export class UserSessionService {
     if (presentedPayload.type !== JwtTokenTypeEnum.ACCESS) {
       return (
         presentedPayload.userId === sessionInput.userId &&
-        !isDefined(sessionInput.workspaceId) &&
-        sessionInput.isImpersonating !== true
+        !isDefined(sessionInput.workspaceId)
       );
     }
 
@@ -215,14 +201,8 @@ export class UserSessionService {
       presentedPayload.userId === sessionInput.userId &&
       (presentedPayload.workspaceId ?? null) ===
         (sessionInput.workspaceId ?? null) &&
-      (presentedPayload.isImpersonating === true) ===
-        (sessionInput.isImpersonating === true) &&
       (presentedPayload.userWorkspaceId ?? null) ===
-        (sessionInput.userWorkspaceId ?? null) &&
-      (presentedPayload.impersonatorUserWorkspaceId ?? null) ===
-        (sessionInput.impersonatorUserWorkspaceId ?? null) &&
-      (presentedPayload.impersonatedUserWorkspaceId ?? null) ===
-        (sessionInput.impersonatedUserWorkspaceId ?? null)
+        (sessionInput.userWorkspaceId ?? null)
     );
   }
 
@@ -250,9 +230,6 @@ export class UserSessionService {
         workspaceId: payload.workspaceId,
         userWorkspaceId: payload.userWorkspaceId,
         authProvider: payload.authProvider,
-        isImpersonating: payload.isImpersonating === true,
-        impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
         origin,
         ...requestMetadata,
       };
@@ -288,22 +265,7 @@ export class UserSessionService {
       );
     }
 
-    if (
-      input.isImpersonating === true &&
-      (!isDefined(input.workspaceId) ||
-        !isDefined(input.impersonatorUserWorkspaceId) ||
-        !isDefined(input.impersonatedUserWorkspaceId))
-    ) {
-      throw new AuthException(
-        'Cannot create an impersonation session without a workspace and both user workspaces',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const lifetime =
-      input.isImpersonating === true
-        ? IMPERSONATION_SESSION_LIFETIME
-        : this.twentyConfigService.get('SESSION_ABSOLUTE_LIFETIME');
+    const lifetime = this.twentyConfigService.get('SESSION_ABSOLUTE_LIFETIME');
 
     const now = new Date();
     const sessionToken = generateUserSessionToken();
@@ -315,15 +277,6 @@ export class UserSessionService {
         workspaceId: input.workspaceId ?? null,
         userWorkspaceId: input.userWorkspaceId ?? null,
         authProvider: input.authProvider,
-        isImpersonating: input.isImpersonating === true,
-        impersonatorUserWorkspaceId:
-          input.isImpersonating === true
-            ? (input.impersonatorUserWorkspaceId ?? null)
-            : null,
-        impersonatedUserWorkspaceId:
-          input.isImpersonating === true
-            ? (input.impersonatedUserWorkspaceId ?? null)
-            : null,
         userAgent: input.userAgent ?? null,
         ipAddress: input.ipAddress ?? null,
         expiresAt: addMilliseconds(now, ms(lifetime)),
@@ -714,9 +667,6 @@ export class UserSessionService {
       workspaceId: session.workspaceId,
       userWorkspaceId: session.userWorkspaceId,
       authProvider: session.authProvider,
-      isImpersonating: session.isImpersonating,
-      impersonatorUserWorkspaceId: session.impersonatorUserWorkspaceId,
-      impersonatedUserWorkspaceId: session.impersonatedUserWorkspaceId,
       expiresAt: session.expiresAt.toISOString(),
       lastActiveAt: session.lastActiveAt.toISOString(),
       authenticatedAt: session.createdAt.toISOString(),
@@ -726,6 +676,10 @@ export class UserSessionService {
   private buildPayloadFromCachedSession(
     cachedSession: CachedUserSession,
   ): AccessTokenJwtPayload | WorkspaceAgnosticTokenJwtPayload {
+    if (!isKnownAuthProvider(cachedSession.authProvider)) {
+      throw buildInvalidSessionException();
+    }
+
     if (!isDefined(cachedSession.workspaceId)) {
       return {
         sub: cachedSession.userId,
@@ -746,15 +700,6 @@ export class UserSessionService {
       userWorkspaceId: cachedSession.userWorkspaceId,
       authProvider: cachedSession.authProvider,
       type: JwtTokenTypeEnum.ACCESS,
-      isImpersonating: cachedSession.isImpersonating === true,
-      impersonatorUserWorkspaceId:
-        cachedSession.isImpersonating === true
-          ? (cachedSession.impersonatorUserWorkspaceId ?? undefined)
-          : undefined,
-      impersonatedUserWorkspaceId:
-        cachedSession.isImpersonating === true
-          ? (cachedSession.impersonatedUserWorkspaceId ?? undefined)
-          : undefined,
     };
   }
 

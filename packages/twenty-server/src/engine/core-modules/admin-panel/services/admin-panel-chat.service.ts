@@ -19,7 +19,7 @@ export class AdminPanelChatService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     // Thread lookup is by id alone; the admin does not know the workspaceId
-    // upfront. assertWorkspaceAllowsImpersonation gates every other read.
+    // upfront. assertWorkspaceExists checks it before every other read.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(AgentChatThreadEntity)
     private readonly agentChatThreadRepository: Repository<AgentChatThreadEntity>,
@@ -27,27 +27,21 @@ export class AdminPanelChatService {
     private readonly agentMessageRepository: WorkspaceScopedRepository<AgentMessageEntity>,
   ) {}
 
-  private async assertWorkspaceAllowsImpersonation(
-    workspaceId: string,
-  ): Promise<void> {
+  private async assertWorkspaceExists(workspaceId: string): Promise<void> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
-      select: { id: true, allowImpersonation: true },
+      select: { id: true },
     });
 
     if (!isDefined(workspace)) {
       throw new UserInputError('Workspace not found');
-    }
-
-    if (!workspace.allowImpersonation) {
-      throw new UserInputError('This workspace has not enabled support access');
     }
   }
 
   async getWorkspaceChatThreads(
     workspaceId: string,
   ): Promise<AdminWorkspaceChatThreadDTO[]> {
-    await this.assertWorkspaceAllowsImpersonation(workspaceId);
+    await this.assertWorkspaceExists(workspaceId);
 
     const threads = await this.agentChatThreadRepository.find({
       where: { workspaceId },
@@ -109,7 +103,7 @@ export class AdminPanelChatService {
       throw new UserInputError('Thread not found');
     }
 
-    await this.assertWorkspaceAllowsImpersonation(thread.workspaceId);
+    await this.assertWorkspaceExists(thread.workspaceId);
 
     const messages = await this.agentMessageRepository.find(
       thread.workspaceId,

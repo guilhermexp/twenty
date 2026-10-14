@@ -135,7 +135,6 @@ export class PermissionsService {
         [PermissionFlagType.IMPORT_CSV]: false,
         [PermissionFlagType.EXPORT_CSV]: false,
         [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
-        [PermissionFlagType.IMPERSONATE]: false,
         [PermissionFlagType.SSO_BYPASS]: false,
         [PermissionFlagType.PROFILE_INFORMATION]: false,
       },

@@ -5,8 +5,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
-import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
@@ -30,7 +28,6 @@ import { UserSessionService } from 'src/engine/core-modules/user-session/service
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -87,10 +84,6 @@ describe('AuthResolver', () => {
         },
         {
           provide: getRepositoryToken(UserEntity),
-          useValue: {},
-        },
-        {
-          provide: getRepositoryToken(UserWorkspaceEntity),
           useValue: {},
         },
         {
@@ -215,10 +208,6 @@ describe('AuthResolver', () => {
           },
         },
         {
-          provide: ImpersonationAuthorizationService,
-          useValue: {},
-        },
-        {
           provide: PermissionsService,
           useValue: {},
         },
@@ -237,14 +226,6 @@ describe('AuthResolver', () => {
         {
           provide: TwentyConfigService,
           useValue: {},
-        },
-        {
-          provide: EventLogEmitterService,
-          useValue: {
-            createContext: jest.fn().mockReturnValue({
-              insertWorkspaceEvent: jest.fn(),
-            }),
-          },
         },
       ],
     })

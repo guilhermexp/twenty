@@ -114,10 +114,6 @@ export class WorkspaceEntity {
 
   @Field()
   @Column({ default: true })
-  allowImpersonation: boolean;
-
-  @Field()
-  @Column({ default: true })
   isPublicInviteLinkEnabled: boolean;
 
   @Field(() => WorkspaceDiscoverability)

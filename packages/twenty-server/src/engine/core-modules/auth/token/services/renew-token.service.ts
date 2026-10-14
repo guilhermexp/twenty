@@ -42,9 +42,6 @@ export class RenewTokenService {
       token: { id, workspaceId },
       authProvider,
       targetedTokenType: targetedTokenTypeFromPayload,
-      isImpersonating,
-      impersonatorUserWorkspaceId,
-      impersonatedUserWorkspaceId,
     } = await this.refreshTokenService.verifyRefreshToken(token);
 
     // Revoke old refresh token only if not already revoked.
@@ -81,9 +78,6 @@ export class RenewTokenService {
             userId: user.id,
             workspaceId: workspaceId as string,
             authProvider: resolvedAuthProvider,
-            isImpersonating,
-            impersonatorUserWorkspaceId,
-            impersonatedUserWorkspaceId,
           });
 
     const refreshToken = await this.refreshTokenService.generateRefreshToken({
@@ -91,9 +85,6 @@ export class RenewTokenService {
       workspaceId,
       authProvider: resolvedAuthProvider,
       targetedTokenType,
-      isImpersonating,
-      impersonatorUserWorkspaceId,
-      impersonatedUserWorkspaceId,
     });
 
     return {

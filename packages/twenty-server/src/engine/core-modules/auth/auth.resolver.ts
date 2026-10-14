@@ -18,8 +18,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { settings } from 'src/engine/constants/settings';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
-import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import {
   AuthException,
   AuthExceptionCode,
@@ -71,9 +69,6 @@ import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-p
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { IMPERSONATION_DENIAL_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant';
-import { IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-log-message-by-reason.constant';
-import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
@@ -135,8 +130,6 @@ export class AuthResolver {
 
   constructor(
     private readonly throttlerService: ThrottlerService,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
@@ -157,8 +150,6 @@ export class AuthResolver {
     private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
     private ssoService: SsoService,
-    private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly userSessionService: UserSessionService,
@@ -703,38 +694,13 @@ export class AuthResolver {
       tokenPayload.workspaceId,
     );
 
-    let authTokens: AuthTokens;
+    await this.validateRegularAuthentication(workspace, userWorkspace);
 
-    if (tokenPayload.authProvider === AuthProviderEnum.Impersonation) {
-      const {
-        workspaceId,
-        impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId,
-        impersonatorUserId,
-        impersonatedUserId,
-      } = await this.validateAndLogImpersonation(
-        tokenPayload,
-        workspace,
-        user.email,
-      );
-
-      authTokens =
-        await this.authService.generateImpersonationAccessTokenAndRefreshToken({
-          workspaceId,
-          impersonatorUserWorkspaceId,
-          impersonatedUserWorkspaceId,
-          _impersonatorUserId: impersonatorUserId,
-          impersonatedUserId,
-        });
-    } else {
-      await this.validateRegularAuthentication(workspace, userWorkspace);
-
-      authTokens = await this.authService.verify(
-        user.email,
-        workspace.id,
-        tokenPayload.authProvider,
-      );
-    }
+    const authTokens = await this.authService.verify(
+      user.email,
+      workspace.id,
+      tokenPayload.authProvider,
+    );
 
     await this.userSessionService.issueSessionForTokenPair({
       tokenPair: authTokens.tokens,
@@ -841,103 +807,6 @@ export class AuthResolver {
       workspace,
       userWorkspace.twoFactorAuthenticationMethods,
     );
-  }
-
-  private async validateAndLogImpersonation(
-    tokenPayload: LoginTokenJwtPayload,
-    workspace: WorkspaceEntity,
-    targetUserEmail: string,
-  ) {
-    const { impersonatorUserWorkspaceId } = tokenPayload;
-
-    const impersonatorUserWorkspace =
-      await this.userWorkspaceRepository.findOne({
-        where: { id: impersonatorUserWorkspaceId },
-        relations: ['user', 'workspace', 'twoFactorAuthenticationMethods'],
-      });
-
-    const toImpersonateUserWorkspace =
-      await this.userWorkspaceRepository.findOne({
-        where: {
-          user: { email: targetUserEmail },
-          workspaceId: workspace.id,
-        },
-        relations: ['user', 'workspace'],
-      });
-
-    if (
-      !isDefined(impersonatorUserWorkspace) ||
-      !isDefined(toImpersonateUserWorkspace)
-    ) {
-      throw new AuthException(
-        'Impersonator or target user workspace not found',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    if (
-      impersonatorUserWorkspace.userId === toImpersonateUserWorkspace.userId
-    ) {
-      throw new AuthException(
-        'User cannot impersonate themselves',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const eventLogContext = this.eventLogEmitterService.createContext({
-      workspaceId: workspace.id,
-      userId: impersonatorUserWorkspace.user.id,
-    });
-
-    const impersonationLevel =
-      this.impersonationAuthorizationService.getImpersonationLevel(
-        impersonatorUserWorkspace,
-        toImpersonateUserWorkspace,
-      );
-
-    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: impersonationLevel,
-      action: 'token_exchange_attempt',
-      message: `Impersonation token exchange attempt for ${targetUserEmail} by ${impersonatorUserWorkspace.user.id}`,
-    });
-
-    const authorizationResult =
-      await this.impersonationAuthorizationService.checkImpersonationAuthorization(
-        impersonatorUserWorkspace,
-        toImpersonateUserWorkspace,
-      );
-
-    if (!authorizationResult.allowed) {
-      void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-        level: authorizationResult.level,
-        action: 'token_exchange_failed',
-        message: IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON[
-          authorizationResult.reason
-        ]({
-          targetUserEmail,
-          impersonatorUserId: impersonatorUserWorkspace.user.id,
-        }),
-      });
-
-      const { message, exceptionCode, userFriendlyMessage } =
-        IMPERSONATION_DENIAL_BY_REASON[authorizationResult.reason];
-
-      throw new AuthException(message, exceptionCode, { userFriendlyMessage });
-    }
-
-    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: authorizationResult.level,
-      action: 'token_exchange_success',
-      message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
-    });
-
-    return {
-      workspaceId: workspace.id,
-      impersonatorUserWorkspaceId: impersonatorUserWorkspace.id,
-      impersonatedUserWorkspaceId: toImpersonateUserWorkspace.id,
-      impersonatorUserId: impersonatorUserWorkspace.user.id,
-      impersonatedUserId: toImpersonateUserWorkspace.user.id,
-    };
   }
 
   @Mutation(() => AuthorizeAppDTO)

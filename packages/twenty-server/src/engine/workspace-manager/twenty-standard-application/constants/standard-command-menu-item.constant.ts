@@ -1359,8 +1359,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `Admin Panel`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression:
-      'canImpersonate or canAccessFullAdminPanel',
+    conditionalAvailabilityExpression: 'canAccessFullAdminPanel',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,

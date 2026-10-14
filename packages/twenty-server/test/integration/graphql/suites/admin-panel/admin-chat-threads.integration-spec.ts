@@ -412,11 +412,6 @@ describe('Admin panel global chat threads (integration)', () => {
         [seededThreadIds],
       );
     }
-
-    await dataSource.query(
-      `UPDATE core."workspace" SET "allowImpersonation" = true WHERE id = $1`,
-      [SEED_APPLE_WORKSPACE_ID],
-    );
   });
 
   describe('getAdminChatThreads', () => {
@@ -582,28 +577,6 @@ describe('Admin panel global chat threads (integration)', () => {
 
       expect(threadIds).toContain(kickoffThreadId);
       expect(threadIds).toContain(regularThreadId);
-    });
-
-    it('excludes workspaces that disabled support access', async () => {
-      await dataSource.query(
-        `UPDATE core."workspace" SET "allowImpersonation" = false WHERE id = $1`,
-        [SEED_APPLE_WORKSPACE_ID],
-      );
-
-      try {
-        const result = await fetchThreads({
-          scope: 'ALL',
-          searchTerm: kickoffThreadId,
-        });
-
-        expect(result.totalCount).toBe(0);
-        expect(result.threads).toHaveLength(0);
-      } finally {
-        await dataSource.query(
-          `UPDATE core."workspace" SET "allowImpersonation" = true WHERE id = $1`,
-          [SEED_APPLE_WORKSPACE_ID],
-        );
-      }
     });
 
     it('rejects a caller without the SECURITY permission flag', async () => {

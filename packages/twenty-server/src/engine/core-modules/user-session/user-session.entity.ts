@@ -69,15 +69,6 @@ export class UserSessionEntity {
   @Column({ type: 'text' })
   authProvider: AuthProviderEnum;
 
-  @Column({ type: 'boolean', default: false })
-  isImpersonating: boolean;
-
-  @Column({ type: 'uuid', nullable: true })
-  impersonatorUserWorkspaceId: string | null;
-
-  @Column({ type: 'uuid', nullable: true })
-  impersonatedUserWorkspaceId: string | null;
-
   @Column({ type: 'text', nullable: true })
   userAgent: string | null;
 

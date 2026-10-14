@@ -10,7 +10,6 @@ type ServerAdminAccessChangedEmailProps = {
   targetName: string;
   targetEmail: string;
   canAccessFullAdminPanel: boolean;
-  canImpersonate: boolean;
   locale: keyof typeof APP_LOCALES;
 };
 
@@ -19,7 +18,6 @@ export const ServerAdminAccessChangedEmail = ({
   targetName,
   targetEmail,
   canAccessFullAdminPanel,
-  canImpersonate,
   locale,
 }: ServerAdminAccessChangedEmailProps) => {
   const i18n = createI18nInstance(locale);
@@ -28,7 +26,6 @@ export const ServerAdminAccessChangedEmail = ({
   const fullAdminStatus = canAccessFullAdminPanel
     ? enabledLabel
     : disabledLabel;
-  const impersonateStatus = canImpersonate ? enabledLabel : disabledLabel;
 
   return (
     <BaseEmail locale={locale}>
@@ -45,12 +42,6 @@ export const ServerAdminAccessChangedEmail = ({
           id="serverAdminAccessChanged.fullAdmin"
           message="Full admin panel access: {fullAdminStatus}"
           values={{ fullAdminStatus }}
-        />
-        <br />
-        <Trans
-          id="serverAdminAccessChanged.impersonation"
-          message="Impersonation: {impersonateStatus}"
-          values={{ impersonateStatus }}
         />
         <br />
         <br />
@@ -71,7 +62,6 @@ ServerAdminAccessChangedEmail.PreviewProps = {
   targetName: 'Jane Smith',
   targetEmail: 'jane.smith@example.com',
   canAccessFullAdminPanel: true,
-  canImpersonate: false,
   locale: 'en',
 } as ServerAdminAccessChangedEmailProps;
 

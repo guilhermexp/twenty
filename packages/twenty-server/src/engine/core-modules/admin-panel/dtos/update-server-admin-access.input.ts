@@ -24,11 +24,6 @@ export class UpdateServerAdminAccessInput {
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsBoolean()
-  canImpersonate?: boolean;
-
-  @Field({ nullable: true })
-  @IsOptional()
   @IsString()
   otp?: string;
 }

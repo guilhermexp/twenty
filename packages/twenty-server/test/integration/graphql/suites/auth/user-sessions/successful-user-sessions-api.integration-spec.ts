@@ -20,7 +20,6 @@ import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessio
 type UserSessionApiEntry = {
   id: string;
   isCurrent: boolean;
-  isImpersonating: boolean;
   authProvider: string;
 };
 
@@ -72,7 +71,6 @@ describe('successful user sessions API (integration)', () => {
 
     expect(currentSessions).toHaveLength(1);
     expect(currentSessions[0].authProvider).toBe('password');
-    expect(currentSessions[0].isImpersonating).toBe(false);
   });
 
   it('should revoke a targeted session by id', async () => {
@@ -100,7 +98,9 @@ describe('successful user sessions API (integration)', () => {
     ).findOneBy({ id: otherSessionRow.id });
 
     expect(revokedRow?.revokedAt).not.toBeNull();
-    expect(revokedRow?.revokedReason).toBe(UserSessionRevokedReason.UserRevoked);
+    expect(revokedRow?.revokedReason).toBe(
+      UserSessionRevokedReason.UserRevoked,
+    );
 
     const sessions = await fetchSessions();
 
@@ -122,9 +122,9 @@ describe('successful user sessions API (integration)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.revokeAllOtherUserSessions).toBeGreaterThanOrEqual(
-      1,
-    );
+    expect(
+      response.body.data.revokeAllOtherUserSessions,
+    ).toBeGreaterThanOrEqual(1);
 
     const sessions = await fetchSessions();
 

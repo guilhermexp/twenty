@@ -12,8 +12,6 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { type ServerAdminDTO } from 'src/engine/core-modules/admin-panel/dtos/server-admin.dto';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { SERVER_ADMIN_ACCESS_CHANGED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/server-admin/server-admin-access-changed';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -37,12 +35,11 @@ export class AdminPanelServerAdminService {
     private readonly emailService: EmailService,
     private readonly i18nService: I18nService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
   async getServerAdmins(): Promise<ServerAdminDTO[]> {
     const admins = await this.userRepository.find({
-      where: [{ canAccessFullAdminPanel: true }, { canImpersonate: true }],
+      where: { canAccessFullAdminPanel: true },
       order: { firstName: 'ASC', lastName: 'ASC' },
     });
 
@@ -54,17 +51,15 @@ export class AdminPanelServerAdminService {
     actorWorkspaceId,
     targetUserId,
     canAccessFullAdminPanel,
-    canImpersonate,
     otp,
   }: {
     actor: AuthContextUser;
     actorWorkspaceId: string;
     targetUserId: string;
     canAccessFullAdminPanel?: boolean;
-    canImpersonate?: boolean;
     otp?: string;
   }): Promise<ServerAdminDTO> {
-    if (!isDefined(canAccessFullAdminPanel) && !isDefined(canImpersonate)) {
+    if (!isDefined(canAccessFullAdminPanel)) {
       throw new UserInputError('No administrator access change was provided.');
     }
 
@@ -82,24 +77,15 @@ export class AdminPanelServerAdminService {
       otp,
     });
 
-    const nextCanAccessFullAdminPanel =
-      canAccessFullAdminPanel ?? targetUser.canAccessFullAdminPanel;
-    const nextCanImpersonate = canImpersonate ?? targetUser.canImpersonate;
-
-    const hasChange =
-      nextCanAccessFullAdminPanel !== targetUser.canAccessFullAdminPanel ||
-      nextCanImpersonate !== targetUser.canImpersonate;
-
-    if (!hasChange) {
+    if (canAccessFullAdminPanel === targetUser.canAccessFullAdminPanel) {
       return this.toServerAdminDTO(targetUser);
     }
 
     const isRevokingFullAdmin =
       targetUser.canAccessFullAdminPanel === true &&
-      nextCanAccessFullAdminPanel === false;
+      canAccessFullAdminPanel === false;
 
-    targetUser.canAccessFullAdminPanel = nextCanAccessFullAdminPanel;
-    targetUser.canImpersonate = nextCanImpersonate;
+    targetUser.canAccessFullAdminPanel = canAccessFullAdminPanel;
 
     await this.userRepository.manager.transaction(async (manager) => {
       if (isRevokingFullAdmin) {
@@ -129,14 +115,8 @@ export class AdminPanelServerAdminService {
 
     this.logger.log(
       `Server admin access for user ${targetUserId} updated by ${actor.id}: ` +
-        `canAccessFullAdminPanel=${nextCanAccessFullAdminPanel}, canImpersonate=${nextCanImpersonate}`,
+        `canAccessFullAdminPanel=${canAccessFullAdminPanel}`,
     );
-
-    this.emitServerAdminAccessChangedEvent({
-      actor,
-      actorWorkspaceId,
-      targetUser,
-    });
 
     await this.notifyAdministrators({ actor, targetUser });
 
@@ -245,7 +225,6 @@ export class AdminPanelServerAdminService {
               targetName,
               targetEmail: targetUser.email,
               canAccessFullAdminPanel: targetUser.canAccessFullAdminPanel,
-              canImpersonate: targetUser.canImpersonate,
               locale,
             });
             const html = await renderEmail(emailTemplate, { pretty: true });
@@ -286,25 +265,6 @@ export class AdminPanelServerAdminService {
     }
   }
 
-  private emitServerAdminAccessChangedEvent({
-    actor,
-    actorWorkspaceId,
-    targetUser,
-  }: {
-    actor: AuthContextUser;
-    actorWorkspaceId: string;
-    targetUser: UserEntity;
-  }): void {
-    void this.eventLogEmitterService
-      .createContext({ workspaceId: actorWorkspaceId, userId: actor.id })
-      .insertWorkspaceEvent(SERVER_ADMIN_ACCESS_CHANGED_EVENT, {
-        targetUserId: targetUser.id,
-        canAccessFullAdminPanel: targetUser.canAccessFullAdminPanel,
-        canImpersonate: targetUser.canImpersonate,
-        message: `Server admin access for user ${targetUser.id} changed by ${actor.id}`,
-      });
-  }
-
   private toServerAdminDTO(user: UserEntity): ServerAdminDTO {
     return {
       id: user.id,
@@ -312,7 +272,6 @@ export class AdminPanelServerAdminService {
       firstName: user.firstName,
       lastName: user.lastName,
       canAccessFullAdminPanel: user.canAccessFullAdminPanel,
-      canImpersonate: user.canImpersonate,
     };
   }
 }

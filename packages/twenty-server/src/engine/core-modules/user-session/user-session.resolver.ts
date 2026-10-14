@@ -167,7 +167,6 @@ export class UserSessionResolver {
       id: session.id,
       workspaceId: session.workspaceId,
       authProvider: session.authProvider,
-      isImpersonating: session.isImpersonating,
       userAgent: session.userAgent,
       ipAddress: session.ipAddress,
       createdAt: session.createdAt,

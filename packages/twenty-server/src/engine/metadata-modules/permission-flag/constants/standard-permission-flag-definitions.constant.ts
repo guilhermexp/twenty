@@ -59,11 +59,6 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     description: 'Manage workflows',
     icon: 'IconSettingsAutomation',
   },
-  [PermissionFlagType.IMPERSONATE]: {
-    label: 'Impersonate',
-    description: 'Impersonate workspace users',
-    icon: 'IconSpy',
-  },
   [PermissionFlagType.SSO_BYPASS]: {
     label: 'SSO Bypass',
     description: 'Enable bypass options',

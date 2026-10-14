@@ -18,7 +18,4 @@ export class ServerAdminDTO {
 
   @Field()
   canAccessFullAdminPanel: boolean;
-
-  @Field()
-  canImpersonate: boolean;
 }

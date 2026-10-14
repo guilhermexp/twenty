@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import crypto, { randomUUID } from 'node:crypto';
+import crypto from 'node:crypto';
 
 import { msg } from '@lingui/core/macro';
 import { addMilliseconds } from 'date-fns';
@@ -19,8 +19,6 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { INVITATION_APP_TOKEN_TYPES } from 'src/engine/core-modules/workspace-invitation/constants/invitation-app-token-types';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import {
   AuthException,
   AuthExceptionCode,
@@ -102,7 +100,6 @@ export class AuthService {
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,
-    private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly createSsoConnectedAccountService: CreateSsoConnectedAccountService,
@@ -406,67 +403,6 @@ export class AuthService {
       workspaceId,
       authProvider,
       targetedTokenType: JwtTokenTypeEnum.ACCESS,
-    });
-
-    return {
-      tokens: {
-        accessOrWorkspaceAgnosticToken: accessToken,
-        refreshToken,
-      },
-    };
-  }
-
-  async generateImpersonationAccessTokenAndRefreshToken({
-    workspaceId,
-    impersonatorUserWorkspaceId,
-    impersonatedUserWorkspaceId,
-    _impersonatorUserId,
-    impersonatedUserId,
-  }: {
-    workspaceId: string;
-    impersonatorUserWorkspaceId: string;
-    impersonatedUserWorkspaceId: string;
-    _impersonatorUserId: string;
-    impersonatedUserId: string;
-  }): Promise<AuthTokens> {
-    const correlationId = randomUUID();
-
-    const eventLogContext = this.eventLogEmitterService.createContext({
-      workspaceId,
-      userId: _impersonatorUserId,
-    });
-
-    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: 'workspace',
-      action: 'attempted',
-      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
-    });
-
-    const accessToken = await this.accessTokenService.generateAccessToken({
-      userId: impersonatedUserId,
-      workspaceId,
-      authProvider: AuthProviderEnum.Impersonation,
-      isImpersonating: true,
-      impersonatorUserWorkspaceId,
-      impersonatedUserWorkspaceId,
-    });
-    const refreshToken = await this.refreshTokenService.generateRefreshToken(
-      {
-        userId: impersonatedUserId,
-        workspaceId,
-        authProvider: AuthProviderEnum.Impersonation,
-        targetedTokenType: JwtTokenTypeEnum.ACCESS,
-        isImpersonating: true,
-        impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId,
-      },
-      true,
-    );
-
-    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: 'workspace',
-      action: 'issued',
-      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
 
     return {

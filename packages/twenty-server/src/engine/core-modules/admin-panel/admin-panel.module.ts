@@ -30,7 +30,6 @@ import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/e
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { ImpersonationModule } from 'src/engine/core-modules/impersonation/impersonation.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -66,7 +65,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     TerminusModule,
     MetricsModule,
     FeatureFlagModule,
-    ImpersonationModule,
     PermissionsModule,
     SecureHttpClientModule,
     ApplicationRegistrationModule,

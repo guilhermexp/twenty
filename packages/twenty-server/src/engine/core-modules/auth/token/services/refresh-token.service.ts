@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -19,6 +20,7 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-t
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { isKnownAuthProvider } from 'src/engine/core-modules/auth/utils/is-known-auth-provider.util';
 
 @Injectable()
 export class RefreshTokenService {
@@ -48,6 +50,16 @@ export class RefreshTokenService {
     }
 
     if (!(jwtPayload.jti && jwtPayload.sub)) {
+      throw new AuthException(
+        'This refresh token is malformed',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (
+      isDefined(jwtPayload.authProvider) &&
+      !isKnownAuthProvider(jwtPayload.authProvider)
+    ) {
       throw new AuthException(
         'This refresh token is malformed',
         AuthExceptionCode.INVALID_INPUT,
@@ -100,19 +112,13 @@ export class RefreshTokenService {
       token,
       authProvider: jwtPayload.authProvider,
       targetedTokenType: jwtPayload.targetedTokenType,
-      isImpersonating: jwtPayload.isImpersonating,
-      impersonatorUserWorkspaceId: jwtPayload.impersonatorUserWorkspaceId,
-      impersonatedUserWorkspaceId: jwtPayload.impersonatedUserWorkspaceId,
     };
   }
 
   async generateRefreshToken(
     payload: Omit<RefreshTokenJwtPayload, 'type' | 'sub' | 'jti'>,
-    isImpersonationToken: boolean = false,
   ): Promise<AuthToken> {
-    const expiresIn = isImpersonationToken
-      ? '1d'
-      : this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
+    const expiresIn = this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
 
     if (!expiresIn) {
       throw new AuthException(
