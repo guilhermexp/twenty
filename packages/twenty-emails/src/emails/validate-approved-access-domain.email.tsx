@@ -9,7 +9,6 @@ import { HighlightedText } from 'src/components/HighlightedText';
 import { Link } from 'src/components/Link';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
-import { DEFAULT_WORKSPACE_LOGO } from 'src/constants/DefaultWorkspaceLogo';
 import { capitalize } from 'src/utils/capitalize';
 import { createI18nInstance } from 'src/utils/i18n.utils';
 import { type APP_LOCALES } from 'twenty-shared/translations';
@@ -65,12 +64,16 @@ export const SendApprovedAccessDomainValidation = ({
         <br />
       </MainText>
       <HighlightedContainer>
-        <Img
-          src={workspaceLogo ?? DEFAULT_WORKSPACE_LOGO}
-          width={40}
-          height={40}
-          alt={workspace.name ?? 'Workspace logo'}
-        />
+        {workspaceLogo ? (
+          <Img
+            src={workspaceLogo}
+            width={40}
+            height={40}
+            alt={workspace.name ?? 'Workspace logo'}
+          />
+        ) : (
+          <></>
+        )}
         {workspace.name ? <HighlightedText value={workspace.name} /> : <></>}
         <CallToAction href={link} value={i18n._('Validate domain')} />
       </HighlightedContainer>
@@ -80,7 +83,7 @@ export const SendApprovedAccessDomainValidation = ({
 };
 
 SendApprovedAccessDomainValidation.PreviewProps = {
-  link: 'https://app.twenty.com/validate-domain',
+  link: 'http://localhost:3001/validate-domain',
   domain: 'example.com',
   workspace: {
     name: 'Acme Inc.',
@@ -91,7 +94,7 @@ SendApprovedAccessDomainValidation.PreviewProps = {
     firstName: 'John',
     lastName: 'Doe',
   },
-  serverUrl: 'https://app.twenty.com',
+  serverUrl: 'http://localhost:3001',
   locale: 'en',
 };
 

@@ -83,13 +83,13 @@ export const SendInviteLinkEmail = ({
 };
 
 SendInviteLinkEmail.PreviewProps = {
-  link: 'https://app.twenty.com/invite/123',
+  link: 'http://localhost:3001/invite/123',
   workspace: {
     name: 'Acme Inc.',
     logo: 'https://fakeimg.pl/200x200/?text=ACME&font=lobster',
   },
   sender: { email: 'john.doe@example.com', firstName: 'John', lastName: 'Doe' },
-  serverUrl: 'https://app.twenty.com',
+  serverUrl: 'http://localhost:3001',
   locale: 'en',
 } as SendInviteLinkEmailProps;
 
