@@ -1,6 +1,9 @@
 import { type DataSource, type Repository } from 'typeorm';
 
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import {
+  OnboardingService,
+  type OnboardingKeyValueTypeMap,
+} from 'src/engine/core-modules/onboarding/onboarding.service';
 import { type ReversibleOnboardingStep } from 'src/engine/core-modules/onboarding/types/reversible-onboarding-step.type';
 import { type UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -15,7 +18,7 @@ describe('OnboardingService', () => {
           'INVITE_TEAM',
           'BOOK_CALL',
         ] as unknown as ReversibleOnboardingStep[]),
-    } as unknown as UserVarsService;
+    } as unknown as UserVarsService<OnboardingKeyValueTypeMap>;
     const service = new OnboardingService(
       {} as never,
       userVarsService,
