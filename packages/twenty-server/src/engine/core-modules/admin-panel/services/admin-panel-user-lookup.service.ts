@@ -103,9 +103,7 @@ export class AdminPanelUserLookupService {
             (await this.fileUrlService.signWorkspaceLogoUrl(
               userWorkspace.workspace,
             )) ?? undefined,
-          workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(
-            userWorkspace.workspace,
-          ),
+          workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(),
           users: workspaceUsers.map((workspaceUser) => ({
             id: workspaceUser.user.id,
             email: workspaceUser.user.email,
@@ -181,7 +179,7 @@ export class AdminPanelUserLookupService {
       logo:
         (await this.fileUrlService.signWorkspaceLogoUrl(workspace)) ??
         undefined,
-      workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
+      workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(),
       users: definedWorkspaceUsers.map((wu) => ({
         id: wu.user.id,
         email: wu.user.email,

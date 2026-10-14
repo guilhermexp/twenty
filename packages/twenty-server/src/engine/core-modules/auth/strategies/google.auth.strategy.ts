@@ -14,7 +14,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type SocialSsoSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { type SocialSsoState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -29,7 +28,6 @@ export type GoogleRequest = Omit<
     picture: string | null;
     locale?: keyof typeof APP_LOCALES | null;
     workspaceInviteHash?: string;
-    action: SocialSsoSignInUpActionType;
     workspaceId?: string;
     returnToPath?: string;
   };
@@ -54,7 +52,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       state: JSON.stringify({
         workspaceInviteHash: req.query.workspaceInviteHash,
         workspaceId: req.params.workspaceId,
-        action: req.query.action,
         locale: req.query.locale,
         returnToPath: req.query.returnToPath,
       }),
@@ -91,7 +88,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       picture: photos?.[0]?.value ?? null,
       workspaceInviteHash: state?.workspaceInviteHash,
       workspaceId: state?.workspaceId,
-      action: state?.action ?? 'list-available-workspaces',
       locale: state?.locale,
       returnToPath: state?.returnToPath,
     };

@@ -10,7 +10,6 @@ export const fromWorkspaceEntityToFlat = (
   logoFileId: entity.logoFileId,
   inviteHash: entity.inviteHash,
   isPublicInviteLinkEnabled: entity.isPublicInviteLinkEnabled,
-  workspaceDiscoverability: entity.workspaceDiscoverability,
   trashRetentionDays: entity.trashRetentionDays,
   eventLogRetentionDays: entity.eventLogRetentionDays,
   activationStatus: entity.activationStatus,

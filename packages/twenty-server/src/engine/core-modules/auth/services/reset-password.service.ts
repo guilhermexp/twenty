@@ -79,7 +79,6 @@ export class ResetPasswordService {
     await this.sendEmailPasswordResetLink({
       resetToken: generationResult.resetToken,
       user: generationResult.user,
-      workspace: generationResult.workspace,
       locale,
     });
   }
@@ -193,12 +192,10 @@ export class ResetPasswordService {
   async sendEmailPasswordResetLink({
     resetToken,
     user,
-    workspace,
     locale,
   }: {
     resetToken: PasswordResetToken;
     user: UserEntity;
-    workspace: WorkspaceEntity;
     locale: keyof typeof APP_LOCALES;
   }): Promise<EmailPasswordResetLinkDTO> {
     const hasPassword = isDefined(user.passwordHash);
@@ -208,7 +205,6 @@ export class ResetPasswordService {
     });
 
     const link = this.workspaceDomainsService.buildWorkspaceURL({
-      workspace,
       pathname: resetPasswordPath,
     });
 

@@ -1,5 +1,5 @@
 import { type Response } from 'supertest';
-import { buildWorkspaceOriginForSubdomain } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
+import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.query-factory.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -37,7 +37,6 @@ export const postMetadataOperationWithHeaders = (
 type SignInOptions = RequestHeaders & {
   email?: string;
   password?: string;
-  workspaceSubdomain?: string;
 };
 
 // Runs the full credentials exchange (credentials -> login token -> auth
@@ -46,11 +45,10 @@ type SignInOptions = RequestHeaders & {
 export const signInWithCookieCapture = async ({
   email = 'tim@apple.dev',
   password = 'tim@apple.dev',
-  workspaceSubdomain = 'apple',
   originHeader,
   cookieHeader,
 }: SignInOptions = {}): Promise<Response> => {
-  const workspaceOrigin = buildWorkspaceOriginForSubdomain(workspaceSubdomain);
+  const workspaceOrigin = buildAppleWorkspaceOrigin();
 
   const loginTokenResponse = await postMetadataOperationWithHeaders(
     getLoginTokenFromCredentialsQueryFactory({
@@ -104,7 +102,12 @@ export const extractSessionCookie = (
   response: Response,
   cookieName?: string,
 ):
-  | { rawCookie: string; cookieName: string; cookieHeader: string; sessionToken: string }
+  | {
+      rawCookie: string;
+      cookieName: string;
+      cookieHeader: string;
+      sessionToken: string;
+    }
   | undefined => {
   const candidateNames =
     cookieName === undefined ? SESSION_COOKIE_NAMES : [cookieName];

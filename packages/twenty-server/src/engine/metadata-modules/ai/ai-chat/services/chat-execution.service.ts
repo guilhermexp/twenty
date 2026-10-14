@@ -302,10 +302,8 @@ export class ChatExecutionService {
     }
 
     if (isDefined(browsingContext)) {
-      const contextString = this.buildContextFromBrowsingContext(
-        workspace,
-        browsingContext,
-      );
+      const contextString =
+        this.buildContextFromBrowsingContext(browsingContext);
 
       processedMessages = this.injectBrowsingContextIntoLastUserMessage(
         processedMessages,
@@ -715,12 +713,10 @@ export class ChatExecutionService {
   }
 
   private buildContextFromBrowsingContext(
-    workspace: WorkspaceEntity,
     browsingContext: BrowsingContextType,
   ): string {
     if (browsingContext.type === 'recordPage') {
       return this.buildRecordPageContext(
-        workspace,
         browsingContext.objectNameSingular,
         browsingContext.recordId,
         browsingContext.pageLayoutId,
@@ -736,14 +732,12 @@ export class ChatExecutionService {
   }
 
   private buildRecordPageContext(
-    workspace: WorkspaceEntity,
     objectNameSingular: string,
     recordId: string,
     pageLayoutId?: string,
     activeTabId?: string | null,
   ): string {
     const resourceUrl = this.workspaceDomainsService.buildWorkspaceURL({
-      workspace,
       pathname: getAppPath(AppPath.RecordShowPage, {
         objectNameSingular,
         objectRecordId: recordId,

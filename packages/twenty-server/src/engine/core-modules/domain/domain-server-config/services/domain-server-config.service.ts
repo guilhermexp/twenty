@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
-import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
 import {
   getHostnameFromUrlOrUndefined,
   isHostUnderPublicFunctionDomain,
@@ -20,19 +17,6 @@ export class DomainServerConfigService {
     );
   }
 
-  getBaseUrl(): URL {
-    const baseUrl = this.getFrontUrl();
-
-    if (
-      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      this.twentyConfigService.get('DEFAULT_SUBDOMAIN')
-    ) {
-      baseUrl.hostname = `${this.twentyConfigService.get('DEFAULT_SUBDOMAIN')}.${baseUrl.hostname}`;
-    }
-
-    return baseUrl;
-  }
-
   getPublicDomainUrl(): URL {
     return new URL(this.twentyConfigService.get('PUBLIC_DOMAIN_URL'));
   }
@@ -43,63 +27,10 @@ export class DomainServerConfigService {
     );
   }
 
-  buildBaseUrl({
-    pathname,
-    searchParams,
-    hash,
-  }: {
-    pathname?: string;
-    searchParams?: Record<string, string | number>;
-    hash?: string;
-  }) {
-    return buildUrlWithPathnameAndSearchParams({
-      baseUrl: this.getBaseUrl(),
-      pathname,
-      searchParams,
-      hash,
+  isPublicDomainOrigin(url: string) {
+    return isHostUnderPublicFunctionDomain({
+      host: new URL(url).hostname,
+      publicDomainBaseHostname: this.getPublicBaseHostnameOrUndefined(),
     });
-  }
-
-  getSubdomainFromUrl = (url: string) => {
-    const { hostname: originHostname } = new URL(url);
-
-    const frontDomain = this.getFrontUrl().hostname;
-
-    const isFrontdomain = originHostname.endsWith(`.${frontDomain}`);
-
-    if (isFrontdomain) {
-      const subdomain = originHostname.replace(`.${frontDomain}`, '');
-
-      return {
-        subdomain: this.isDefaultSubdomain(subdomain) ? undefined : subdomain,
-        isPublicDomainOrigin: false,
-      };
-    }
-
-    const publicBaseDomain = this.getPublicBaseHostnameOrUndefined();
-
-    if (
-      isDefined(publicBaseDomain) &&
-      isHostUnderPublicFunctionDomain({
-        host: originHostname,
-        publicDomainBaseHostname: publicBaseDomain,
-      })
-    ) {
-      const subdomain = originHostname.replace(`.${publicBaseDomain}`, '');
-
-      return {
-        subdomain: this.isDefaultSubdomain(subdomain) ? undefined : subdomain,
-        isPublicDomainOrigin: true,
-      };
-    }
-
-    return {
-      subdomain: undefined,
-      isPublicDomainOrigin: false,
-    };
-  };
-
-  isDefaultSubdomain(subdomain: string) {
-    return subdomain === this.twentyConfigService.get('DEFAULT_SUBDOMAIN');
   }
 }

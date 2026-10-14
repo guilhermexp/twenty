@@ -32,7 +32,6 @@ import { AuthService } from 'src/engine/core-modules/auth/services/auth.service'
 import { OidcRequest } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
 import { SamlRequest } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import {
@@ -53,7 +52,6 @@ export class SsoAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly userService: UserService,
     private readonly ssoService: SsoService,
     @InjectRepository(WorkspaceSsoIdentityProviderEntity)
@@ -114,7 +112,6 @@ export class SsoAuthController {
     const workspaceIdentityProvider =
       await this.workspaceSsoIdentityProviderRepository.findOne({
         where: { id: req.user.identityProviderId },
-        relations: { workspace: true },
       });
 
     try {
@@ -138,8 +135,6 @@ export class SsoAuthController {
       const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
         workspaceId: workspaceIdentityProvider.workspaceId,
         workspaceInviteHash: req.user.workspaceInviteHash,
-        email: req.user.email,
-        authProvider: AuthProviderEnum.SSO,
       });
 
       assertIsDefinedOrThrow(
@@ -174,17 +169,13 @@ export class SsoAuthController {
       return res.redirect(
         this.authService.computeRedirectURI({
           loginToken: loginToken.token,
-          workspace: currentWorkspace,
         }),
       );
     } catch (error) {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
           error,
-          workspace:
-            this.workspaceDomainsService.getSubdomainFromWorkspaceFallbackOnDefaultSubdomain(
-              workspaceIdentityProvider?.workspace,
-            ),
+          workspaceId: workspaceIdentityProvider?.workspaceId,
           pathname: AppPath.Verify,
         }),
       );

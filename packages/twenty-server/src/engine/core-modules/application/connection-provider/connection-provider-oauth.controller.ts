@@ -18,7 +18,6 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -35,7 +34,6 @@ export class ConnectionProviderOAuthController {
     private readonly transientTokenService: TransientTokenService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -55,8 +53,7 @@ export class ConnectionProviderOAuthController {
     @Query('redirectLocation') redirectLocation: string | undefined,
     @Res() res: Response,
   ) {
-    // Captured early so the error-redirect lands on the user's own
-    // subdomain (different cookie domain otherwise = de-facto logout).
+    // Captured early so a failure is reported against the workspace.
     let workspace: WorkspaceEntity | null = null;
 
     try {
@@ -210,7 +207,6 @@ export class ConnectionProviderOAuthController {
       );
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
-        workspace,
         pathname,
         searchParams,
         hash,
@@ -235,12 +231,7 @@ export class ConnectionProviderOAuthController {
     return res.redirect(
       this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
         error: error instanceof Error ? error : new Error(String(error)),
-        workspace: {
-          id: workspace?.id,
-          subdomain:
-            workspace?.subdomain ??
-            this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-        },
+        workspaceId: workspace?.id,
         pathname: getSettingsPath(SettingsPath.Accounts),
       }),
     );

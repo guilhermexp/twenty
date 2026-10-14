@@ -9,9 +9,4 @@ export class SignUpInNewWorkspaceInput {
   @IsOptional()
   @MaxLength(100)
   displayName?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  subdomain?: string;
 }

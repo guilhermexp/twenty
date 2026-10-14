@@ -1,8 +1,5 @@
 import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -13,8 +10,6 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 
 @Injectable()
 export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
@@ -24,9 +19,6 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly transientTokenService: TransientTokenService,
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
     super({
       prompt: 'select_account',
@@ -34,8 +26,6 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
   }
 
   async canActivate(context: ExecutionContext) {
-    let workspace: WorkspaceEntity | null = null;
-
     try {
       if (
         !this.twentyConfigService.get('MESSAGING_PROVIDER_MICROSOFT_ENABLED') &&
@@ -49,14 +39,9 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
 
       const request = context.switchToHttp().getRequest();
 
-      const { workspaceId } =
-        await this.transientTokenService.verifyTransientToken(
-          request.query.transientToken,
-        );
-
-      workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
-      });
+      await this.transientTokenService.verifyTransientToken(
+        request.query.transientToken,
+      );
 
       new MicrosoftAPIsOauthRequestCodeStrategy(this.twentyConfigService);
       setRequestExtraParams(request, {
@@ -71,13 +56,7 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      this.guardRedirectService.dispatchErrorFromGuard(
-        context,
-        err,
-        this.workspaceDomainsService.getSubdomainFromWorkspaceFallbackOnDefaultSubdomain(
-          workspace,
-        ),
-      );
+      this.guardRedirectService.dispatchErrorFromGuard(context, err);
 
       return false;
     }

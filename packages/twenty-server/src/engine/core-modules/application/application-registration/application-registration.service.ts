@@ -48,7 +48,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
@@ -104,8 +103,6 @@ export class ApplicationRegistrationService {
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly serverFileStorageService: ServerFileStorageService,
@@ -990,56 +987,6 @@ export class ApplicationRegistrationService {
     });
 
     return claimedRegistration;
-  }
-
-  async transferOwnership(params: {
-    applicationRegistrationId: string;
-    targetWorkspaceSubdomain: string;
-    currentOwnerWorkspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.findOneById(
-      params.applicationRegistrationId,
-      params.currentOwnerWorkspaceId,
-    );
-
-    const targetWorkspace = await this.workspaceRepository.findOne({
-      where: { subdomain: params.targetWorkspaceSubdomain },
-    });
-
-    if (!isDefined(targetWorkspace)) {
-      throw new ApplicationRegistrationException(
-        `No workspace found with subdomain "${params.targetWorkspaceSubdomain}"`,
-        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
-      );
-    }
-
-    if (targetWorkspace.id === params.currentOwnerWorkspaceId) {
-      throw new ApplicationRegistrationException(
-        'Cannot transfer ownership to the same workspace',
-        ApplicationRegistrationExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    await this.applicationRegistrationRepository.update(registration.id, {
-      ownerWorkspaceId: targetWorkspace.id,
-    });
-
-    const transferredRegistration =
-      await this.applicationRegistrationRepository.findOneOrFail({
-        where: { id: registration.id },
-      });
-
-    await this.broadcastApplicationRegistrationEvent({
-      type: 'deleted',
-      applicationRegistration: registration,
-    });
-
-    await this.broadcastApplicationRegistrationEvent({
-      type: 'created',
-      applicationRegistration: transferredRegistration,
-    });
-
-    return transferredRegistration;
   }
 
   private async generateClientSecret(): Promise<{

@@ -344,7 +344,6 @@ describe('ApprovedAccessDomainService', () => {
         { expiresIn: '7d' },
       );
       expect(workspaceDomainsService.buildWorkspaceURL).toHaveBeenCalledWith({
-        workspace: workspace,
         pathname: getSettingsPath(SettingsPath.WorkspaceMembersPage),
         searchParams: {
           wtdId: approvedAccessDomain.id,

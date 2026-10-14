@@ -1,7 +1,6 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation } from '@nestjs/graphql';
 
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ResendEmailVerificationTokenInput } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.input';
 import { ResendEmailVerificationTokenDTO } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.dto';
@@ -22,7 +21,6 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 export class EmailVerificationResolver {
   constructor(
     private readonly emailVerificationService: EmailVerificationService,
-    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
   // TODO: this should be an authenticated endpoint
@@ -31,17 +29,11 @@ export class EmailVerificationResolver {
   async resendEmailVerificationToken(
     @Args()
     resendEmailVerificationTokenInput: ResendEmailVerificationTokenInput,
-    @Args('origin') origin: string,
+    @Args('origin') _origin: string,
     @Context() context: I18nContext,
   ): Promise<ResendEmailVerificationTokenDTO> {
-    const workspace =
-      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
     return await this.emailVerificationService.resendEmailVerificationToken(
       resendEmailVerificationTokenInput.email,
-      workspace,
       context.req.locale,
     );
   }

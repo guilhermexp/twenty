@@ -51,10 +51,7 @@ describe('ClientConfigController', () => {
           sso: [],
         },
         signInPrefilled: false,
-        isMultiWorkspaceEnabled: true,
         isEmailVerificationRequired: false,
-        defaultSubdomain: 'app',
-        frontDomain: 'localhost',
         publicFunctionDomain: null,
         sentry: {
           environment: 'development',

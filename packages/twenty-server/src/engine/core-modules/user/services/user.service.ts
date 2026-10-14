@@ -18,7 +18,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -55,7 +54,6 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
-    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly emailVerificationService: EmailVerificationService,
     private readonly workspaceService: WorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -496,12 +494,10 @@ export class UserService {
 
   async updateUserEmail({
     user,
-    workspace,
     newEmail,
     verifyEmailRedirectPath,
   }: {
     user: AuthContextUser;
-    workspace: WorkspaceEntity;
     newEmail: string;
     verifyEmailRedirectPath?: string;
   }): Promise<void> {
@@ -548,15 +544,9 @@ export class UserService {
       return;
     }
 
-    const workspaceDomainConfig =
-      this.workspaceDomainsService.getSubdomainFromWorkspaceFallbackOnDefaultSubdomain(
-        workspace,
-      );
-
     await this.emailVerificationService.sendVerificationEmail({
       userId: user.id,
       email: normalizedEmail,
-      workspace: workspaceDomainConfig,
       locale: user.locale || SOURCE_LOCALE,
       verifyEmailRedirectPath,
       verificationTrigger: EmailVerificationTrigger.EMAIL_UPDATE,

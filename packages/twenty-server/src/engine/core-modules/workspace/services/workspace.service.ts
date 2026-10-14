@@ -24,7 +24,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import {
   EmailingDomainWorkspaceCleanupJob,
@@ -103,14 +102,12 @@ export class WorkspaceService {
     string,
     PermissionFlagType
   > = {
-    subdomain: PermissionFlagType.WORKSPACE,
     displayName: PermissionFlagType.WORKSPACE,
     logo: PermissionFlagType.WORKSPACE,
     trashRetentionDays: PermissionFlagType.WORKSPACE,
     eventLogRetentionDays: PermissionFlagType.SECURITY,
     inviteHash: PermissionFlagType.WORKSPACE_MEMBERS,
     isPublicInviteLinkEnabled: PermissionFlagType.SECURITY,
-    workspaceDiscoverability: PermissionFlagType.SECURITY,
     isGoogleAuthEnabled: PermissionFlagType.SECURITY,
     isMicrosoftAuthEnabled: PermissionFlagType.SECURITY,
     isPasswordAuthEnabled: PermissionFlagType.SECURITY,
@@ -144,7 +141,6 @@ export class WorkspaceService {
     private readonly preInstalledAppsService: PreInstalledAppsService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceSchemaService: WorkspaceSchemaService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly aiModelRegistryService: AiModelRegistryService,
@@ -184,15 +180,6 @@ export class WorkspaceService {
       apiKey,
       workspaceActivationStatus: workspace.activationStatus,
     });
-
-    if (
-      isDefined(payload.subdomain) &&
-      workspace.subdomain !== payload.subdomain
-    ) {
-      await this.subdomainManagerService.validateSubdomainOrThrow(
-        payload.subdomain,
-      );
-    }
 
     const authProvidersBySystem = {
       google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),

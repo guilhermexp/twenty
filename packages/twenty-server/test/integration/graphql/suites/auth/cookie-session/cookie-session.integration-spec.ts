@@ -4,20 +4,8 @@ import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/c
 
 const SERVER_URL = `http://localhost:${APP_PORT}`;
 
-const buildAppleOrigin = (): string => {
-  const origin = new URL(SERVER_URL);
-
-  origin.hostname =
-    process.env.IS_MULTIWORKSPACE_ENABLED === 'true'
-      ? `apple.${origin.hostname}`
-      : origin.hostname;
-
-  return origin.origin;
-};
-
-// The app listens on localhost while the seeded workspace resolves from the
-// apple subdomain. Without a matching Host the server sees a cross-origin
-// request and refuses to issue the cookie, which is the behaviour under test
+// Without a Host matching the Origin the server sees a cross-origin request
+// and refuses to issue the cookie, which is the behaviour under test
 // everywhere except here.
 const asWorkspaceRequest = (
   agent: request.Test,
@@ -75,7 +63,7 @@ const extractSessionCookie = (
     ?.split(';')[0];
 };
 
-const origin = buildAppleOrigin();
+const origin = new URL(SERVER_URL).origin;
 
 const signInAndGetSessionCookie = async (): Promise<string> => {
   const loginResponse = await asWorkspaceRequest(

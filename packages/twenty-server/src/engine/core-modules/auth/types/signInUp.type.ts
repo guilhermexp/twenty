@@ -5,11 +5,6 @@ import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-export type SocialSsoSignInUpActionType =
-  | 'create-new-workspace'
-  | 'list-available-workspaces'
-  | 'join-workspace';
-
 export type SignInUpBaseParams = {
   invitation?: AppTokenEntity;
   workspace?: WorkspaceEntity | null;

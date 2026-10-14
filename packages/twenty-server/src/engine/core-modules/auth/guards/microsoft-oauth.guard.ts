@@ -1,18 +1,14 @@
 import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { MICROSOFT_OAUTH_MAX_RETRY_ATTEMPTS } from 'src/engine/core-modules/auth/constants/microsoft-oauth-max-retry-attempts.constants';
 import { type SocialSsoState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
 import { isMicrosoftOAuthTransientError } from 'src/engine/core-modules/auth/utils/is-microsoft-oauth-transient-error.util';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type SocialSsoStateWithRetry = SocialSsoState & {
   oauthRetryCount?: number;
@@ -20,12 +16,7 @@ type SocialSsoStateWithRetry = SocialSsoState & {
 
 @Injectable()
 export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
-  constructor(
-    private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly workspaceDomainsService: WorkspaceDomainsService,
-  ) {
+  constructor(private readonly guardRedirectService: GuardRedirectService) {
     super({
       prompt: 'select_account',
     });
@@ -33,7 +24,6 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    let workspace: WorkspaceEntity | null = null;
 
     try {
       if (
@@ -41,9 +31,6 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
         typeof request.query.workspaceId === 'string'
       ) {
         request.params.workspaceId = request.query.workspaceId;
-        workspace = await this.workspaceRepository.findOneBy({
-          id: request.query.workspaceId,
-        });
       }
 
       return (await super.canActivate(context)) as boolean;
@@ -52,13 +39,7 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
         return false;
       }
 
-      this.guardRedirectService.dispatchErrorFromGuard(
-        context,
-        err,
-        this.workspaceDomainsService.getSubdomainFromWorkspaceFallbackOnDefaultSubdomain(
-          workspace,
-        ),
-      );
+      this.guardRedirectService.dispatchErrorFromGuard(context, err);
 
       return false;
     }

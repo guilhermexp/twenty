@@ -1,20 +1,6 @@
-// Workspace-selection origin for a seeded workspace, passed as the GraphQL
-// `origin` variable on auth exchanges. The server resolves which workspace to
-// authenticate into from this URL's subdomain
-// (getWorkspaceByOriginOrDefaultWorkspace); it is routing data, unrelated to
-// the HTTP Origin header the CSRF and cookie-issuance gates read.
-export const buildWorkspaceOriginForSubdomain = (
-  subdomain: string,
-): string => {
-  const origin = new URL(`http://localhost:${APP_PORT}`);
-
-  origin.hostname =
-    process.env.IS_MULTIWORKSPACE_ENABLED === 'true'
-      ? `${subdomain}.${origin.hostname}`
-      : origin.hostname;
-
-  return origin.toString();
-};
-
+// Origin passed as the GraphQL `origin` variable on auth exchanges. The server
+// always resolves the single workspace, which is the seeded Apple workspace in
+// the test environment; this is unrelated to the HTTP Origin header the CSRF
+// and cookie-issuance gates read.
 export const buildAppleWorkspaceOrigin = (): string =>
-  buildWorkspaceOriginForSubdomain('apple');
+  new URL(`http://localhost:${APP_PORT}`).toString();

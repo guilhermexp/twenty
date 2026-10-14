@@ -35,7 +35,6 @@ import { type UpdatePasswordDTO } from 'src/engine/core-modules/auth/dto/update-
 import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
 import { type CheckUserExistDTO } from 'src/engine/core-modules/auth/dto/user-exists.dto';
 import { type WorkspaceInviteHashValidDTO } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.dto';
-import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { CreateSsoConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
@@ -57,7 +56,6 @@ import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
@@ -87,7 +85,6 @@ export class AuthService {
     private readonly guardRedirectService: GuardRedirectService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly authSsoService: AuthSsoService,
     private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
     private readonly permissionsService: PermissionsService,
@@ -413,12 +410,6 @@ export class AuthService {
     };
   }
 
-  async countAvailableWorkspacesByEmail(email: string): Promise<number> {
-    return Object.values(
-      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
-    ).flat(2).length;
-  }
-
   async checkUserExists(email: string): Promise<CheckUserExistDTO> {
     const user = await this.userService.findUserByEmail(email);
 
@@ -426,8 +417,6 @@ export class AuthService {
 
     return {
       exists: isUserExist,
-      availableWorkspacesCount:
-        await this.countAvailableWorkspacesByEmail(email),
       isEmailVerified: isUserExist ? user.isEmailVerified : false,
     };
   }
@@ -674,7 +663,7 @@ export class AuthService {
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
-      link: this.domainServerConfigService.getBaseUrl().toString(),
+      link: this.domainServerConfigService.getFrontUrl().toString(),
       locale: firstUserWorkspace.locale,
     });
 
@@ -720,15 +709,12 @@ export class AuthService {
 
   computeRedirectURI({
     loginToken,
-    workspace,
     returnToPath,
   }: {
     loginToken: string;
-    workspace: WorkspaceDomainConfig;
     returnToPath?: string;
   }) {
     const url = this.workspaceDomainsService.buildWorkspaceURL({
-      workspace,
       pathname: AppPath.Verify,
       searchParams: {
         loginToken,
@@ -774,18 +760,10 @@ export class AuthService {
     return (await qr.getOne()) ?? undefined;
   }
 
-  async findWorkspaceForSignInUp(
-    params: {
-      workspaceId?: string;
-      workspaceInviteHash?: string;
-    } & (
-      | {
-          authProvider: Exclude<AuthProviderEnum, AuthProviderEnum.Password>;
-          email: string;
-        }
-      | { authProvider: Extract<AuthProviderEnum, AuthProviderEnum.Password> }
-    ),
-  ) {
+  async findWorkspaceForSignInUp(params: {
+    workspaceId?: string;
+    workspaceInviteHash?: string;
+  }) {
     if (params.workspaceInviteHash) {
       return (
         (await this.workspaceRepository.findOne({
@@ -794,18 +772,6 @@ export class AuthService {
           },
           relations: ['approvedAccessDomains'],
         })) ?? undefined
-      );
-    }
-
-    if (params.authProvider !== AuthProviderEnum.Password) {
-      return (
-        (await this.authSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
-          {
-            email: params.email,
-            authProvider: params.authProvider,
-          },
-          params.workspaceId,
-        )) ?? undefined
       );
     }
 
@@ -922,8 +888,8 @@ export class AuthService {
     const existingUser =
       await this.userService.findUserByEmailWithWorkspaces(email);
 
-    // Route SSO sign-ins through the same create-or-select flow as credentials
-    // instead of landing straight on a workspace subdomain.
+    // Without a target workspace (fresh instance bootstrap), route SSO sign-ins
+    // through the same flow as credentials so the user can create the workspace.
     if (!workspaceId && !workspaceInviteHash) {
       const user =
         existingUser ??
@@ -949,7 +915,7 @@ export class AuthService {
 
       // The token rides in the fragment so it never reaches access logs,
       // proxies or Referer headers: browsers keep it out of the request line.
-      const url = this.domainServerConfigService.buildBaseUrl({
+      const url = this.workspaceDomainsService.buildWorkspaceURL({
         pathname: AppPath.SignInUp,
         searchParams: {
           ...(isNonEmptyString(returnToPath) && returnToPath.startsWith('/')
@@ -965,8 +931,6 @@ export class AuthService {
     const currentWorkspace = await this.findWorkspaceForSignInUp({
       workspaceId,
       workspaceInviteHash,
-      email,
-      authProvider,
     });
 
     try {
@@ -1021,16 +985,12 @@ export class AuthService {
 
       return this.computeRedirectURI({
         loginToken: loginToken.token,
-        workspace,
         returnToPath,
       });
     } catch (error) {
       return this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
         error,
-        workspace:
-          this.workspaceDomainsService.getSubdomainFromWorkspaceFallbackOnDefaultSubdomain(
-            currentWorkspace,
-          ),
+        workspaceId: currentWorkspace?.id,
         pathname: AppPath.Verify,
       });
     }

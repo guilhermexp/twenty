@@ -4,7 +4,7 @@ import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
-import { type AvailableWorkspacesAndAccessTokensDTO } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.dto';
+import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
 import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
 
 type SignUpUtilArgs = {
@@ -16,7 +16,7 @@ export const signUp = async ({
   input,
   expectToFail,
 }: SignUpUtilArgs): CommonResponseBody<{
-  signUp: AvailableWorkspacesAndAccessTokensDTO;
+  signUp: AuthTokens;
 }> => {
   const mutation = gql`
     mutation SignUp(
@@ -33,24 +33,6 @@ export const signUp = async ({
           refreshToken {
             token
             expiresAt
-          }
-        }
-        availableWorkspaces {
-          availableWorkspacesForSignIn {
-            id
-            displayName
-            logo
-            workspaceUrls {
-              subdomainUrl
-            }
-          }
-          availableWorkspacesForSignUp {
-            id
-            displayName
-            logo
-            workspaceUrls {
-              subdomainUrl
-            }
           }
         }
       }

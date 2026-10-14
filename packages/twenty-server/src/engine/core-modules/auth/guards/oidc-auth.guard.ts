@@ -10,18 +10,14 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { OidcAuthStrategy } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
-import { type SsoConfiguration } from 'src/engine/core-modules/sso/types/sso-configurations.type';
-import { type WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 @Injectable()
 export class OidcAuthGuard extends AuthGuard('openidconnect') {
   constructor(
     private readonly ssoService: SsoService,
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
     super();
   }
@@ -55,10 +51,6 @@ export class OidcAuthGuard extends AuthGuard('openidconnect') {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
 
-    let identityProvider:
-      | (SsoConfiguration & WorkspaceSsoIdentityProviderEntity)
-      | null = null;
-
     try {
       const state = this.getStateByRequest(request);
 
@@ -69,9 +61,10 @@ export class OidcAuthGuard extends AuthGuard('openidconnect') {
         );
       }
 
-      identityProvider = await this.ssoService.findSsoIdentityProviderById(
-        state.identityProviderId,
-      );
+      const identityProvider =
+        await this.ssoService.findSsoIdentityProviderById(
+          state.identityProviderId,
+        );
 
       if (!identityProvider) {
         throw new AuthException(
@@ -88,13 +81,7 @@ export class OidcAuthGuard extends AuthGuard('openidconnect') {
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      this.guardRedirectService.dispatchErrorFromGuard(
-        context,
-        err,
-        this.workspaceDomainsService.getSubdomainFromWorkspaceFallbackOnDefaultSubdomain(
-          identityProvider?.workspace,
-        ),
-      );
+      this.guardRedirectService.dispatchErrorFromGuard(context, err);
 
       return false;
     }

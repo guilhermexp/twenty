@@ -6,11 +6,6 @@ const client = request(SERVER_URL);
 
 const ORIGIN = new URL(SERVER_URL);
 
-ORIGIN.hostname =
-  process.env.IS_MULTIWORKSPACE_ENABLED === 'true'
-    ? `apple.${ORIGIN.hostname}`
-    : ORIGIN.hostname;
-
 const auth = {
   email: 'tim@apple.dev',
   password: 'tim@apple.dev',

@@ -26,11 +26,10 @@ export class OAuthDiscoveryController {
   async getAuthorizationServerMetadata(@Req() request: Request) {
     const issuer = getRequestBaseUrl(request);
     // /authorize is served by the frontend; SERVER_URL (API-only) has no such
-    // route, so we route the client to the default frontend base URL in that
-    // case. All other hosts (app.twenty.com, workspace subdomains, custom
-    // domains) serve both frontend and API.
+    // route, so we route the client to FRONTEND_URL in that case. A host that
+    // serves both the frontend and the API keeps its own /authorize.
     const authorizeBase = this.isApiHost(request)
-      ? cleanServerUrl(this.domainServerConfigService.getBaseUrl().toString())
+      ? cleanServerUrl(this.domainServerConfigService.getFrontUrl().toString())
       : issuer;
 
     const authorizationEndpoint =

@@ -12,7 +12,6 @@ import {
 import { CustomException } from 'src/utils/custom-exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -26,7 +25,6 @@ export class ApplicationRegistrationClaimController {
     private readonly applicationRegistrationClaimService: ApplicationRegistrationClaimService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly guardRedirectService: GuardRedirectService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Get('github/callback')
@@ -67,7 +65,6 @@ export class ApplicationRegistrationClaimController {
       }
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
-        workspace,
         pathname: getSettingsPath(SettingsPath.Applications),
       });
 
@@ -80,7 +77,6 @@ export class ApplicationRegistrationClaimController {
 
       if (workspace !== null) {
         const url = this.workspaceDomainsService.buildWorkspaceURL({
-          workspace,
           pathname: getSettingsPath(SettingsPath.Applications),
         });
 
@@ -93,9 +89,6 @@ export class ApplicationRegistrationClaimController {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
           error,
-          workspace: {
-            subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-          },
           pathname: getSettingsPath(SettingsPath.Applications),
         }),
       );

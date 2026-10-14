@@ -26,7 +26,6 @@ import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
 import { AuthorizeAppDTO } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { AvailableWorkspacesAndAccessTokensDTO } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.dto';
 import { EmailPasswordResetLinkDTO } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
 import { GetAuthTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-auth-token-from-email-verification-token.input';
@@ -57,7 +56,6 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-t
 import { LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
-import { SubdomainAvailabilityDTO } from 'src/engine/core-modules/domain/subdomain-manager/dtos/subdomain-availability.dto';
 import { WorkspaceCreationDefaultsDTO } from 'src/engine/core-modules/domain/subdomain-manager/dtos/workspace-creation-defaults.dto';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -232,51 +230,20 @@ export class AuthResolver {
     return { loginToken };
   }
 
-  @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
+  @Mutation(() => AuthTokens)
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signIn(
     @Args()
     userCredentials: UserCredentialsInput,
     @Context() context: { req: Request },
-  ): Promise<AvailableWorkspacesAndAccessTokensDTO> {
+  ): Promise<AuthTokens> {
     const user =
       await this.authService.validateLoginWithPassword(userCredentials);
 
-    const availableWorkspaces =
-      await this.userWorkspaceService.findAvailableWorkspacesByEmail(
-        user.email,
-      );
-
-    const result = {
-      availableWorkspaces:
-        await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
-          availableWorkspaces,
-          user,
-          AuthProviderEnum.Password,
-        ),
-      tokens: {
-        accessOrWorkspaceAgnosticToken:
-          await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
-            {
-              userId: user.id,
-              authProvider: AuthProviderEnum.Password,
-            },
-          ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: user.id,
-          authProvider: AuthProviderEnum.Password,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
-      },
-    };
-
-    await this.userSessionService.issueSessionForTokenPair({
-      tokenPair: result.tokens,
+    return this.issueWorkspaceAgnosticAuthTokens({
+      userId: user.id,
       request: context.req,
-      origin: 'sign_in',
     });
-
-    return result;
   }
 
   @Mutation(() => VerifyEmailAndGetLoginTokenDTO)
@@ -306,10 +273,9 @@ export class AuthResolver {
     await this.appTokenRepository.remove(appToken);
 
     const workspace =
-      (await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
-      )) ??
-      (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
+      );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -317,19 +283,19 @@ export class AuthResolver {
       AuthProviderEnum.Password,
     );
 
-    const workspaceUrls =
-      this.workspaceDomainsService.getWorkspaceUrls(workspace);
-
-    return { loginToken, workspaceUrls };
+    return {
+      loginToken,
+      workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(),
+    };
   }
 
-  @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
+  @Mutation(() => AuthTokens)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async verifyEmailAndGetWorkspaceAgnosticToken(
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
     @Context() context: { req: Request },
-  ) {
+  ): Promise<AuthTokens> {
     const appToken =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
         getAuthTokenFromEmailVerificationTokenInput,
@@ -349,41 +315,10 @@ export class AuthResolver {
 
     await this.appTokenRepository.remove(appToken);
 
-    const availableWorkspaces =
-      await this.userWorkspaceService.findAvailableWorkspacesByEmail(
-        user.email,
-      );
-
-    const result = {
-      availableWorkspaces:
-        await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
-          availableWorkspaces,
-          user,
-          AuthProviderEnum.Password,
-        ),
-      tokens: {
-        accessOrWorkspaceAgnosticToken:
-          await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
-            {
-              userId: user.id,
-              authProvider: AuthProviderEnum.Password,
-            },
-          ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: user.id,
-          authProvider: AuthProviderEnum.Password,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
-      },
-    };
-
-    await this.userSessionService.issueSessionForTokenPair({
-      tokenPair: result.tokens,
+    return this.issueWorkspaceAgnosticAuthTokens({
+      userId: user.id,
       request: context.req,
-      origin: 'sign_in',
     });
-
-    return result;
   }
 
   @Mutation(() => AuthTokens)
@@ -428,12 +363,12 @@ export class AuthResolver {
     return authTokens;
   }
 
-  @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
+  @Mutation(() => AuthTokens)
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
     @Context() context: { req: Request },
-  ): Promise<AvailableWorkspacesAndAccessTokensDTO> {
+  ): Promise<AuthTokens> {
     const user = await this.signInUpService.signUpWithoutWorkspace(
       {
         email: signUpInput.email,
@@ -445,50 +380,18 @@ export class AuthResolver {
       },
     );
 
-    const availableWorkspaces =
-      await this.userWorkspaceService.findAvailableWorkspacesByEmail(
-        user.email,
-      );
-
     await this.emailVerificationService.sendVerificationEmail({
       userId: user.id,
       email: user.email,
-      workspace: undefined,
       locale: signUpInput.locale ?? SOURCE_LOCALE,
       verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
       verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });
 
-    const result = {
-      availableWorkspaces:
-        await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
-          availableWorkspaces,
-          user,
-          AuthProviderEnum.Password,
-        ),
-      tokens: {
-        accessOrWorkspaceAgnosticToken:
-          await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
-            {
-              userId: user.id,
-              authProvider: AuthProviderEnum.Password,
-            },
-          ),
-        refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: user.id,
-          authProvider: AuthProviderEnum.Password,
-          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-        }),
-      },
-    };
-
-    await this.userSessionService.issueSessionForTokenPair({
-      tokenPair: result.tokens,
+    return this.issueWorkspaceAgnosticAuthTokens({
+      userId: user.id,
       request: context.req,
-      origin: 'sign_in',
     });
-
-    return result;
   }
 
   @Mutation(() => SignUpDTO)
@@ -498,7 +401,6 @@ export class AuthResolver {
   ): Promise<SignUpDTO> {
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceInviteHash: signUpInput.workspaceInviteHash,
-      authProvider: AuthProviderEnum.Password,
       workspaceId: signUpInput.workspaceId,
     });
 
@@ -543,7 +445,6 @@ export class AuthResolver {
     await this.emailVerificationService.sendVerificationEmail({
       userId: user.id,
       email: user.email,
-      workspace,
       locale: signUpInput.locale ?? SOURCE_LOCALE,
       verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
       verificationTrigger: EmailVerificationTrigger.SIGN_UP,
@@ -559,17 +460,9 @@ export class AuthResolver {
       loginToken,
       workspace: {
         id: workspace.id,
-        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(),
       },
     };
-  }
-
-  @Query(() => SubdomainAvailabilityDTO)
-  @UseGuards(UserAuthGuard, NoPermissionGuard)
-  async checkWorkspaceSubdomainAvailability(
-    @Args('subdomain') subdomain: string,
-  ): Promise<SubdomainAvailabilityDTO> {
-    return this.subdomainManagerService.getSubdomainAvailability(subdomain);
   }
 
   @Query(() => WorkspaceCreationDefaultsDTO)
@@ -603,7 +496,7 @@ export class AuthResolver {
 
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: fullUser },
-      { displayName: input?.displayName, subdomain: input?.subdomain },
+      { displayName: input?.displayName },
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
@@ -616,7 +509,7 @@ export class AuthResolver {
       loginToken,
       workspace: {
         id: workspace.id,
-        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(),
       },
     };
   }
@@ -959,5 +852,36 @@ export class AuthResolver {
     return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );
+  }
+
+  private async issueWorkspaceAgnosticAuthTokens({
+    userId,
+    request,
+  }: {
+    userId: string;
+    request: Request;
+  }): Promise<AuthTokens> {
+    const tokens = {
+      accessOrWorkspaceAgnosticToken:
+        await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
+          {
+            userId,
+            authProvider: AuthProviderEnum.Password,
+          },
+        ),
+      refreshToken: await this.refreshTokenService.generateRefreshToken({
+        userId,
+        authProvider: AuthProviderEnum.Password,
+        targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
+      }),
+    };
+
+    await this.userSessionService.issueSessionForTokenPair({
+      tokenPair: tokens,
+      request,
+      origin: 'sign_in',
+    });
+
+    return { tokens };
   }
 }

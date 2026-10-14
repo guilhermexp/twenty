@@ -30,7 +30,7 @@ describe('OAuthDiscoveryController', () => {
         {
           provide: DomainServerConfigService,
           useValue: {
-            getBaseUrl: jest
+            getFrontUrl: jest
               .fn()
               .mockReturnValue(new URL('https://app.example.com')),
           },
@@ -50,23 +50,23 @@ describe('OAuthDiscoveryController', () => {
   // origin itself and the /mcp variant maps to <origin>/mcp.
   describe('getProtectedResourceMetadata', () => {
     it('root form returns the origin as the resource', () => {
-      const request = buildMockRequest('workspace.twenty.com');
+      const request = buildMockRequest('crm.example.com');
 
       expect(
         controller.getProtectedResourceMetadataRoot(request),
       ).toMatchObject({
-        resource: 'https://workspace.twenty.com',
-        authorization_servers: ['https://workspace.twenty.com'],
+        resource: 'https://crm.example.com',
+        authorization_servers: ['https://crm.example.com'],
       });
     });
 
     it('path-aware /mcp form returns origin/mcp as the resource', () => {
-      const request = buildMockRequest('workspace.twenty.com');
+      const request = buildMockRequest('crm.example.com');
 
       expect(controller.getProtectedResourceMetadataMcp(request)).toMatchObject(
         {
-          resource: 'https://workspace.twenty.com/mcp',
-          authorization_servers: ['https://workspace.twenty.com'],
+          resource: 'https://crm.example.com/mcp',
+          authorization_servers: ['https://crm.example.com'],
         },
       );
     });
@@ -86,7 +86,7 @@ describe('OAuthDiscoveryController', () => {
           {
             provide: DomainServerConfigService,
             useValue: {
-              getBaseUrl: jest
+              getFrontUrl: jest
                 .fn()
                 .mockReturnValue(new URL('https://crm.acme.com')),
             },
@@ -110,13 +110,13 @@ describe('OAuthDiscoveryController', () => {
     });
 
     it('serves /authorize on its own origin when it has one', async () => {
-      const request = buildMockRequest('workspace.twenty.com');
+      const request = buildMockRequest('crm.example.com');
 
       expect(
         await controller.getAuthorizationServerMetadata(request),
       ).toMatchObject({
-        issuer: 'https://workspace.twenty.com',
-        authorization_endpoint: 'https://workspace.twenty.com/authorize',
+        issuer: 'https://crm.example.com',
+        authorization_endpoint: 'https://crm.example.com/authorize',
         authorization_response_iss_parameter_supported: true,
       });
     });

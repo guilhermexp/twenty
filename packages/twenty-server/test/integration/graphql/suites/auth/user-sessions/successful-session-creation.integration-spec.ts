@@ -45,8 +45,8 @@ describe('successful user session creation on auth exchanges (integration)', () 
     // Pins name, sess_ prefix, attribute list and order in one place. The
     // absences matter as much as the presences: no Secure and no __Host-
     // (plain-http test deployment), and no Domain, which is what makes the
-    // cookie host-only so browsers never send it to sibling workspace
-    // subdomains. The secure boot pins its own shape in
+    // cookie host-only so browsers never send it to sibling subdomains. The
+    // secure boot pins its own shape in
     // secure-deployment-session-cookie.integration-spec.ts, so this snapshot
     // only applies to the insecure one.
     if (!IS_SECURE_DEPLOYMENT) {

@@ -76,7 +76,6 @@ export class ApprovedAccessDomainService {
     }
 
     const link = this.workspaceDomainsService.buildWorkspaceURL({
-      workspace,
       pathname: getSettingsPath(SettingsPath.WorkspaceMembersPage),
       searchParams: {
         wtdId: approvedAccessDomain.id,
@@ -301,21 +300,5 @@ export class ApprovedAccessDomainService {
 
   async getApprovedAccessDomains(workspace: WorkspaceEntity) {
     return this.approvedAccessDomainRepository.find(workspace.id);
-  }
-
-  async findValidatedApprovedAccessDomainWithWorkspacesAndSsoIdentityProvidersDomain(
-    domain: string,
-  ) {
-    return this.approvedAccessDomainRepositoryUnscoped.find({
-      relations: [
-        'workspace',
-        'workspace.workspaceSsoIdentityProviders',
-        'workspace.approvedAccessDomains',
-      ],
-      where: {
-        domain,
-        isValidated: true,
-      },
-    });
   }
 }

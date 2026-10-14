@@ -235,16 +235,7 @@ export class ClientConfig {
   signInPrefilled: boolean;
 
   @Field(() => Boolean)
-  isMultiWorkspaceEnabled: boolean;
-
-  @Field(() => Boolean)
   isEmailVerificationRequired: boolean;
-
-  @Field(() => String, { nullable: true })
-  defaultSubdomain: string;
-
-  @Field(() => String)
-  frontDomain: string;
 
   @Field(() => String, { nullable: true })
   publicFunctionDomain: string | null;

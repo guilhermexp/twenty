@@ -174,7 +174,7 @@ export class CleanerWorkspaceService {
     );
 
     const workspaceUrl = this.workspaceDomainsService
-      .buildWorkspaceURL({ workspace })
+      .buildWorkspaceURL()
       .toString();
 
     if (!dryRun) {

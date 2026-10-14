@@ -164,14 +164,9 @@ export class ClientConfigService {
         sso: [],
       },
       signInPrefilled: this.twentyConfigService.get('SIGN_IN_PREFILLED'),
-      isMultiWorkspaceEnabled: this.twentyConfigService.get(
-        'IS_MULTIWORKSPACE_ENABLED',
-      ),
       isEmailVerificationRequired: this.twentyConfigService.get(
         'IS_EMAIL_VERIFICATION_REQUIRED',
       ),
-      defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-      frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
       publicFunctionDomain:
         this.domainServerConfigService.getPublicBaseHostnameOrUndefined() ??
         null,

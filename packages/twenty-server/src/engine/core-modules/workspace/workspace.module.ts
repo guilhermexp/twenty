@@ -7,7 +7,6 @@ import { ApplicationManifestModule } from 'src/engine/core-modules/application/a
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { CompanyEnrichmentModule } from 'src/engine/core-modules/company-enrichment/company-enrichment.module';
-import { SubdomainManagerModule } from 'src/engine/core-modules/domain/subdomain-manager/subdomain-manager.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -60,7 +59,6 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
     RoleModule,
     AiAgentModule,
     WorkspaceDomainsModule,
-    SubdomainManagerModule,
     ViewModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ApplicationModule,

@@ -5,17 +5,9 @@ import { msg } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import {
-  IsNull,
-  QueryFailedError,
-  Repository,
-  type DataSource,
-  type QueryRunner,
-} from 'typeorm';
+import { IsNull, Repository, type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
-import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/user/user-signup';
 import { WORKSPACE_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
@@ -30,12 +22,6 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { getSignUpWithoutWorkspaceDecision } from 'src/engine/core-modules/auth/utils/get-sign-up-without-workspace-decision.util';
-import { hasProvisionedSignUpDestination } from 'src/engine/core-modules/auth/utils/has-provisioned-sign-up-destination.util';
-import { DEFAULT_DPA_REGION } from 'src/engine/core-modules/dpa/config/dpa-region-config.constant';
-import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
-import { DpaAgreementType } from 'src/engine/core-modules/dpa/enums/dpa-agreement-type.enum';
-import { buildDpaAgreementRecord } from 'src/engine/core-modules/dpa/utils/build-dpa-agreement-record.util';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrPartialUserWithPicture,
@@ -49,17 +35,12 @@ import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-p
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
 import { isWorkEmail } from 'src/utils/is-work-email';
@@ -77,7 +58,6 @@ export class SignInUpService {
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly userService: UserService,
     private readonly metricsService: MetricsService,
@@ -396,71 +376,17 @@ export class SignInUpService {
     return savedUser;
   }
 
-  private async isSignUpEnabled(): Promise<boolean> {
+  // A single workspace per instance: sign-up outside an existing workspace
+  // is only the bootstrap of a fresh instance.
+  private async assertNoWorkspaceExists(): Promise<void> {
     const workspaceCount = await this.workspaceRepository.count();
 
-    return (
-      this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') ||
-      workspaceCount === 0
-    );
-  }
-
-  private async assertSignUpEnabled(): Promise<void> {
-    if (!(await this.isSignUpEnabled())) {
+    if (workspaceCount > 0) {
       throw new AuthException(
         'New workspace setup is disabled',
         AuthExceptionCode.SIGNUP_DISABLED,
       );
     }
-  }
-
-  // Enforced here rather than at workspace creation so a restricted instance
-  // stops accumulating verified users that can never reach a workspace.
-  private async assertSignUpWithoutWorkspaceAllowed(
-    email: string,
-  ): Promise<void> {
-    const decision = getSignUpWithoutWorkspaceDecision({
-      isMultiWorkspaceEnabled: this.twentyConfigService.get(
-        'IS_MULTIWORKSPACE_ENABLED',
-      ),
-      isWorkspaceCreationLimitedToServerAdmins: this.twentyConfigService.get(
-        'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
-      ),
-      workspaceCount: await this.workspaceRepository.count(),
-    });
-
-    if (decision === 'allowed') {
-      return;
-    }
-
-    if (
-      decision === 'requiresDestination' &&
-      (await this.hasProvisionedDestination(email))
-    ) {
-      return;
-    }
-
-    throw new AuthException(
-      'New workspace setup is disabled',
-      AuthExceptionCode.SIGNUP_DISABLED,
-    );
-  }
-
-  private async hasProvisionedDestination(email: string): Promise<boolean> {
-    // Invitations are read directly instead of through the sign-in picker,
-    // which hides HIDDEN workspaces: that is a listing rule, not a statement
-    // that the invitee has nowhere to land.
-    const invitations =
-      await this.workspaceInvitationService.findInvitationsByEmail(email);
-
-    if (hasProvisionedSignUpDestination(invitations)) {
-      return true;
-    }
-
-    const { availableWorkspacesForSignUp } =
-      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
-
-    return hasProvisionedSignUpDestination(availableWorkspacesForSignUp);
   }
 
   private async hasServerAdmin(): Promise<boolean> {
@@ -469,42 +395,6 @@ export class SignInUpService {
     });
 
     return adminCount > 0;
-  }
-
-  private async assertWorkspaceCreationAllowed(
-    userData: ExistingUserOrPartialUserWithPicture['userData'],
-  ): Promise<void> {
-    await this.assertSignUpEnabled();
-
-    const workspaceCount = await this.workspaceRepository.count();
-
-    if (workspaceCount === 0) {
-      return;
-    }
-
-    if (
-      !this.twentyConfigService.get(
-        'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
-      )
-    ) {
-      return;
-    }
-
-    const isExistingAdmin =
-      userData.type === 'existingUser' &&
-      userData.existingUser.canAccessFullAdminPanel;
-
-    if (isExistingAdmin) {
-      return;
-    }
-
-    throw new AuthException(
-      'Workspace creation is restricted to admins',
-      AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      {
-        userFriendlyMessage: msg`Workspace creation is restricted to admins`,
-      },
-    );
   }
 
   private async deleteInferredWorkspaceLogo({
@@ -595,7 +485,7 @@ export class SignInUpService {
 
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
-    options?: { displayName?: string; subdomain?: string },
+    options?: { displayName?: string },
   ) {
     const email =
       userData.type === 'newUserWithPicture'
@@ -612,7 +502,7 @@ export class SignInUpService {
       );
     }
 
-    await this.assertWorkspaceCreationAllowed(userData);
+    await this.assertNoWorkspaceExists();
 
     const displayName = options?.displayName?.trim();
 
@@ -623,14 +513,6 @@ export class SignInUpService {
         {
           userFriendlyMessage: msg`Workspace name is required`,
         },
-      );
-    }
-
-    const requestedSubdomain = options?.subdomain;
-
-    if (isDefined(requestedSubdomain)) {
-      await this.subdomainManagerService.validateSubdomainOrThrow(
-        requestedSubdomain,
       );
     }
 
@@ -648,11 +530,9 @@ export class SignInUpService {
 
           const workspaceToCreate = this.workspaceRepository.create({
             id: workspaceId,
-            subdomain: isDefined(requestedSubdomain)
-              ? requestedSubdomain
-              : await this.subdomainManagerService.generateSubdomain(
-                  isWorkEmailFound ? { userEmail: email } : {},
-                ),
+            subdomain: await this.subdomainManagerService.generateSubdomain(
+              isWorkEmailFound ? { userEmail: email } : {},
+            ),
             workspaceCustomApplicationId,
             displayName,
             inviteHash: v4(),
@@ -716,31 +596,6 @@ export class SignInUpService {
             queryRunner,
           );
 
-          // Click-through DPA: the DPA is incorporated by reference into the
-          // ToS/signup, so acceptance = execution. Only relevant on Twenty's
-          // managed cloud (multi-workspace), where Twenty is the Processor
-          // hosting the data; on self-hosted deployments Twenty is not the
-          // Processor, so there is nothing to record. Done atomically with
-          // workspace creation so we can later prove what was agreed. (Billing
-          // is an independent feature flag and must not be used to detect cloud.)
-          if (
-            this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') === true
-          ) {
-            await queryRunner.manager.save(
-              DpaAgreementEntity,
-              buildDpaAgreementRecord({
-                workspaceId: workspace.id,
-                type: DpaAgreementType.CLICK_THROUGH,
-                region:
-                  this.twentyConfigService.get('DPA_DEPLOYMENT_REGION') ??
-                  DEFAULT_DPA_REGION,
-                acceptedAt: new Date(),
-                acceptedByUserId: user.id,
-                acceptedByEmail: email,
-              }),
-            );
-          }
-
           return {
             user,
             workspace,
@@ -766,20 +621,6 @@ export class SignInUpService {
         .insertWorkspaceEvent(WORKSPACE_CREATED_EVENT, {});
 
       return { user, workspace };
-    } catch (error) {
-      const isSubdomainConflict =
-        error instanceof QueryFailedError &&
-        (error as QueryFailedErrorWithCode).code ===
-          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
-
-      if (isDefined(requestedSubdomain) && isSubdomainConflict) {
-        throw new WorkspaceException(
-          'Subdomain already taken',
-          WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
-        );
-      }
-
-      throw error;
     } finally {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatApplicationMaps',
@@ -803,7 +644,7 @@ export class SignInUpService {
       );
     }
 
-    await this.assertSignUpWithoutWorkspaceAllowed(newUserParams.email);
+    await this.assertNoWorkspaceExists();
 
     const shouldGrantServerAdmin = !(await this.hasServerAdmin());
 

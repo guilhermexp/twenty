@@ -39,7 +39,6 @@ import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-confi
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
-import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/auth/constants/default-workspace-auto-login-window.constant';
 import { IsNonNegativeDuration } from 'src/engine/core-modules/twenty-config/decorators/is-non-negative-duration.decorator';
 import { IsPositiveDuration } from 'src/engine/core-modules/twenty-config/decorators/is-positive-duration.decorator';
 import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/decorators/is-optional-or-empty-string.decorator';
@@ -376,16 +375,6 @@ export class ConfigVariables {
   SESSION_IDLE_TIMEOUT = '30d';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.TOKENS_DURATION,
-    description:
-      'Window after authenticating on the workspace-agnostic domain during which a user-level session can still auto-login into a workspace without re-authenticating',
-    type: ConfigVariableType.STRING,
-  })
-  @IsNonNegativeDuration()
-  @IsOptional()
-  WORKSPACE_AUTO_LOGIN_WINDOW: string = DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'SameSite attribute of the user session cookie. Use none only for split-origin deployments, behind https',
@@ -527,15 +516,6 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   EMAIL_SMTP_PASSWORD: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'When enabled, only server admins can create new workspaces, and signing up without a pending invitation or an approved access domain is refused. Ignored during initial setup when no workspace exists.',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -871,15 +851,6 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
   FRONTEND_URL: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
-    description:
-      'Default subdomain for the frontend when multi-workspace is enabled',
-    type: ConfigVariableType.STRING,
-  })
-  @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
-  DEFAULT_SUBDOMAIN = 'app';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1603,14 +1574,6 @@ export class ConfigVariables {
   })
   @IsOptional()
   AI_MODELS_DEFAULT_DISABLED: string[] = DEFAULT_DISABLED_MODELS;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
-    description: 'Enable or disable multi-workspace support',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_MULTIWORKSPACE_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,

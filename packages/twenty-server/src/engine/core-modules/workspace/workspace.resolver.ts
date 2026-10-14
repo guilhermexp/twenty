@@ -261,8 +261,8 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => WorkspaceUrlsDTO)
-  workspaceUrls(@Parent() workspace: WorkspaceEntity) {
-    return this.workspaceDomainsService.getWorkspaceUrls(workspace);
+  workspaceUrls() {
+    return this.workspaceDomainsService.getWorkspaceUrls();
   }
 
   @ResolveField(() => Boolean)
@@ -351,7 +351,7 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
-        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(),
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,

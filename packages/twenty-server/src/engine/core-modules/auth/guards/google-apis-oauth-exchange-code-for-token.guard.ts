@@ -1,8 +1,6 @@
 import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import {
   AuthException,
   AuthExceptionCode,
@@ -13,7 +11,6 @@ import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
@@ -23,8 +20,6 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
     private readonly guardRedirectService: GuardRedirectService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly transientTokenService: TransientTokenService,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
     super();
@@ -62,19 +57,9 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
       if (err.status === 401) {
-        const request = context.switchToHttp().getRequest();
-        const state = JSON.parse(request.query.state);
-
-        const workspace = await this.getWorkspaceFromTransientToken(
-          state.transientToken,
-        );
-
         const redirectErrorUrl =
           this.workspaceDomainsService.computeWorkspaceRedirectErrorUrl(
             'We cannot connect to your Google account, please try again with more permissions, or a valid account',
-            {
-              subdomain: workspace.subdomain,
-            },
             '/settings/accounts',
           );
 
@@ -83,33 +68,9 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         return false;
       }
 
-      this.guardRedirectService.dispatchErrorFromGuard(
-        context,
-        err,
-        this.guardRedirectService.getSubdomainFromContext(context),
-      );
+      this.guardRedirectService.dispatchErrorFromGuard(context, err);
 
       return false;
     }
-  }
-
-  private async getWorkspaceFromTransientToken(
-    transientToken: string,
-  ): Promise<WorkspaceEntity> {
-    const { workspaceId } =
-      await this.transientTokenService.verifyTransientToken(transientToken);
-
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
-    });
-
-    if (!workspace) {
-      throw new AuthException(
-        `Error extracting workspace from transientToken for Google APIs connect for ${workspaceId}`,
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    return workspace;
   }
 }

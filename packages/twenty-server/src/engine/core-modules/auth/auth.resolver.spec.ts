@@ -137,11 +137,7 @@ describe('AuthResolver', () => {
         },
         {
           provide: UserWorkspaceService,
-          useValue: {
-            findAvailableWorkspacesByEmail: jest.fn(),
-            findFirstWorkspaceByUserId: jest.fn(),
-            setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch: jest.fn(),
-          },
+          useValue: {},
         },
         {
           provide: RenewTokenService,

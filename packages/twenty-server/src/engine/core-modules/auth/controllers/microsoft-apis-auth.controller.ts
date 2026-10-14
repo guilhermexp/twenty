@@ -6,12 +6,10 @@ import {
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
 import { ApiPath, AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -27,8 +25,6 @@ import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-c
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
@@ -38,12 +34,9 @@ export class MicrosoftAPIsAuthController {
   constructor(
     private readonly microsoftAPIsService: MicrosoftAPIsService,
     private readonly transientTokenService: TransientTokenService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly onboardingService: OnboardingService,
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   @Get()
@@ -67,7 +60,7 @@ export class MicrosoftAPIsAuthController {
     @Req() req: APIsOAuthRequest,
     @Res() res: Response,
   ) {
-    let workspace: WorkspaceEntity | null = null;
+    let workspaceId: string | undefined;
 
     try {
       const { user } = req;
@@ -83,8 +76,11 @@ export class MicrosoftAPIsAuthController {
         skipMessageChannelConfiguration,
       } = user;
 
-      const { workspaceMemberId, userId, workspaceId } =
+      const transientTokenPayload =
         await this.transientTokenService.verifyTransientToken(transientToken);
+      const { workspaceMemberId, userId } = transientTokenPayload;
+
+      workspaceId = transientTokenPayload.workspaceId;
 
       if (!workspaceId) {
         throw new AuthException(
@@ -92,10 +88,6 @@ export class MicrosoftAPIsAuthController {
           AuthExceptionCode.WORKSPACE_NOT_FOUND,
         );
       }
-
-      workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
-      });
 
       if (emails.length === 0) {
         throw new AuthException(
@@ -126,13 +118,6 @@ export class MicrosoftAPIsAuthController {
         });
       }
 
-      if (!workspace) {
-        throw new AuthException(
-          'Workspace not found',
-          AuthExceptionCode.WORKSPACE_NOT_FOUND,
-        );
-      }
-
       const { pathname, searchParams, hash } = parseRelativeUrl(
         redirectLocation ||
           getSettingsPath(SettingsPath.AccountsConfiguration, {
@@ -141,7 +126,6 @@ export class MicrosoftAPIsAuthController {
       );
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
-        workspace,
         pathname,
         searchParams,
         hash,
@@ -152,9 +136,7 @@ export class MicrosoftAPIsAuthController {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
           error,
-          workspace: workspace ?? {
-            subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-          },
+          workspaceId,
           pathname: AppPath.Verify,
         }),
       );

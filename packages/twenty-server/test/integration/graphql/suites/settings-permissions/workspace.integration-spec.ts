@@ -31,7 +31,6 @@ describe('workspace permissions', () => {
           isPasswordAuthEnabled
           logo
           isPublicInviteLinkEnabled
-          subdomain
         }
       }
     `;
@@ -46,7 +45,6 @@ describe('workspace permissions', () => {
       mutation updateWorkspace {
         updateWorkspace(data: {
           displayName: "${originalWorkspaceState.displayName}",
-          subdomain: "${originalWorkspaceState.subdomain}",
           logo: "${originalWorkspaceState.logo}",
           isGoogleAuthEnabled: ${originalWorkspaceState.isGoogleAuthEnabled},
           isMicrosoftAuthEnabled: ${originalWorkspaceState.isMicrosoftAuthEnabled},
@@ -149,147 +147,6 @@ describe('workspace permissions', () => {
               ErrorCode.FORBIDDEN,
             );
           });
-      });
-    });
-
-    describe('subdomain update', () => {
-      it('should update workspace subdomain when user has workspace settings permission', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { subdomain: "new-subdomain" }) {
-            id
-            subdomain
-          }
-        }
-      `,
-        };
-
-        return client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
-
-            expect(data).toBeDefined();
-            expect(data.subdomain).toBe('new-subdomain');
-          });
-      });
-
-      it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { subdomain: "another-new-subdomain" }) {
-            id
-            subdomain
-          }
-        }
-      `,
-        };
-
-        await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
-      });
-
-      it('should return a validation error when subdomain is empty string', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { subdomain: "" }) {
-            id
-            subdomain
-          }
-        }
-      `,
-        };
-
-        const response = await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData);
-
-        expect(response.body.data).toBeNull();
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.CONFLICT,
-        );
-        expect(response.body.errors[0].extensions.userFriendlyMessage).toBe(
-          'Invalid subdomain.',
-        );
-      });
-
-      it('should return a validation error when subdomain has invalid characters', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { subdomain: "INVALID!" }) {
-            id
-            subdomain
-          }
-        }
-      `,
-        };
-
-        const response = await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData);
-
-        expect(response.body.data).toBeNull();
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.CONFLICT,
-        );
-        expect(response.body.errors[0].extensions.userFriendlyMessage).toBe(
-          'Invalid subdomain.',
-        );
-      });
-
-      it('should return a validation error when subdomain starts with api-', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { subdomain: "api-workspace" }) {
-            id
-            subdomain
-          }
-        }
-      `,
-        };
-
-        const response = await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData);
-
-        expect(response.body.data).toBeNull();
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.CONFLICT,
-        );
-        expect(response.body.errors[0].extensions.userFriendlyMessage).toBe(
-          'Invalid subdomain.',
-        );
       });
     });
 

@@ -225,7 +225,6 @@ export abstract class RestApiBaseHandler {
       throw new BadRequestException(
         `No object was found for the workspace associated with this API key. You may generate a new one here ${this.workspaceDomainsService
           .buildWorkspaceURL({
-            workspace,
             pathname: getSettingsPath(SettingsPath.ApiWebhooks),
           })
           .toString()}`,

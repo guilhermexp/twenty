@@ -39,12 +39,6 @@ describe('Successful User Sign Up (integration)', () => {
       firstSignUpData.signUp.tokens.accessOrWorkspaceAgnosticToken.token,
     ).toBeDefined();
     expect(firstSignUpData.signUp.tokens.refreshToken.token).toBeDefined();
-    expect(
-      firstSignUpData.signUp.availableWorkspaces.availableWorkspacesForSignIn,
-    ).toEqual([]);
-    expect(
-      firstSignUpData.signUp.availableWorkspaces.availableWorkspacesForSignUp,
-    ).toEqual([]);
 
     const {
       data: { currentUser: currentUserAfterSignUp },

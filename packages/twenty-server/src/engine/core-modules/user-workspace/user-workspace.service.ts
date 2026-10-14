@@ -9,17 +9,10 @@ import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
-import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
-import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
-import { getJoinableWorkspacesFromApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/get-joinable-workspaces-from-approved-access-domains.util';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
@@ -27,10 +20,7 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -45,7 +35,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
-import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
 
 export class UserWorkspaceService {
   private readonly logger = new Logger(UserWorkspaceService.name);
@@ -59,16 +48,12 @@ export class UserWorkspaceService {
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     private readonly roleValidationService: RoleValidationService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly workspaceDomainsService: WorkspaceDomainsService,
-    private readonly loginTokenService: LoginTokenService,
-    private readonly approvedAccessDomainService: ApprovedAccessDomainService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly fileUrlService: FileUrlService,
     private readonly onboardingService: OnboardingService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async findById(id: string): Promise<UserWorkspaceEntity | null> {
@@ -366,81 +351,6 @@ export class UserWorkspaceService {
     }
   }
 
-  async findAvailableWorkspacesByEmail(email: string) {
-    const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: {
-        userWorkspaces: {
-          workspace: {
-            workspaceSsoIdentityProviders: true,
-            approvedAccessDomains: true,
-          },
-        },
-      },
-    });
-
-    // HIDDEN workspaces are never advertised in the root-domain picker, even to
-    // their own members — they must sign in from the workspace URL directly.
-    const alreadyMemberWorkspaces = user
-      ? user.userWorkspaces
-          .map(({ workspace }) => ({ workspace }))
-          .filter(
-            ({ workspace }) =>
-              workspace.workspaceDiscoverability !==
-              WorkspaceDiscoverability.HIDDEN,
-          )
-      : [];
-
-    const alreadyMemberWorkspacesIds = alreadyMemberWorkspaces.map(
-      ({ workspace }) => workspace.id,
-    );
-
-    // Email-domain discovery is the only "listing" source: PUBLIC only.
-    const workspacesFromApprovedAccessDomain = this.twentyConfigService.get(
-      'IS_EMAIL_VERIFICATION_REQUIRED',
-    )
-      ? getJoinableWorkspacesFromApprovedAccessDomains({
-          approvedAccessDomains:
-            await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSsoIdentityProvidersDomain(
-              getDomainFromEmailOrThrow(email),
-            ),
-          alreadyMemberWorkspaceIds: alreadyMemberWorkspacesIds,
-        })
-      : [];
-
-    const workspacesFromApprovedAccessDomainIds =
-      workspacesFromApprovedAccessDomain.map(({ workspace }) => workspace.id);
-
-    // HIDDEN removes the picker convenience only; invited users can still join
-    // through the direct invitation link, which carries its own token.
-    const workspacesFromInvitations = (
-      await this.workspaceInvitationService.findInvitationsByEmail(email)
-    )
-      .filter(
-        ({ workspace }) =>
-          ![
-            ...alreadyMemberWorkspacesIds,
-            ...workspacesFromApprovedAccessDomainIds,
-          ].includes(workspace.id) &&
-          workspace.workspaceDiscoverability !==
-            WorkspaceDiscoverability.HIDDEN,
-      )
-      .map((appToken) => ({
-        workspace: appToken.workspace,
-        appToken,
-      }));
-
-    return {
-      availableWorkspacesForSignIn: alreadyMemberWorkspaces,
-      availableWorkspacesForSignUp: [
-        ...workspacesFromApprovedAccessDomain,
-        ...workspacesFromInvitations,
-      ],
-    };
-  }
-
   async getUserWorkspaceForUser({
     userId,
     workspaceId,
@@ -613,94 +523,6 @@ export class UserWorkspaceService {
       fileId: savedFile.id,
       fileFolder: FileFolder.CorePicture,
     });
-  }
-
-  async castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {
-    return {
-      id: workspace.id,
-      displayName: workspace.displayName,
-      workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
-      logo: isDefined(workspace.logoFileId)
-        ? await this.fileUrlService.signFileByIdUrl({
-            fileId: workspace.logoFileId,
-            workspaceId: workspace.id,
-            fileFolder: FileFolder.CorePicture,
-          })
-        : '',
-      sso:
-        workspace.workspaceSsoIdentityProviders?.reduce(
-          (acc, identityProvider) =>
-            acc.concat(
-              identityProvider.status === 'Inactive'
-                ? []
-                : [
-                    {
-                      id: identityProvider.id,
-                      name: identityProvider.name,
-                      issuer: identityProvider.issuer,
-                      type: identityProvider.type,
-                      status: identityProvider.status,
-                    },
-                  ],
-            ),
-          [] as AvailableWorkspace['sso'],
-        ) ?? [],
-    };
-  }
-
-  async setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
-    availableWorkspaces: {
-      availableWorkspacesForSignUp: Array<{
-        workspace: WorkspaceEntity;
-        appToken?: AppTokenEntity;
-      }>;
-      availableWorkspacesForSignIn: Array<{
-        workspace: WorkspaceEntity;
-        appToken?: AppTokenEntity;
-      }>;
-    },
-    user: Pick<UserEntity, 'email'>,
-    authProvider: AuthProviderEnum,
-    canAutoLoginIntoWorkspaces = true,
-  ) {
-    const [availableWorkspacesForSignUp, availableWorkspacesForSignIn] =
-      await Promise.all([
-        Promise.all(
-          availableWorkspaces.availableWorkspacesForSignUp.map(
-            async ({ workspace, appToken }) => {
-              return {
-                ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
-                ...(appToken ? { personalInviteToken: appToken.value } : {}),
-              };
-            },
-          ),
-        ),
-        Promise.all(
-          availableWorkspaces.availableWorkspacesForSignIn.map(
-            async ({ workspace }) => {
-              return {
-                ...(await this.castWorkspaceToAvailableWorkspace(workspace)),
-                loginToken:
-                  canAutoLoginIntoWorkspaces &&
-                  workspaceValidator.isAuthEnabled(authProvider, workspace)
-                    ? (
-                        await this.loginTokenService.generateLoginToken(
-                          user.email,
-                          workspace.id,
-                          AuthProviderEnum.Password,
-                        )
-                      ).token
-                    : undefined,
-              };
-            },
-          ),
-        ),
-      ]);
-
-    return {
-      availableWorkspacesForSignUp,
-      availableWorkspacesForSignIn,
-    };
   }
 
   public async getActiveUserWorkspaceCountTotal(): Promise<number> {

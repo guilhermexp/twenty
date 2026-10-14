@@ -36,7 +36,6 @@ import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/applic
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import { RotateClientSecretDTO } from 'src/engine/core-modules/application/application-registration/dtos/rotate-client-secret.dto';
-import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/transfer-application-registration-ownership.input';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -368,26 +367,6 @@ export class ApplicationRegistrationResolver {
         userId: user?.id ?? null,
       },
     );
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
-  )
-  @Mutation(() => ApplicationRegistrationEntity)
-  async transferApplicationRegistrationOwnership(
-    @Args()
-    {
-      applicationRegistrationId,
-      targetWorkspaceSubdomain,
-    }: TransferApplicationRegistrationOwnershipInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationRegistrationService.transferOwnership({
-      applicationRegistrationId,
-      targetWorkspaceSubdomain,
-      currentOwnerWorkspaceId: workspaceId,
-    });
   }
 
   @ResolveField(() => Boolean)

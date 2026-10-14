@@ -103,23 +103,6 @@ export class WorkspaceInvitationService {
     }
   }
 
-  async findInvitationsByEmail(email: string) {
-    return await this.appTokenRepository
-      .createQueryBuilder('appToken')
-      .innerJoinAndSelect('appToken.workspace', 'workspace')
-      .where('"appToken".type IN (:...types)', {
-        types: INVITATION_APP_TOKEN_TYPES,
-      })
-      .andWhere('lower("appToken".context->>\'email\') = lower(:email)', {
-        email,
-      })
-      .andWhere('appToken.deletedAt IS NULL')
-      .andWhere('appToken.expiresAt > :now', {
-        now: new Date(),
-      })
-      .getMany();
-  }
-
   async getOneWorkspaceInvitation(workspaceId: string, email: string) {
     return await this.appTokenRepository.findOne({
       where: {
@@ -338,7 +321,6 @@ export class WorkspaceInvitationService {
     for (const invitation of invitationResults) {
       if (invitation.status === 'fulfilled') {
         const link = this.workspaceDomainsService.buildWorkspaceURL({
-          workspace,
           pathname: getAppPath(AppPath.Invite, {
             workspaceInviteHash: workspace?.inviteHash,
           }),

@@ -1,8 +1,6 @@
 import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import {
   AuthException,
   AuthExceptionCode,
@@ -10,10 +8,8 @@ import {
 import { GoogleAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-request-code.auth.strategy';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
@@ -21,9 +17,6 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly transientTokenService: TransientTokenService,
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
     super({
       prompt: 'select_account',
@@ -31,8 +24,6 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
   }
 
   async canActivate(context: ExecutionContext) {
-    let workspace: WorkspaceEntity | null = null;
-
     try {
       const request = context.switchToHttp().getRequest();
 
@@ -40,10 +31,6 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
         await this.transientTokenService.verifyTransientToken(
           request.query.transientToken,
         );
-
-      workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
-      });
 
       setRequestExtraParams(request, {
         transientToken: request.query.transientToken,
@@ -71,13 +58,7 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      this.guardRedirectService.dispatchErrorFromGuard(
-        context,
-        err,
-        this.workspaceDomainsService.getSubdomainFromWorkspaceFallbackOnDefaultSubdomain(
-          workspace,
-        ),
-      );
+      this.guardRedirectService.dispatchErrorFromGuard(context, err);
 
       return false;
     }

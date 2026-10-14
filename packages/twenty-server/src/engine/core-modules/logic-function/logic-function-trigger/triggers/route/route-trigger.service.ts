@@ -5,14 +5,12 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Request } from 'express';
 import { match } from 'path-to-regexp';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
 import { HTTPMethod } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -42,7 +40,6 @@ type RouteTriggerWorkspace = Pick<
 type RouteTriggerRequestContext = {
   workspace: RouteTriggerWorkspace;
   isIsolatedOrigin: boolean;
-  authenticationContext: AuthContext | undefined;
 };
 
 @Injectable()
@@ -58,54 +55,13 @@ export class RouteTriggerService {
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
   ) {}
 
-  private async resolveAuthenticationContextForWorkspaceFallback({
-    request,
-    workspaceFromHost,
-  }: {
-    request: Request;
-    workspaceFromHost: RouteTriggerWorkspace | undefined;
-  }): Promise<AuthContext | undefined> {
-    if (
-      isDefined(workspaceFromHost) ||
-      !isNonEmptyString(request.headers.authorization)
-    ) {
-      return undefined;
-    }
-
-    try {
-      return await this.accessTokenService.validateTokenByRequest(request);
-    } catch (error) {
-      if (error instanceof AuthException) {
-        return undefined;
-      }
-
-      throw error;
-    }
-  }
-
   private async resolveRouteTriggerRequestContextOrFail(
     request: Request,
   ): Promise<RouteTriggerRequestContext> {
     const host = `${request.protocol}://${request.get('host')}`;
 
-    const { workspace: workspaceFromHost, isIsolatedOrigin } =
+    const { workspace, isIsolatedOrigin } =
       await this.workspaceDomainsService.resolveWorkspaceFromOrigin(host);
-
-    const authenticationContext =
-      await this.resolveAuthenticationContextForWorkspaceFallback({
-        request,
-        workspaceFromHost,
-      });
-
-    const workspace = workspaceFromHost ?? authenticationContext?.workspace;
-
-    assertIsDefinedOrThrow(
-      workspace,
-      new RouteTriggerException(
-        'Workspace not found',
-        RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
-    );
 
     if (workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED) {
       throw new RouteTriggerException(
@@ -117,7 +73,6 @@ export class RouteTriggerService {
     return {
       workspace,
       isIsolatedOrigin,
-      authenticationContext,
     };
   }
 
@@ -247,7 +202,7 @@ export class RouteTriggerService {
     request: Request;
     httpMethod: HTTPMethod;
   }): Promise<{ response: RouteTriggerResponse; isIsolatedOrigin: boolean }> {
-    const { workspace, isIsolatedOrigin, authenticationContext } =
+    const { workspace, isIsolatedOrigin } =
       await this.resolveRouteTriggerRequestContextOrFail(request);
 
     const logicFunctionsWithHttpRouteTrigger =
@@ -278,8 +233,7 @@ export class RouteTriggerService {
 
     if (httpRouteSettings?.isAuthRequired) {
       const routeAuthenticationContext =
-        authenticationContext ??
-        (await this.accessTokenService.validateTokenByRequest(request));
+        await this.accessTokenService.validateTokenByRequest(request);
 
       if (!isDefined(routeAuthenticationContext.workspace)) {
         throw new RouteTriggerException(

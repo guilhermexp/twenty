@@ -5,7 +5,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { type Issuer } from 'openid-client';
 
 import { OidcAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { type SsoConfiguration } from 'src/engine/core-modules/sso/types/sso-configurations.type';
@@ -56,12 +55,6 @@ describe('OIDCAuthGuard', () => {
           provide: GuardRedirectService,
           useValue: {
             dispatchErrorFromGuard: jest.fn(),
-          },
-        },
-        {
-          provide: WorkspaceDomainsService,
-          useValue: {
-            getSubdomainFromWorkspaceFallbackOnDefaultSubdomain: jest.fn(),
           },
         },
       ],

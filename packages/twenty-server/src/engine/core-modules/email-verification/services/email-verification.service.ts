@@ -15,9 +15,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
-import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import {
   EmailVerificationException,
@@ -36,7 +34,6 @@ export class EmailVerificationService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    private readonly domainsServerConfigService: DomainServerConfigService,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailVerificationTokenService: EmailVerificationTokenService,
@@ -46,14 +43,12 @@ export class EmailVerificationService {
   async sendVerificationEmail({
     userId,
     email,
-    workspace,
     locale,
     verifyEmailRedirectPath,
     verificationTrigger = EmailVerificationTrigger.SIGN_UP,
   }: {
     userId: string;
     email: string;
-    workspace: WorkspaceDomainConfig | undefined;
     locale: keyof typeof APP_LOCALES;
     verifyEmailRedirectPath?: string;
     verificationTrigger?: EmailVerificationTrigger;
@@ -65,7 +60,7 @@ export class EmailVerificationService {
     const { token: emailVerificationToken } =
       await this.emailVerificationTokenService.generateToken(userId, email);
 
-    const linkPathnameAndSearchParams = {
+    const verificationLink = this.workspaceDomainsService.buildWorkspaceURL({
       pathname: AppPath.VerifyEmail,
       searchParams: {
         emailVerificationToken,
@@ -74,15 +69,7 @@ export class EmailVerificationService {
           ? { nextPath: verifyEmailRedirectPath }
           : {}),
       },
-    };
-    const verificationLink = workspace
-      ? this.workspaceDomainsService.buildWorkspaceURL({
-          workspace,
-          ...linkPathnameAndSearchParams,
-        })
-      : this.domainsServerConfigService.buildBaseUrl(
-          linkPathnameAndSearchParams,
-        );
+    });
 
     const emailData = {
       link: verificationLink.toString(),
@@ -121,7 +108,6 @@ export class EmailVerificationService {
 
   async resendEmailVerificationToken(
     email: string,
-    workspace: WorkspaceDomainConfig | undefined,
     locale: keyof typeof APP_LOCALES,
   ) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
@@ -174,7 +160,6 @@ export class EmailVerificationService {
     await this.sendVerificationEmail({
       userId: user.id,
       email,
-      workspace,
       locale,
       verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });

@@ -5,9 +5,6 @@ export class CheckUserExistDTO {
   @Field(() => Boolean)
   exists: boolean;
 
-  @Field(() => Number)
-  availableWorkspacesCount: number;
-
   @Field(() => Boolean)
   isEmailVerified: boolean;
 }
