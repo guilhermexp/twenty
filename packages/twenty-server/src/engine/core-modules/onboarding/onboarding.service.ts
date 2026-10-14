@@ -146,9 +146,6 @@ export class OnboardingService {
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
-    const isBookCallPending =
-      userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING) === true;
-
     if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
     }

@@ -19,10 +19,7 @@ import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/user/user-signup';
 import { WORKSPACE_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
-import {
-  type AppTokenEntity,
-  AppTokenType,
-} from 'src/engine/core-modules/app-token/app-token.entity';
+import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   AuthException,
@@ -233,7 +230,6 @@ export class SignInUpService {
       userData: params.userData,
       roleId: params.invitation.context?.roleId,
     });
-
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
       invitationValidation.workspace.id,
@@ -788,7 +784,6 @@ export class SignInUpService {
       void this.eventLogEmitterService
         .createContext({ workspaceId })
         .insertWorkspaceEvent(WORKSPACE_CREATED_EVENT, {});
-
 
       return { user, workspace };
     } catch (error) {

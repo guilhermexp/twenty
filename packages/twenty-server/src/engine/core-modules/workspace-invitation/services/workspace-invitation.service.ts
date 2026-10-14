@@ -14,7 +14,6 @@ import {
   IsNull,
   LessThanOrEqual,
   MoreThan,
-  Not,
   Raw,
   Repository,
 } from 'typeorm';
@@ -276,8 +275,6 @@ export class WorkspaceInvitationService {
       workspace,
       sender,
       roleId: appToken.context.roleId,
-      isOnboardingInviteRewardOverride:
-        appToken.type === AppTokenType.OnboardingInvitationToken,
       appTokenIdToInvalidate: appToken.id,
     });
   }
@@ -287,14 +284,12 @@ export class WorkspaceInvitationService {
     workspace,
     sender,
     roleId,
-    isOnboardingInviteRewardOverride,
     appTokenIdToInvalidate,
   }: {
     emails: string[];
     workspace: WorkspaceEntity;
     sender: WorkspaceMemberWorkspaceEntity;
     roleId?: string;
-    isOnboardingInviteRewardOverride?: boolean;
     appTokenIdToInvalidate?: string;
   }): Promise<SendInvitationsDTO> {
     if (!workspace?.inviteHash) {
@@ -477,7 +472,6 @@ export class WorkspaceInvitationService {
 
     return this.appTokenRepository.save(invitationToken);
   }
-
 
   private async throttleInvitationSending(
     workspaceId: string,
