@@ -191,6 +191,7 @@ import { DropImpersonationColumnsFastInstanceCommand } from 'src/database/comman
 import { DeleteImpersonatePermissionFlagSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791947223403-delete-impersonate-permission-flag';
 import { DeleteImpersonationUserSessionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-slow-1791947223404-delete-impersonation-user-sessions';
 import { DropDpaAgreementFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1791948037573-drop-dpa-agreement';
+import { DropWorkspaceDiscoverabilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-39/2-39-instance-command-fast-1791948190741-drop-workspace-discoverability';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -384,4 +385,5 @@ export const INSTANCE_COMMANDS = [
   DeleteImpersonatePermissionFlagSlowInstanceCommand,
   DeleteImpersonationUserSessionsSlowInstanceCommand,
   DropDpaAgreementFastInstanceCommand,
+  DropWorkspaceDiscoverabilityFastInstanceCommand,
 ];
