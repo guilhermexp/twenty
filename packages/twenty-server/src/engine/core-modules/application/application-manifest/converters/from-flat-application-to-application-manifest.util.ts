@@ -1,5 +1,5 @@
 import { type ApplicationManifest } from 'twenty-shared/application';
-import { isDefined, isEmptyObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
@@ -9,7 +9,6 @@ export type FlatApplicationHeader = Pick<
   | 'name'
   | 'description'
   | 'logo'
-  | 'billing'
   | 'packageJsonChecksum'
   | 'yarnLockChecksum'
 >;
@@ -30,10 +29,6 @@ export const fromFlatApplicationToApplicationManifest = ({
   description: flatApplication.description ?? '',
   defaultRoleUniversalIdentifier,
   ...(isDefined(flatApplication.logo) ? { logo: flatApplication.logo } : {}),
-  ...(isDefined(flatApplication.billing) &&
-  !isEmptyObject(flatApplication.billing)
-    ? { billing: flatApplication.billing }
-    : {}),
   ...(isDefined(settingsFrontComponentUniversalIdentifier)
     ? {
         settingsFrontComponent: {

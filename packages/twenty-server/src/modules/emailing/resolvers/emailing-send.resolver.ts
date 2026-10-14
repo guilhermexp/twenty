@@ -28,7 +28,7 @@ import {
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
-import { EmailUsageQuotaService } from 'src/modules/emailing/services/email-usage-quota.service';
+import { EmailUsageService } from 'src/modules/emailing/services/email-usage.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -57,7 +57,7 @@ export class EmailingSendResolver {
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly emailGroupAccessService: EmailGroupAccessService,
-    private readonly emailUsageQuotaService: EmailUsageQuotaService,
+    private readonly emailUsageService: EmailUsageService,
   ) {}
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
@@ -69,9 +69,6 @@ export class EmailingSendResolver {
     userWorkspaceId: string | undefined,
   ): Promise<SendEmailViaDomainOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailUsageQuotaService.validateEmailCreditsOrThrow(
-      currentWorkspace.id,
-    );
 
     const { emailingDomainId, ...content } = input;
     const result = await this.emailingDomainSenderService.sendEmail(
@@ -80,7 +77,7 @@ export class EmailingSendResolver {
       { ...content, sendKind: 'TRANSACTIONAL' },
     );
 
-    await this.billAcceptedSend({
+    await this.recordAcceptedSend({
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
       result,
@@ -97,9 +94,6 @@ export class EmailingSendResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<SendMessageCampaignOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailUsageQuotaService.validateEmailCreditsOrThrow(
-      currentWorkspace.id,
-    );
 
     return this.messageCampaignService.send({
       workspaceId: currentWorkspace.id,
@@ -131,9 +125,6 @@ export class EmailingSendResolver {
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<SendEmailViaDomainOutputDTO> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
-    await this.emailUsageQuotaService.validateEmailCreditsOrThrow(
-      currentWorkspace.id,
-    );
 
     const result = await this.messageCampaignService.sendTest({
       workspaceId: currentWorkspace.id,
@@ -144,7 +135,7 @@ export class EmailingSendResolver {
       fromAddress: input.fromAddress,
     });
 
-    await this.billAcceptedSend({ workspaceId: currentWorkspace.id, result });
+    await this.recordAcceptedSend({ workspaceId: currentWorkspace.id, result });
 
     return { messageId: result.messageId };
   }
@@ -166,9 +157,9 @@ export class EmailingSendResolver {
     });
   }
 
-  // The provider has already accepted the mail, so surfacing a billing failure
-  // would invite a retry that sends it a second time.
-  private async billAcceptedSend({
+  // The provider has already accepted the mail, so surfacing a usage recording
+  // failure would invite a retry that sends it a second time.
+  private async recordAcceptedSend({
     workspaceId,
     userWorkspaceId,
     result,
@@ -177,15 +168,15 @@ export class EmailingSendResolver {
     userWorkspaceId?: string;
     result: EmailingDomainSendEmailResult;
   }): Promise<void> {
-    await this.emailUsageQuotaService
-      .billSentEmails({
+    await this.emailUsageService
+      .recordSentEmails({
         workspaceId,
         userWorkspaceId,
         sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
       })
       .catch((error) => {
         this.logger.error(
-          `Workspace ${workspaceId} sent email ${result.messageId} but failed to bill it, so this send is unbilled: ${
+          `Workspace ${workspaceId} sent email ${result.messageId} but failed to record its usage: ${
             error instanceof Error ? error.message : String(error)
           }`,
         );

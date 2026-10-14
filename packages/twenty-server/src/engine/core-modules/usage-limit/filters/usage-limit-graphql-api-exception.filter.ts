@@ -2,10 +2,7 @@ import { Catch, type ExceptionFilter } from '@nestjs/common';
 
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import {
-  ForbiddenError,
-  UserInputError,
-} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
@@ -18,8 +15,6 @@ export class UsageLimitGraphqlApiExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case UsageLimitExceptionCode.LIMIT_INVALID:
         throw new UserInputError(exception);
-      case UsageLimitExceptionCode.LIMIT_NOT_ENTITLED:
-        throw new ForbiddenError(exception);
       case UsageLimitExceptionCode.RATE_LIMITED:
       case UsageLimitExceptionCode.QUOTA_EXHAUSTED:
         return usageLimitToGraphqlApiExceptionHandler(exception);

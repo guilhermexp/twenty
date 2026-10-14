@@ -39,8 +39,8 @@ describe('ClientConfigController', () => {
             label: 'GPT-4o',
             modelFamily: ModelFamily.GPT,
             sdkPackage: '@ai-sdk/openai' as const,
-            inputCostPerMillionTokensInCredits: 2500000,
-            outputCostPerMillionTokensInCredits: 10000000,
+            inputCostPerMillionTokens: 2.5,
+            outputCostPerMillionTokens: 10,
           },
         ],
         authProviders: {
@@ -68,12 +68,6 @@ describe('ClientConfigController', () => {
         },
         api: {
           mutationMaximumAffectedRecords: 100,
-        },
-        onboarding: {
-          importContactsCreditsReward: 2,
-          inviteTeamCreditsRewardPerUser: 3,
-          upgradeCreditsReward: 5,
-          installAppsCreditsRewardPerApp: 1,
         },
         isAttachmentPreviewEnabled: true,
         analyticsEnabled: false,

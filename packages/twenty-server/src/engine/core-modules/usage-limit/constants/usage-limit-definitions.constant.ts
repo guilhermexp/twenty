@@ -49,7 +49,7 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
         'application',
         'agent',
       ],
-      allowedMeters: ['creditsUsedMicro', 'quantity'],
+      allowedMeters: ['quantity'],
     },
   },
   [UsageResourceType.WORKFLOW]: {},

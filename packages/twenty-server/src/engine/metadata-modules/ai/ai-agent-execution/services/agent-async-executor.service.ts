@@ -53,12 +53,8 @@ import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entiti
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-usage-quota/constants/native-web-search-cost-per-call-dollars';
 import { AiUsageQuotaService } from 'src/engine/metadata-modules/ai/ai-usage-quota/services/ai-usage-quota.service';
-import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/count-native-web-search-calls-from-steps.util';
-import {
-  extractCacheCreationTokens,
-  extractCacheCreationTokensFromSteps,
-} from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/extract-cache-creation-tokens.util';
+import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/merge-language-model-usage.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
@@ -374,8 +370,6 @@ export class AgentAsyncExecutorService {
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
-      let hasNoMoreAvailableCredits = false;
-
       const textResponse = await generateText({
         system: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
         tools,
@@ -386,9 +380,7 @@ export class AgentAsyncExecutorService {
             content: message.content,
           }),
         ),
-        stopWhen: (step) =>
-          stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
-          hasNoMoreAvailableCredits,
+        stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
         providerOptions,
         experimental_telemetry: buildAiTelemetry({
           functionId: 'agent-execution',
@@ -409,23 +401,12 @@ export class AgentAsyncExecutorService {
           });
         },
         onStepFinish: async (step) => {
-          const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-            await this.aiUsageQuotaService.decrementAndCheckAvailableCredits({
-              modelId: registeredModel.modelId,
-              billingInput: {
-                usage: step.usage,
-                cacheCreationTokens: extractCacheCreationTokens(
-                  step.providerMetadata,
-                ),
-              },
-              workspaceId,
-              operationType,
-              spenders: { userWorkspaceId, agentId: agent?.id },
-            });
-
-          if (stepHasNoMoreAvailableCredits) {
-            hasNoMoreAvailableCredits = true;
-          }
+          await this.aiUsageQuotaService.consumeQuota({
+            usage: step.usage,
+            workspaceId,
+            operationType,
+            spenders: { userWorkspaceId, agentId: agent?.id },
+          });
 
           for (const part of step.content) {
             if (part.type !== 'tool-result' && part.type !== 'tool-error') {
@@ -514,23 +495,12 @@ export class AgentAsyncExecutorService {
             agentId: agent?.id,
           }),
           onStepFinish: async (step) => {
-            const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-              await this.aiUsageQuotaService.decrementAndCheckAvailableCredits({
-                modelId: registeredModel.modelId,
-                billingInput: {
-                  usage: step.usage,
-                  cacheCreationTokens: extractCacheCreationTokens(
-                    step.providerMetadata,
-                  ),
-                },
-                workspaceId,
-                operationType,
-                spenders: { userWorkspaceId, agentId: agent?.id },
-              });
-
-            if (stepHasNoMoreAvailableCredits) {
-              hasNoMoreAvailableCredits = true;
-            }
+            await this.aiUsageQuotaService.consumeQuota({
+              usage: step.usage,
+              workspaceId,
+              operationType,
+              spenders: { userWorkspaceId, agentId: agent?.id },
+            });
           },
         });
 
@@ -558,18 +528,15 @@ export class AgentAsyncExecutorService {
       const totalCostInDollars =
         tokenCostInDollars +
         nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
-      const creditsUsedMicro = convertDollarsToCreditsMicro(totalCostInDollars);
 
       return {
         result,
         usage: accumulatedUsage,
         cacheCreationTokens,
         nativeWebSearchCallCount,
-        hasNoMoreAvailableCredits,
         steps: executionSteps,
         modelId: resolvedModelId,
         totalCostInDollars,
-        creditsUsedMicro,
       };
     } catch (error) {
       if (error instanceof AiException) {
@@ -581,18 +548,12 @@ export class AgentAsyncExecutorService {
       );
     } finally {
       const modelId = agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID;
-      const costInDollars = this.aiUsageQuotaService.calculateCost(modelId, {
-        usage: accumulatedUsage,
-        cacheCreationTokens,
-      });
-      const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
       const totalTokens =
         (accumulatedUsage.inputTokens ?? 0) +
         (accumulatedUsage.outputTokens ?? 0);
 
       void this.aiUsageQuotaService.emitAiTokenUsageEvent(
         workspaceId,
-        creditsUsedMicro,
         totalTokens,
         modelId,
         operationType,
@@ -600,7 +561,7 @@ export class AgentAsyncExecutorService {
         userWorkspaceId,
       );
 
-      void this.aiUsageQuotaService.billNativeWebSearchUsage(
+      void this.aiUsageQuotaService.recordNativeWebSearchUsage(
         nativeWebSearchCallCount,
         workspaceId,
         userWorkspaceId,

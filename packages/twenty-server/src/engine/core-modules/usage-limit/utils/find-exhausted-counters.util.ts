@@ -1,14 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
+import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 
 export const findExhaustedCounters = ({
   counters,
   remainings,
 }: {
-  counters: QuotaCounter[];
+  counters: LimitQuotaCounter[];
   remainings: (number | null)[];
-}): QuotaCounter[] =>
+}): LimitQuotaCounter[] =>
   counters.filter((_, index) => {
     const remaining = remainings[index];
 

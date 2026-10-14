@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
@@ -8,12 +7,10 @@ import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.m
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaGateService } from 'src/engine/core-modules/usage-limit/services/usage-quota-gate.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
-import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageLimitResolver } from 'src/engine/core-modules/usage-limit/usage-limit.resolver';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
@@ -35,16 +32,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ]),
     WorkspaceCacheModule,
     PermissionsModule,
-    DiscoveryModule,
     CacheLockModule,
     ClickHouseModule,
-    UsageModule,
   ],
   providers: [
     UsageLimitQuotaService,
     UsageQuotaGateService,
     UsageLimitSpeedService,
-    UsageLimitEntitlementService,
     UsageLimitsCacheService,
     UsagePeriodService,
     UsageLimitService,

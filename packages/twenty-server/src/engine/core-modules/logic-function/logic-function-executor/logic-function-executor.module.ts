@@ -7,7 +7,6 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/event-log-live.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -27,7 +26,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     SecretEncryptionModule,
     SubscriptionsModule,
     WorkspaceCacheModule,
-    UsageLimitModule,
     FeatureFlagModule,
     WorkspaceDomainsModule,
     ApplicationModule,

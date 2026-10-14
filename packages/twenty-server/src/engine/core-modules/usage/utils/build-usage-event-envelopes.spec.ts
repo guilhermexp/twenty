@@ -9,7 +9,6 @@ const usageEvent = (overrides: Partial<UsageEvent> = {}): UsageEvent => ({
   operationType: UsageOperationType.AI_CHAT_TOKEN,
   quantity: 1500,
   unit: UsageUnit.TOKEN,
-  creditsUsedMicro: 7500,
   ...overrides,
 });
 
@@ -32,13 +31,13 @@ describe('buildUsageEventEnvelopes', () => {
       resourceType: UsageResourceType.AI,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       quantity: 1500,
-      creditsUsedMicro: 7500,
+      creditsUsedMicro: 0,
       resourceId: 'agent-1',
       resourceContext: 'gpt-4o',
     });
   });
 
-  it('defaults the optional string columns to empty and omits periodStart when absent', () => {
+  it('defaults the optional string columns to empty and never sets periodStart', () => {
     const [envelope] = buildUsageEventEnvelopes('ws-1', [usageEvent()]);
 
     expect(envelope.row).toMatchObject({
@@ -54,15 +53,5 @@ describe('buildUsageEventEnvelopes', () => {
     expect(
       (envelope.row as { periodStart?: string }).periodStart,
     ).toBeUndefined();
-  });
-
-  it('formats periodStart for ClickHouse when present', () => {
-    const [envelope] = buildUsageEventEnvelopes('ws-1', [
-      usageEvent({ periodStart: new Date('2026-01-01T00:00:00.000Z') }),
-    ]);
-
-    expect((envelope.row as { periodStart?: string }).periodStart).toBe(
-      '2026-01-01 00:00:00.000',
-    );
   });
 });

@@ -21,7 +21,7 @@ type ToolCall = {
   input: string;
 };
 
-type RepairToolCallBillingContext = {
+type RepairToolCallUsageContext = {
   aiUsageQuotaService: AiUsageQuotaService;
   modelId: string;
   workspaceId: string;
@@ -35,14 +35,14 @@ export const repairToolCall = async ({
   inputSchema,
   error,
   model,
-  billingContext,
+  usageContext,
 }: {
   toolCall: ToolCall;
   tools: Record<string, unknown>;
   inputSchema: (toolCall: { toolName: string }) => unknown;
   error: Error;
   model: LanguageModel;
-  billingContext?: RepairToolCallBillingContext;
+  usageContext?: RepairToolCallUsageContext;
 }): Promise<ToolCall | null> => {
   // Don't attempt to fix invalid tool names
   if (NoSuchToolError.isInstance(error)) {
@@ -85,8 +85,8 @@ export const repairToolCall = async ({
       ].join('\n'),
       experimental_telemetry: buildAiTelemetry({
         functionId: 'repair-tool-call',
-        workspaceId: billingContext?.workspaceId,
-        userWorkspaceId: billingContext?.userWorkspaceId,
+        workspaceId: usageContext?.workspaceId,
+        userWorkspaceId: usageContext?.userWorkspaceId,
       }),
     });
 
@@ -108,18 +108,18 @@ export const repairToolCall = async ({
   } catch {
     return null;
   } finally {
-    if (billingContext && usage) {
+    if (usageContext && usage) {
       const cacheCreationTokens = steps
         ? extractCacheCreationTokensFromSteps(steps)
         : 0;
 
-      void billingContext.aiUsageQuotaService.calculateAndBillUsage(
-        billingContext.modelId,
+      void usageContext.aiUsageQuotaService.consumeAndRecordUsage(
+        usageContext.modelId,
         { usage, cacheCreationTokens },
-        billingContext.workspaceId,
-        billingContext.operationType,
+        usageContext.workspaceId,
+        usageContext.operationType,
         null,
-        billingContext.userWorkspaceId,
+        usageContext.userWorkspaceId,
       );
     }
   }

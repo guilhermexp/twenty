@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { EmailUsageQuotaService } from 'src/modules/emailing/services/email-usage-quota.service';
+import { EmailUsageService } from 'src/modules/emailing/services/email-usage.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
@@ -28,7 +28,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
-    private readonly emailUsageQuotaService: EmailUsageQuotaService,
+    private readonly emailUsageService: EmailUsageService,
   ) {}
 
   async sendMessage(
@@ -43,10 +43,6 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
         MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED,
       );
     }
-
-    await this.emailUsageQuotaService.validateEmailCreditsOrThrow(
-      connectedAccount.workspaceId,
-    );
 
     const result = await this.emailingDomainSenderService.sendEmail(
       connectedAccount.workspaceId,
@@ -67,16 +63,16 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       },
     );
 
-    // The provider has already accepted the mail, so surfacing a billing
-    // failure would invite a retry that sends it a second time.
-    await this.emailUsageQuotaService
-      .billSentEmails({
+    // The provider has already accepted the mail, so surfacing a usage
+    // recording failure would invite a retry that sends it a second time.
+    await this.emailUsageService
+      .recordSentEmails({
         workspaceId: connectedAccount.workspaceId,
         sentEmailCount: countDeliveredRecipients(result.deliveredRecipients),
       })
       .catch((error) => {
         this.logger.error(
-          `Workspace ${connectedAccount.workspaceId} sent email ${result.messageId} but failed to bill it, so this send is unbilled: ${
+          `Workspace ${connectedAccount.workspaceId} sent email ${result.messageId} but failed to record its usage: ${
             error instanceof Error ? error.message : String(error)
           }`,
         );

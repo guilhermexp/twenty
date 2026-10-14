@@ -14,18 +14,16 @@ const buildRow = (
   agentId: '',
   workflowId: '',
   logicFunctionId: '',
-  creditsUsedMicro: '100',
-  quantity: '10',
+  quantity: '100',
   ...overrides,
 });
 
 const buildCounter = (
   overrides: Partial<LimitQuotaCounter>,
 ): LimitQuotaCounter => ({
-  kind: 'limit',
   key: 'counter-key',
   limitValue: 1_000,
-  meter: 'creditsUsedMicro',
+  meter: 'quantity',
   resourceType: UsageResourceType.AI,
   periodUnit: 'month',
   periodStart: new Date('2026-08-01T00:00:00.000Z'),
@@ -41,14 +39,13 @@ const rows = [
   buildRow({
     userWorkspaceId: 'user-2',
     logicFunctionId: 'logic-function-1',
-    creditsUsedMicro: '40',
+    quantity: '40',
   }),
   buildRow({
     operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     userWorkspaceId: '',
     workflowId: 'workflow-1',
-    creditsUsedMicro: '7',
-    quantity: '3',
+    quantity: '7',
   }),
 ];
 
@@ -90,15 +87,6 @@ describe('computeQuotaConsumed', () => {
         }),
       }),
     ).toBe(140);
-  });
-
-  it('sums the quantity column when the counter meters on it', () => {
-    expect(
-      computeQuotaConsumed({
-        rows,
-        counter: buildCounter({ meter: 'quantity' }),
-      }),
-    ).toBe(23);
   });
 
   it('matches a named agent on its own column', () => {

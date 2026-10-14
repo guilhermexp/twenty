@@ -12,7 +12,6 @@ const buildFlatApplication = (
   name: 'Ticketing',
   description: 'Tickets for support',
   logo: null,
-  billing: {},
   packageJsonChecksum: 'package-json-checksum',
   yarnLockChecksum: 'yarn-lock-checksum',
   ...overrides,
@@ -35,18 +34,15 @@ describe('fromFlatApplicationToApplicationManifest', () => {
     });
   });
 
-  it('should emit the logo and a non-empty billing declaration', () => {
-    const billing = { recurringCharges: [] };
-
+  it('should emit the logo', () => {
     expect(
       fromFlatApplicationToApplicationManifest({
         flatApplication: buildFlatApplication({
           logo: 'https://example.com/logo.png',
-          billing: billing as FlatApplicationHeader['billing'],
         }),
         defaultRoleUniversalIdentifier: ROLE_UID,
       }),
-    ).toMatchObject({ logo: 'https://example.com/logo.png', billing });
+    ).toMatchObject({ logo: 'https://example.com/logo.png' });
   });
 
   it('should default a missing description to an empty string', () => {

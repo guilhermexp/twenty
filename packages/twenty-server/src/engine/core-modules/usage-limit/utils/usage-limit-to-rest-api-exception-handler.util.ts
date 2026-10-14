@@ -13,13 +13,9 @@ export const buildUsageLimitHttpException = (
 ): HttpException => {
   const { exhaustedScope } = error;
 
-  // Paying only unblocks an exhausted allowance; configured limits reset with
-  // time, so they answer 429 with retry headers whatever their period length.
-  const isAllowanceExhausted = exhaustedScope?.exhaustedKind === 'allowance';
-
-  const statusCode = isAllowanceExhausted
-    ? HttpStatus.PAYMENT_REQUIRED
-    : HttpStatus.TOO_MANY_REQUESTS;
+  // Configured limits reset with time, so they answer 429 with retry headers
+  // whatever their period length.
+  const statusCode = HttpStatus.TOO_MANY_REQUESTS;
 
   if (!isDefined(exhaustedScope)) {
     return new HttpException(error.message, statusCode);
@@ -33,7 +29,6 @@ export const buildUsageLimitHttpException = (
       error: getUsageLimitErrorCode(error.code),
       messages: [error.message],
       limitKind: exhaustedScope.limitKind,
-      exhaustedKind: exhaustedScope.exhaustedKind,
       scope: {
         spenderType: exhaustedScope.spenderType,
         spenderId: exhaustedScope.spenderId,
@@ -45,9 +40,7 @@ export const buildUsageLimitHttpException = (
       periodUnit: exhaustedScope.periodUnit,
       retryAfterSeconds,
     },
-    isAllowanceExhausted
-      ? {}
-      : buildRateLimitResponseHeaders({ exhaustedScope, retryAfterSeconds }),
+    buildRateLimitResponseHeaders({ exhaustedScope, retryAfterSeconds }),
   );
 };
 

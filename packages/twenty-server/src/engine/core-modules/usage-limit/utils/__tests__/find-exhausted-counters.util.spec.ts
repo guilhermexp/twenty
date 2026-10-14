@@ -1,12 +1,19 @@
-import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
+import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
-const buildCounter = (key: string): AllowanceQuotaCounter => ({
-  kind: 'allowance',
+const buildCounter = (key: string): LimitQuotaCounter => ({
   key,
-  meter: 'creditsUsedMicro',
+  limitValue: 1_000,
+  meter: 'quantity',
+  resourceType: UsageResourceType.AI,
+  periodUnit: 'month',
   periodStart: new Date('2026-08-01T00:00:00.000Z'),
   periodEnd: new Date('2026-09-01T00:00:00.000Z'),
+  spenderType: 'workspace',
+  spenderId: null,
+  operationType: UsageOperationType.AI_CHAT_TOKEN,
 });
 
 describe('findExhaustedCounters', () => {

@@ -39,25 +39,15 @@ export class UsageQuotaGateService {
     operationType,
     spenders,
     cost,
-  }: UsageQuotaScope & { cost: QuotaCost }): Promise<{
-    hasNoMoreAvailableCredits: boolean;
-  }> {
-    const { exhausted } = await this.usageLimitQuotaService.consumeQuota({
+  }: UsageQuotaScope & { cost: QuotaCost }): Promise<void> {
+    // An exhausted quota blocks the next call through assertUsageAllowed;
+    // usage already spent is still counted in full.
+    await this.usageLimitQuotaService.consumeQuota({
       workspaceId,
       resourceType,
       operationType,
       spenders,
       cost,
     });
-
-    return {
-      hasNoMoreAvailableCredits: exhausted.some(
-        (scope) => scope.exhaustedKind === 'allowance',
-      ),
-    };
-  }
-
-  async hasAvailableCredits(_workspaceId: string): Promise<boolean> {
-    return true;
   }
 }

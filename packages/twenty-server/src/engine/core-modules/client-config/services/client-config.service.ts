@@ -48,7 +48,6 @@ export class ClientConfigService {
       this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
       EmailingDomainDriver.LOG;
 
-
     const availableModels =
       this.aiModelRegistryService.getAdminFilteredModels();
     const recommendedModelIds =
@@ -193,7 +192,6 @@ export class ClientConfigService {
           'MUTATION_MAXIMUM_AFFECTED_RECORDS',
         ),
       },
-      onboarding: null,
       isAttachmentPreviewEnabled: this.twentyConfigService.get(
         'IS_ATTACHMENT_PREVIEW_ENABLED',
       ),

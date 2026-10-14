@@ -19,7 +19,6 @@ const buildRollupKey = (workspaceId: string, usageEvent: UsageEvent): string =>
     usageEvent.unit,
     usageEvent.resourceContext || ABSENT,
     usageEvent.resourceId || ABSENT,
-    usageEvent.periodStart?.toISOString() ?? ABSENT,
     usageEvent.spenders?.userWorkspaceId || ABSENT,
     usageEvent.spenders?.apiKeyId || ABSENT,
     usageEvent.spenders?.applicationId || ABSENT,
@@ -43,7 +42,6 @@ export class UsageRollupBuffer {
 
     if (isDefined(bufferedRollup)) {
       bufferedRollup.usageEvent.quantity += usageEvent.quantity;
-      bufferedRollup.usageEvent.creditsUsedMicro += usageEvent.creditsUsedMicro;
 
       return;
     }

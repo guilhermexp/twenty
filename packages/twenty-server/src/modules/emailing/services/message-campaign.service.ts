@@ -24,7 +24,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
-import { EmailUsageQuotaService } from 'src/modules/emailing/services/email-usage-quota.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -61,7 +60,6 @@ export class MessageCampaignService {
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly throttlerService: ThrottlerService,
-    private readonly emailUsageQuotaService: EmailUsageQuotaService,
   ) {}
 
   async send({
@@ -106,16 +104,6 @@ export class MessageCampaignService {
         roleId,
         unsubscribeTopicId: unsubscribeTopicId ?? undefined,
       });
-
-    const { hasCredits } =
-      await this.emailUsageQuotaService.getEmailCreditContext(workspaceId);
-
-    if (sendableRecipients.length > 0 && !hasCredits) {
-      throw new EmailingDomainException(
-        `Campaign ${campaignId} cannot be sent to ${sendableRecipients.length} recipient(s) because the workspace has no email credits left`,
-        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS,
-      );
-    }
 
     const messageChannel =
       await this.messageChannelMetadataService.getOrCreateEmailGroupChannel({

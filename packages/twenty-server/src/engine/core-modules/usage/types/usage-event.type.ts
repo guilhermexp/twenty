@@ -8,10 +8,8 @@ import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-sp
 export type UsageEvent = {
   resourceType: UsageResourceType;
   operationType: UsageOperationType;
-  creditsUsedMicro: number;
   quantity: number;
   unit: UsageUnit;
-  periodStart?: Date;
   resourceId?: string | null;
   resourceContext?: string | null;
   spenders?: UsageSpenders;

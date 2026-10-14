@@ -10,10 +10,9 @@ const NOW = new Date('2026-08-20T00:00:00.000Z').getTime();
 const buildCounter = (
   overrides: Partial<LimitQuotaCounter> = {},
 ): LimitQuotaCounter => ({
-  kind: 'limit',
   key: 'counter-key',
   limitValue: 1_000,
-  meter: 'creditsUsedMicro',
+  meter: 'quantity',
   resourceType: UsageResourceType.AI,
   periodUnit: 'month',
   periodStart: new Date('2026-08-01T00:00:00.000Z'),
@@ -34,7 +33,6 @@ const buildRow = (
   agentId: '',
   workflowId: '',
   logicFunctionId: '',
-  creditsUsedMicro: '0',
   quantity: '0',
   ...overrides,
 });
@@ -52,8 +50,8 @@ describe('buildLimitWarmedEntries', () => {
       buildLimitWarmedEntries({
         coldLimitCounters: [counter],
         rowsByPeriod: buildRowsByPeriod(counter, [
-          buildRow({ creditsUsedMicro: '150' }),
-          buildRow({ userWorkspaceId: 'user-2', creditsUsedMicro: '100' }),
+          buildRow({ quantity: '150' }),
+          buildRow({ userWorkspaceId: 'user-2', quantity: '100' }),
         ]),
         now: NOW,
       }),
@@ -76,8 +74,8 @@ describe('buildLimitWarmedEntries', () => {
       buildLimitWarmedEntries({
         coldLimitCounters: [counter],
         rowsByPeriod: buildRowsByPeriod(counter, [
-          buildRow({ creditsUsedMicro: '150' }),
-          buildRow({ userWorkspaceId: 'user-2', creditsUsedMicro: '100' }),
+          buildRow({ quantity: '150' }),
+          buildRow({ userWorkspaceId: 'user-2', quantity: '100' }),
         ]),
         now: NOW,
       }),

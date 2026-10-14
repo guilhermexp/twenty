@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -51,8 +50,6 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
       WorkspaceEntity,
     ]),
     AiAgentExecutionModule,
-
-    UsageLimitModule,
     ThrottlerModule,
     FileModule,
     PermissionsModule,

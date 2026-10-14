@@ -9,16 +9,17 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
-import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-usage-quota/constants/native-web-search-cost-per-call-dollars';
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/compute-cost-breakdown.util';
-import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/convert-dollars-to-credits-micro.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 
-export type BillingUsageInput = {
+export type AiTokenUsageInput = {
   usage: LanguageModelUsage;
   cacheCreationTokens?: number;
 };
+
+const getTotalTokens = (usage: LanguageModelUsage): number =>
+  (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0);
 
 @Injectable()
 export class AiUsageQuotaService {
@@ -47,7 +48,7 @@ export class AiUsageQuotaService {
     });
   }
 
-  private async consumeQuota({
+  private async consumeQuotaCost({
     workspaceId,
     operationType,
     spenders,
@@ -57,8 +58,8 @@ export class AiUsageQuotaService {
     operationType: UsageOperationType;
     spenders: UsageSpenders;
     cost: QuotaCost;
-  }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
-    return this.usageQuotaGateService.consumeUsageQuota({
+  }): Promise<void> {
+    await this.usageQuotaGateService.consumeUsageQuota({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,
@@ -67,9 +68,9 @@ export class AiUsageQuotaService {
     });
   }
 
-  calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
+  calculateCost(modelId: ModelId, usageInput: AiTokenUsageInput): number {
     const model = this.aiModelRegistryService.getEffectiveModelConfig(modelId);
-    const { usage, cacheCreationTokens = 0 } = billingInput;
+    const { usage, cacheCreationTokens = 0 } = usageInput;
 
     const breakdown = computeCostBreakdown(model, {
       inputTokens: usage.inputTokens,
@@ -91,31 +92,25 @@ export class AiUsageQuotaService {
     return breakdown.totalCostInDollars;
   }
 
-  async calculateAndBillUsage(
+  async consumeAndRecordUsage(
     modelId: ModelId,
-    billingInput: BillingUsageInput,
+    usageInput: AiTokenUsageInput,
     workspaceId: string,
     operationType: UsageOperationType,
     agentId?: string | null,
     userWorkspaceId?: string | null,
   ): Promise<void> {
-    const costInDollars = this.calculateCost(modelId, billingInput);
-    const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
+    const totalTokens = getTotalTokens(usageInput.usage);
 
-    const totalTokens =
-      (billingInput.usage.inputTokens ?? 0) +
-      (billingInput.usage.outputTokens ?? 0);
-
-    await this.consumeQuota({
+    await this.consumeQuotaCost({
       workspaceId,
       operationType,
       spenders: { userWorkspaceId, agentId },
-      cost: { creditsUsedMicro, quantity: totalTokens },
+      cost: { quantity: totalTokens },
     });
 
     await this.emitAiTokenUsageEvent(
       workspaceId,
-      creditsUsedMicro,
       totalTokens,
       modelId,
       operationType,
@@ -124,35 +119,26 @@ export class AiUsageQuotaService {
     );
   }
 
-  async decrementAndCheckAvailableCredits({
-    modelId,
-    billingInput,
+  async consumeQuota({
+    usage,
     workspaceId,
     operationType,
     spenders,
   }: {
-    modelId: ModelId;
-    billingInput: BillingUsageInput;
+    usage: LanguageModelUsage;
     workspaceId: string;
     operationType: UsageOperationType;
     spenders: UsageSpenders;
-  }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
-    const costInDollars = this.calculateCost(modelId, billingInput);
-    const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
-
-    const totalTokens =
-      (billingInput.usage.inputTokens ?? 0) +
-      (billingInput.usage.outputTokens ?? 0);
-
-    return this.consumeQuota({
+  }): Promise<void> {
+    await this.consumeQuotaCost({
       workspaceId,
       operationType,
       spenders,
-      cost: { creditsUsedMicro, quantity: totalTokens },
+      cost: { quantity: getTotalTokens(usage) },
     });
   }
 
-  async billNativeWebSearchUsage(
+  async recordNativeWebSearchUsage(
     nativeWebSearchCallCount: number,
     workspaceId: string,
     userWorkspaceId?: string | null,
@@ -161,26 +147,17 @@ export class AiUsageQuotaService {
       return;
     }
 
-    const costInDollars =
-      nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
-    const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
-
-    this.logger.log(
-      `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,
-    );
-
-    await this.consumeQuota({
+    await this.consumeQuotaCost({
       workspaceId,
       operationType: UsageOperationType.WEB_SEARCH,
       spenders: { userWorkspaceId },
-      cost: { creditsUsedMicro, quantity: nativeWebSearchCallCount },
+      cost: { quantity: nativeWebSearchCallCount },
     });
 
     await this.usageRecorderService.record(workspaceId, [
       {
         resourceType: UsageResourceType.AI,
         operationType: UsageOperationType.WEB_SEARCH,
-        creditsUsedMicro,
         quantity: nativeWebSearchCallCount,
         unit: UsageUnit.INVOCATION,
         spenders: { userWorkspaceId },
@@ -190,7 +167,6 @@ export class AiUsageQuotaService {
 
   async emitAiTokenUsageEvent(
     workspaceId: string,
-    creditsUsedMicro: number,
     totalTokens: number,
     modelId: ModelId,
     operationType: UsageOperationType,
@@ -201,7 +177,6 @@ export class AiUsageQuotaService {
       {
         resourceType: UsageResourceType.AI,
         operationType,
-        creditsUsedMicro,
         quantity: totalTokens,
         unit: UsageUnit.TOKEN,
         resourceId: agentId || null,

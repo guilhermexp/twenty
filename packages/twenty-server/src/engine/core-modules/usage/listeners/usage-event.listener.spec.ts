@@ -13,7 +13,6 @@ const USAGE_EVENT: UsageEvent = {
   operationType: UsageOperationType.WORKFLOW_EXECUTION,
   quantity: 1,
   unit: UsageUnit.INVOCATION,
-  creditsUsedMicro: 1,
 };
 
 const buildBatch = (

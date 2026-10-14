@@ -69,7 +69,7 @@ export class AgentTitleGenerationService {
           ? extractCacheCreationTokensFromSteps(steps)
           : 0;
 
-        void this.aiUsageQuotaService.calculateAndBillUsage(
+        void this.aiUsageQuotaService.consumeAndRecordUsage(
           defaultModel.modelId,
           { usage, cacheCreationTokens },
           workspaceId,

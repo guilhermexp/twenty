@@ -135,14 +135,6 @@ export class AgentRunService {
         }),
       );
 
-      if (executionResult.hasNoMoreAvailableCredits) {
-        return {
-          result: null,
-          error: 'AI agent stopped: no more available credits.',
-          success: false,
-        };
-      }
-
       return {
         result: executionResult.result,
         error: null,

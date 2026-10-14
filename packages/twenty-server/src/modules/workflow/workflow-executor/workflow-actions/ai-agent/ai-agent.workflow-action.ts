@@ -107,12 +107,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       durationMs,
     });
 
-    if (executionResult.hasNoMoreAvailableCredits) {
-      return {
-        error: 'AI agent stopped: no more available credits.',
-      };
-    }
-
     return {
       result: executionResult.result,
     };

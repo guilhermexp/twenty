@@ -1,12 +1,5 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import {
-  Args,
-  Float,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-} from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -15,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -50,9 +42,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
-@UseFilters(
-  UsageLimitGraphqlApiExceptionFilter,
-)
+@UseFilters(UsageLimitGraphqlApiExceptionFilter)
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
   constructor(
@@ -562,16 +552,6 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspace.aiAdditionalInstructions ?? undefined,
     );
-  }
-
-  @ResolveField(() => Float)
-  totalInputCredits(@Parent() thread: AgentChatThreadEntity): number {
-    return toDisplayCredits(thread.totalInputCredits);
-  }
-
-  @ResolveField(() => Float)
-  totalOutputCredits(@Parent() thread: AgentChatThreadEntity): number {
-    return toDisplayCredits(thread.totalOutputCredits);
   }
 
   @ResolveField('lastMessageAt', () => Date, { nullable: true })

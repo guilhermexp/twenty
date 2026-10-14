@@ -157,7 +157,6 @@ describe('StreamAgentChatJob', () => {
         : jest.fn().mockResolvedValue({
             stream: chatStream,
             modelConfig: { contextWindowTokens: 100000 },
-            hasNoMoreAvailableCredits: () => false,
           }),
     };
     const eventPublisherService = {

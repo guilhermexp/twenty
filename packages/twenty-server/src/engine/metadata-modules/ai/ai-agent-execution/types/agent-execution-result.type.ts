@@ -5,9 +5,7 @@ export interface AgentExecutionResult {
   usage: LanguageModelUsage;
   cacheCreationTokens: number;
   nativeWebSearchCallCount: number;
-  hasNoMoreAvailableCredits: boolean;
   steps?: StepResult<ToolSet>[];
   modelId?: string;
   totalCostInDollars?: number;
-  creditsUsedMicro?: number;
 }

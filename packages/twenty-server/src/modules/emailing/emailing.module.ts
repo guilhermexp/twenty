@@ -28,7 +28,7 @@ import { MessageSuppressionResolver } from 'src/modules/emailing/resolvers/messa
 import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubscribe-topic.resolver';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
-import { EmailUsageQuotaService } from 'src/modules/emailing/services/email-usage-quota.service';
+import { EmailUsageService } from 'src/modules/emailing/services/email-usage.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignDraftService } from 'src/modules/emailing/services/message-campaign-draft.service';
 import { MessageCampaignRecoveryService } from 'src/modules/emailing/services/message-campaign-recovery.service';
@@ -68,7 +68,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
   controllers: [UnsubscribeController],
   providers: [
     CampaignVariableService,
-    EmailUsageQuotaService,
+    EmailUsageService,
     MessageCampaignService,
     MessageCampaignAudienceService,
     MessageCampaignDeliveryService,
@@ -96,7 +96,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
   ],
   exports: [
     EmailingDomainSenderService,
-    EmailUsageQuotaService,
+    EmailUsageService,
     MessageCampaignService,
     MessageCampaignDeliveryService,
     MessageCampaignDeliveryFeedbackService,

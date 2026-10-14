@@ -60,12 +60,6 @@ export class AgentChatThreadEntity {
   conversationSize: number;
 
   @Column({ type: 'bigint', default: 0 })
-  totalInputCredits: number;
-
-  @Column({ type: 'bigint', default: 0 })
-  totalOutputCredits: number;
-
-  @Column({ type: 'bigint', default: 0 })
   totalCacheReadTokens: number;
 
   @Column({ type: 'bigint', default: 0 })

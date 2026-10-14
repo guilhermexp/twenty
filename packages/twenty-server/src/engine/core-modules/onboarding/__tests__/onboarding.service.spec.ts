@@ -16,8 +16,6 @@ describe('OnboardingService', () => {
   const userId = 'user-id';
   const workspaceId = 'workspace-id';
 
-  // The book-call step deliberately asks for a far bigger company than the
-  // credit reward, so the two bars cannot be confused for one another.
   const bookCallMinEmployeeCount = 200;
 
   const configValues: Record<string, unknown> = {
@@ -68,7 +66,6 @@ describe('OnboardingService', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
-
 
   describe('setOnboardingBookCallPendingIfQualified', () => {
     it('offers the call to a company meeting the employee count threshold', async () => {

@@ -22,7 +22,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   limitKind: 'quota',
   periodCount: 1,
   periodUnit: 'month',
-  meter: 'creditsUsedMicro',
+  meter: 'quantity',
   limitValue: 1_000_000,
   burstValue: null,
   ...overrides,
@@ -46,10 +46,9 @@ describe('buildQuotaCounters', () => {
 
     expect(counters).toEqual([
       {
-        kind: 'limit',
-        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}`,
+        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:quantity:month:${MONTH_PERIOD.periodStart.getTime()}`,
         limitValue: 1_000_000,
-        meter: 'creditsUsedMicro',
+        meter: 'quantity',
         resourceType: UsageResourceType.AI,
         periodUnit: 'month',
         periodStart: MONTH_PERIOD.periodStart,

@@ -528,12 +528,9 @@ export class AdminPanelResolver {
 
     defaultStart.setDate(defaultStart.getDate() - 30);
 
-    const useDollarMode = true;
-
     const items = await this.usageAnalyticsService.getAdminAiUsageByWorkspace({
       periodStart: periodStart ?? defaultStart,
       periodEnd: periodEnd ?? defaultEnd,
-      useDollarMode,
     });
 
     if (items.length === 0) {

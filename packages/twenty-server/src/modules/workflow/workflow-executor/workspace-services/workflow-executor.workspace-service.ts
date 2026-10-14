@@ -8,7 +8,6 @@ import {
   WorkflowRunStepInfos,
 } from 'twenty-shared/workflow';
 
-import { UsageQuotaGateService } from 'src/engine/core-modules/usage-limit/services/usage-quota-gate.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -59,7 +58,6 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly usageRecorderService: UsageRecorderService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    private readonly usageQuotaGateService: UsageQuotaGateService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -344,19 +342,10 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string,
     workflowId: string,
   ) {
-    await this.usageQuotaGateService.consumeUsageQuota({
-      workspaceId,
-      resourceType: UsageResourceType.WORKFLOW,
-      operationType: UsageOperationType.WORKFLOW_EXECUTION,
-      spenders: { workflowId },
-      cost: { creditsUsedMicro: 100, quantity: 1 },
-    });
-
     await this.usageRecorderService.record(workspaceId, [
       {
         resourceType: UsageResourceType.WORKFLOW,
         operationType: UsageOperationType.WORKFLOW_EXECUTION,
-        creditsUsedMicro: 100,
         quantity: 1,
         unit: UsageUnit.INVOCATION,
         resourceId: workflowId,
@@ -446,10 +435,10 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }) {
-    // Credit-cap enforcement lives at the AI entry points (chat resolver,
+    // AI quota enforcement lives at the AI entry points (chat resolver,
     // executeAgent, generate-text controller, title generation). Cheap
     // workflow steps (DB CRUD, branching, actions) are not gated here so a
-    // chat-driven cap exhaustion does not block non-AI automations.
+    // chat-driven quota exhaustion does not block non-AI automations.
     const stepId = step.id;
 
     const workflowAction = this.workflowActionFactory.get(step.type);

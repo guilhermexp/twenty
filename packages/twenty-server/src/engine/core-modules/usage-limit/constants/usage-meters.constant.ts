@@ -1,1 +1,1 @@
-export const USAGE_METERS = ['creditsUsedMicro', 'quantity'] as const;
+export const USAGE_METERS = ['quantity'] as const;

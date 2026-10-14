@@ -6,6 +6,5 @@ export type QuotaConsumptionRow = {
   agentId: string;
   workflowId: string;
   logicFunctionId: string;
-  creditsUsedMicro: string | number;
   quantity: string | number;
 };

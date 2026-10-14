@@ -184,16 +184,6 @@ export class ApiConfig {
   mutationMaximumAffectedRecords: number;
 }
 
-export class OnboardingConfig {
-  importContactsCreditsReward: number;
-
-  inviteTeamCreditsRewardPerUser: number;
-
-  upgradeCreditsReward: number;
-
-  installAppsCreditsRewardPerApp: number;
-}
-
 @ObjectType()
 export class PublicFeatureFlagMetadata {
   @Field(() => String)
@@ -238,7 +228,6 @@ export class ClientConfig {
   @Field(() => AuthProvidersDTO, { nullable: false })
   authProviders: AuthProvidersDTO;
 
-
   @Field(() => [ClientAiModelConfig])
   aiModels: ClientAiModelConfig[];
 
@@ -274,8 +263,6 @@ export class ClientConfig {
 
   @Field(() => ApiConfig)
   api: ApiConfig;
-
-  onboarding: OnboardingConfig | null;
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;

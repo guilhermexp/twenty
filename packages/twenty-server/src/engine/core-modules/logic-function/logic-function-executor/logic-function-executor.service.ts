@@ -23,14 +23,12 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
-import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
-import { UsageQuotaGateService } from 'src/engine/core-modules/usage-limit/services/usage-quota-gate.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
@@ -39,7 +37,6 @@ import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/compute-logic-function-execution-credits-micro.util';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -92,7 +89,6 @@ export class LogicFunctionExecutorService {
     private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly usageRecorderService: UsageRecorderService,
-    private readonly usageQuotaGateService: UsageQuotaGateService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationStopService: ApplicationStopService,
@@ -595,41 +591,15 @@ export class LogicFunctionExecutorService {
         functionName: flatLogicFunction.name,
       });
 
-    // Billing-exempt apps (first-party maintenance apps whose per-record
-    // triggers fire during mailbox/calendar import) do not consume the
-    // workspace's credits for the execution itself. Explicit chargeCredits
-    // calls and AI token usage from within the function are billed separately
-    // and stay untouched.
-    const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
-      computeLogicFunctionExecutionCreditsMicro({
-        durationMs: result.billedDurationMs,
-        isBillingExempt: isBillingExemptApplication(
-          flatApplication.universalIdentifier,
-        ),
-      });
-
-    const totalCreditsMicro = invocationCreditsMicro + durationCreditsMicro;
-
     const spenders = {
       logicFunctionId: flatLogicFunction.id,
       applicationId: flatApplication.id,
     };
 
-    if (totalCreditsMicro > 0) {
-      await this.usageQuotaGateService.consumeUsageQuota({
-        workspaceId,
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        spenders,
-        cost: { creditsUsedMicro: totalCreditsMicro, quantity: 1 },
-      });
-    }
-
     await this.usageRecorderService.record(workspaceId, [
       {
         resourceType: UsageResourceType.LOGIC_FUNCTION,
         operationType: UsageOperationType.CODE_EXECUTION,
-        creditsUsedMicro: invocationCreditsMicro,
         quantity: 1,
         unit: UsageUnit.INVOCATION,
         resourceId: flatLogicFunction.id,
@@ -638,8 +608,7 @@ export class LogicFunctionExecutorService {
       {
         resourceType: UsageResourceType.LOGIC_FUNCTION,
         operationType: UsageOperationType.CODE_EXECUTION,
-        creditsUsedMicro: durationCreditsMicro,
-        quantity: billedDurationMs,
+        quantity: Math.max(Math.floor(result.billedDurationMs), 0),
         unit: UsageUnit.MILLISECOND,
         resourceId: flatLogicFunction.id,
         spenders,

@@ -11,7 +11,6 @@ export enum EmailingDomainExceptionCode {
   MESSAGE_SUPPRESSION_NOT_REMOVABLE = 'MESSAGE_SUPPRESSION_NOT_REMOVABLE',
   MESSAGE_CAMPAIGN_NOT_FOUND = 'MESSAGE_CAMPAIGN_NOT_FOUND',
   MESSAGE_CAMPAIGN_NOT_SENDABLE = 'MESSAGE_CAMPAIGN_NOT_SENDABLE',
-  MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS = 'MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS',
   MESSAGE_CAMPAIGN_NOT_CANCELABLE = 'MESSAGE_CAMPAIGN_NOT_CANCELABLE',
 }
 
@@ -29,8 +28,6 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
       return msg`This address cannot be removed from the suppression list.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND:
       return msg`This campaign no longer exists.`;
-    case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS:
-      return msg`This campaign needs more email credits than your workspace has left. Top up your credits or send to a smaller list.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
       return msg`This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:

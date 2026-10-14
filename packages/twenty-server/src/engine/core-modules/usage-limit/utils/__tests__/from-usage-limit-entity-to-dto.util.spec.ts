@@ -14,7 +14,7 @@ const buildEntity = (overrides: Partial<UsageLimitEntity>): UsageLimitEntity =>
     limitKind: 'quota',
     periodCount: 1,
     periodUnit: 'month',
-    meter: 'creditsUsedMicro',
+    meter: 'quantity',
     limitValue: 3000,
     burstValue: null,
     createdAt: new Date('2026-01-01'),

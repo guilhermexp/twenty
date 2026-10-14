@@ -5,7 +5,6 @@ import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usa
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
 export type LimitQuotaCounter = {
-  kind: 'limit';
   key: string;
   limitValue: number;
   meter: UsageMeter;

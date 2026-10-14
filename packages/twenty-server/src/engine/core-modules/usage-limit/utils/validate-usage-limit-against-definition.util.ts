@@ -55,13 +55,6 @@ export const validateUsageLimitAgainstDefinition = (
         UsageLimitExceptionCode.LIMIT_INVALID,
       );
     }
-
-    if (input.meter !== 'quantity') {
-      throw new UsageLimitException(
-        'A speed limit counts requests, so it is metered on quantity',
-        UsageLimitExceptionCode.LIMIT_INVALID,
-      );
-    }
   }
 
   if (input.limitKind === 'quota') {
@@ -96,12 +89,9 @@ export const validateUsageLimitAgainstDefinition = (
       );
     }
 
-    if (
-      input.meter === 'quantity' &&
-      input.operationType === UsageOperationType.ALL
-    ) {
+    if (input.operationType === UsageOperationType.ALL) {
       throw new UsageLimitException(
-        'A quantity quota needs an operation: only credits aggregate across operations',
+        'A quota needs an operation: quantities of different operations do not add up',
         UsageLimitExceptionCode.LIMIT_INVALID,
       );
     }

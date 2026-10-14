@@ -304,7 +304,7 @@ describe('buildSpeedBuckets with limits configured', () => {
           spenderId: '',
           periodCount: 1,
           periodUnit: 'month',
-          meter: 'creditsUsedMicro',
+          meter: 'quantity',
         }),
       ],
     });

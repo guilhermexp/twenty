@@ -35,7 +35,6 @@ export const buildAiAgentStepLog = ({
     },
     cost: {
       totalCostInDollars: executionResult.totalCostInDollars ?? 0,
-      creditsUsedMicro: executionResult.creditsUsedMicro ?? 0,
     },
     nativeWebSearchCallCount: executionResult.nativeWebSearchCallCount,
     toolCalls,

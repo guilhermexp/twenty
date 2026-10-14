@@ -30,8 +30,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
-import { EmailUsageQuotaService } from 'src/modules/emailing/services/email-usage-quota.service';
-import { type EmailCreditContext } from 'src/modules/emailing/types/email-credit-context.type';
+import { EmailUsageService } from 'src/modules/emailing/services/email-usage.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
@@ -68,7 +67,7 @@ export class MessageCampaignDeliveryService {
     private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
-    private readonly emailUsageQuotaService: EmailUsageQuotaService,
+    private readonly emailUsageService: EmailUsageService,
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly usageLimitSpeedService: UsageLimitSpeedService,
@@ -103,17 +102,12 @@ export class MessageCampaignDeliveryService {
         return;
       }
 
-      const creditContext =
-        await this.emailUsageQuotaService.getEmailCreditContext(workspaceId);
+      const refusal = await this.findSendSlotRefusal(workspaceId);
 
-      if (creditContext.hasCredits) {
-        const refusal = await this.findSendSlotRefusal(workspaceId);
+      if (isDefined(refusal)) {
+        await this.requeueRateLimitedSendJob({ data, refusal });
 
-        if (isDefined(refusal)) {
-          await this.requeueRateLimitedSendJob({ data, refusal });
-
-          return;
-        }
+        return;
       }
 
       const messageRepository = this.workspaceOrmManager.getRepository(
@@ -131,7 +125,6 @@ export class MessageCampaignDeliveryService {
         data,
         messageRepository,
         sendContext,
-        creditContext,
       });
 
       await this.messageCampaignLifecycleService.finalizeCampaignIfComplete({
@@ -331,12 +324,10 @@ export class MessageCampaignDeliveryService {
     data,
     messageRepository,
     sendContext: { campaign, person, claimToken },
-    creditContext: { hasCredits },
   }: {
     data: SendCampaignEmailJobData;
     messageRepository: WorkspaceRepository<MessageWorkspaceEntity>;
     sendContext: SendContext;
-    creditContext: EmailCreditContext;
   }): Promise<void> {
     const {
       workspaceId,
@@ -346,20 +337,6 @@ export class MessageCampaignDeliveryService {
       emailingDomainId,
       userWorkspaceId,
     } = data;
-
-    if (!hasCredits) {
-      await this.settleClaimedDelivery({
-        workspaceId,
-        messageId,
-        claimToken,
-        update: {
-          state: CAMPAIGN_DELIVERY_STATE.SKIPPED,
-          skipReason: CAMPAIGN_SKIP_REASON.OUT_OF_CREDITS,
-        },
-      });
-
-      return;
-    }
 
     const variables =
       await this.campaignVariableService.buildVariablesForPerson(
@@ -408,7 +385,7 @@ export class MessageCampaignDeliveryService {
 
     if (affected !== 1) {
       this.logger.warn(
-        `Campaign ${campaignId} delivered message ${messageId} but another worker owns the claim, so this send is recorded by neither and is not billed`,
+        `Campaign ${campaignId} delivered message ${messageId} but another worker owns the claim, so this send is recorded by neither and its usage is not recorded`,
       );
 
       return;
@@ -420,15 +397,15 @@ export class MessageCampaignDeliveryService {
       text: plainText,
     });
 
-    await this.emailUsageQuotaService
-      .billSentEmails({
+    await this.emailUsageService
+      .recordSentEmails({
         workspaceId,
         sentEmailCount: 1,
         userWorkspaceId,
       })
       .catch((error) => {
         this.logger.error(
-          `Campaign ${campaignId} delivered message ${messageId} but failed to bill it, so this send is unbilled: ${
+          `Campaign ${campaignId} delivered message ${messageId} but failed to record its usage: ${
             error instanceof Error ? error.message : String(error)
           }`,
         );

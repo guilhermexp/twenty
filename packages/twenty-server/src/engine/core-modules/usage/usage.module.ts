@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { Module } from '@nestjs/common';
-import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
@@ -18,7 +17,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     ClickHouseModule,
-    DiscoveryModule,
     EventLogEmitterModule,
     FeatureFlagModule,
     PermissionsModule,

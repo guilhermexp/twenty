@@ -427,33 +427,26 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
   }) {
-    const hasClaimedConnectAccountStep =
-      await this.runStepTransitionInLockedTransaction(
-        { userId, workspaceId },
-        async (queryRunner) => {
-          const hasClaimedStep = await this.claimOnboardingConnectAccountStep(
-            { userId, workspaceId },
-            queryRunner,
-          );
+    await this.runStepTransitionInLockedTransaction(
+      { userId, workspaceId },
+      async (queryRunner) => {
+        const hasClaimedStep = await this.claimOnboardingConnectAccountStep(
+          { userId, workspaceId },
+          queryRunner,
+        );
 
-          if (!hasClaimedStep) {
-            return false;
-          }
+        if (!hasClaimedStep) {
+          return false;
+        }
 
-          await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
-            { userId, workspaceId },
-            queryRunner,
-          );
+        await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
+          { userId, workspaceId },
+          queryRunner,
+        );
 
-          return true;
-        },
-      );
-
-    if (!hasClaimedConnectAccountStep) {
-      return;
-    }
-
-    await this.creditImportContactsRewardForFirstWorkspaceUser({ workspaceId });
+        return true;
+      },
+    );
   }
 
   async skipOnboardingConnectAccountStep({
@@ -524,10 +517,6 @@ export class OnboardingService {
     return isDefined(affectedRows) && affectedRows > 0;
   }
 
-  private async creditImportContactsRewardForFirstWorkspaceUser(_args: {
-    workspaceId: string;
-  }) {}
-
   async setOnboardingInviteTeamPending(
     {
       userId,
@@ -563,11 +552,6 @@ export class OnboardingService {
       queryRunner,
     );
   }
-
-  async creditEnrichmentQualificationReward(_args: {
-    workspaceId: string;
-    employeeCount: number | null;
-  }) {}
 
   async isOnboardingBookCallPending({
     userId,

@@ -49,7 +49,6 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiUsageQuotaService } from 'src/engine/metadata-modules/ai/ai-usage-quota/services/ai-usage-quota.service';
-import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-usage-quota/utils/count-native-web-search-calls-from-steps.util';
 import {
   extractCacheCreationTokens,
@@ -111,7 +110,6 @@ export type ChatExecutionOptions = {
 export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   modelConfig: AiModelConfig;
-  hasNoMoreAvailableCredits: () => boolean;
 };
 
 @Injectable()
@@ -370,7 +368,6 @@ export class ChatExecutionService {
 
     const modelMessages = pruningResult.messages;
 
-    let hasNoMoreAvailableCredits = false;
     const streamStartedAt = performance.now();
     let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
@@ -420,15 +417,8 @@ export class ChatExecutionService {
       const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
       const totalTokens = (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0);
 
-      const costInDollars = this.aiUsageQuotaService.calculateCost(
-        registeredModel.modelId,
-        { usage, cacheCreationTokens },
-      );
-      const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
-
       await this.aiUsageQuotaService.emitAiTokenUsageEvent(
         workspace.id,
-        creditsUsedMicro,
         totalTokens,
         registeredModel.modelId,
         UsageOperationType.AI_CHAT_TOKEN,
@@ -436,9 +426,9 @@ export class ChatExecutionService {
         userWorkspaceId,
       );
 
-      // billNativeWebSearchUsage short-circuits when count <= 0, so calling
+      // recordNativeWebSearchUsage short-circuits when count <= 0, so calling
       // unconditionally is safe regardless of whether native search fired.
-      void this.aiUsageQuotaService.billNativeWebSearchUsage(
+      void this.aiUsageQuotaService.recordNativeWebSearchUsage(
         countNativeWebSearchCallsFromSteps(steps),
         workspace.id,
         userWorkspaceId,
@@ -485,8 +475,7 @@ export class ChatExecutionService {
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
         hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||
-        hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
-        hasNoMoreAvailableCredits,
+        hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step),
       experimental_telemetry: buildAiTelemetry({
         functionId: isWorkspaceSetupThread
           ? AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID
@@ -551,23 +540,12 @@ export class ChatExecutionService {
           bucketBoundaries: AI_LATENCY_MS_BUCKET_BOUNDARIES,
         });
 
-        const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-          await this.aiUsageQuotaService.decrementAndCheckAvailableCredits({
-            modelId: registeredModel.modelId,
-            billingInput: {
-              usage: step.usage,
-              cacheCreationTokens: extractCacheCreationTokens(
-                step.providerMetadata,
-              ),
-            },
-            workspaceId: workspace.id,
-            operationType: UsageOperationType.AI_CHAT_TOKEN,
-            spenders: { userWorkspaceId },
-          });
-
-        if (stepHasNoMoreAvailableCredits) {
-          hasNoMoreAvailableCredits = true;
-        }
+        await this.aiUsageQuotaService.consumeQuota({
+          usage: step.usage,
+          workspaceId: workspace.id,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          spenders: { userWorkspaceId },
+        });
 
         this.logger.log(
           `[AI_CHAT_TOKENS] step #${++stepIndex} — ` +
@@ -630,7 +608,7 @@ export class ChatExecutionService {
           inputSchema,
           error,
           model: registeredModel.model,
-          billingContext: {
+          usageContext: {
             aiUsageQuotaService: this.aiUsageQuotaService,
             modelId: registeredModel.modelId,
             workspaceId: workspace.id,
@@ -692,7 +670,6 @@ export class ChatExecutionService {
     return {
       stream,
       modelConfig,
-      hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
     };
   }
 

@@ -24,7 +24,7 @@ const validQuotaLimit: UpsertUsageLimitInput = {
   limitKind: 'quota',
   periodCount: 1,
   periodUnit: 'month',
-  meter: 'creditsUsedMicro',
+  meter: 'quantity',
   limitValue: 1_000_000,
 };
 
@@ -87,19 +87,6 @@ describe('validateUsageLimitAgainstDefinition', () => {
     );
   });
 
-  it('rejects a speed limit metered on credits', () => {
-    expect(() =>
-      validateUsageLimitAgainstDefinition({
-        ...validSpeedLimit,
-        meter: 'creditsUsedMicro',
-      }),
-    ).toThrow(
-      expect.objectContaining({
-        code: UsageLimitExceptionCode.LIMIT_INVALID,
-      }),
-    );
-  });
-
   it('rejects a workspace limit, because the definition does not allow that scope', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
@@ -136,7 +123,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
     ).not.toThrow();
   });
 
-  it('accepts a monthly credit quota on the workspace', () => {
+  it('accepts a monthly token quota on the workspace', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition(validQuotaLimit),
     ).not.toThrow();
@@ -148,15 +135,6 @@ describe('validateUsageLimitAgainstDefinition', () => {
         ...validQuotaLimit,
         spenderType: 'agent',
         spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-      }),
-    ).not.toThrow();
-  });
-
-  it('accepts a quota covering every operation of the resource', () => {
-    expect(() =>
-      validateUsageLimitAgainstDefinition({
-        ...validQuotaLimit,
-        operationType: UsageOperationType.ALL,
       }),
     ).not.toThrow();
   });
@@ -211,23 +189,11 @@ describe('validateUsageLimitAgainstDefinition', () => {
     );
   });
 
-  it('accepts a token quota on one operation', () => {
-    expect(() =>
-      validateUsageLimitAgainstDefinition({
-        ...validQuotaLimit,
-        meter: 'quantity',
-        limitValue: 1_000_000,
-      }),
-    ).not.toThrow();
-  });
-
-  it('rejects a quantity quota covering every operation', () => {
+  it('rejects a quota covering every operation', () => {
     expect(() =>
       validateUsageLimitAgainstDefinition({
         ...validQuotaLimit,
         operationType: UsageOperationType.ALL,
-        meter: 'quantity',
-        limitValue: 1_000_000,
       }),
     ).toThrow(
       expect.objectContaining({

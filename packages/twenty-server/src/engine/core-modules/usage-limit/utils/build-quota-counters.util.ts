@@ -46,7 +46,6 @@ export const buildQuotaCounters = ({
 
         return [
           {
-            kind: 'limit' as const,
             key: buildQuotaCounterKey({
               workspaceId,
               resourceType,

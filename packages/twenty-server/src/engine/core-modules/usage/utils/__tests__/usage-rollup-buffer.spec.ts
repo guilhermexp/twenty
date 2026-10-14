@@ -9,19 +9,18 @@ const apiRequest = (overrides: Partial<UsageEvent> = {}): UsageEvent => ({
   operationType: UsageOperationType.API_REQUEST,
   quantity: 1,
   unit: UsageUnit.REQUEST,
-  creditsUsedMicro: 0,
   ...overrides,
 });
 
 describe('UsageRollupBuffer', () => {
-  it('sums the quantities and credits of events sharing the same scope', () => {
+  it('sums the quantities of events sharing the same scope', () => {
     const buffer = new UsageRollupBuffer(10);
 
-    buffer.increment('ws-1', apiRequest({ creditsUsedMicro: 5 }));
-    buffer.increment('ws-1', apiRequest({ quantity: 2, creditsUsedMicro: 7 }));
+    buffer.increment('ws-1', apiRequest());
+    buffer.increment('ws-1', apiRequest({ quantity: 2 }));
 
     expect(buffer.drain().get('ws-1')).toEqual([
-      expect.objectContaining({ quantity: 3, creditsUsedMicro: 12 }),
+      expect.objectContaining({ quantity: 3 }),
     ]);
   });
 
@@ -30,21 +29,6 @@ describe('UsageRollupBuffer', () => {
 
     buffer.increment('ws-1', apiRequest({ spenders: { apiKeyId: 'key-1' } }));
     buffer.increment('ws-1', apiRequest({ spenders: { apiKeyId: 'key-2' } }));
-
-    expect(buffer.drain().get('ws-1')).toHaveLength(2);
-  });
-
-  it('keeps a row per period so a window straddling a boundary does not merge two periods', () => {
-    const buffer = new UsageRollupBuffer(10);
-
-    buffer.increment(
-      'ws-1',
-      apiRequest({ periodStart: new Date('2026-01-01T00:00:00.000Z') }),
-    );
-    buffer.increment(
-      'ws-1',
-      apiRequest({ periodStart: new Date('2026-02-01T00:00:00.000Z') }),
-    );
 
     expect(buffer.drain().get('ws-1')).toHaveLength(2);
   });

@@ -1,4 +1,4 @@
-import { Field, Float, HideField, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ID, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType('AgentChatThread')
 export class AgentChatThreadDTO {
@@ -19,14 +19,6 @@ export class AgentChatThreadDTO {
 
   @Field(() => Int)
   conversationSize: number;
-
-  // Credits are converted from internal precision to display precision
-  // (internal / 1000) at the resolver level
-  @Field(() => Float)
-  totalInputCredits: number;
-
-  @Field(() => Float)
-  totalOutputCredits: number;
 
   @Field()
   createdAt: Date;

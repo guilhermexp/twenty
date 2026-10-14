@@ -96,7 +96,7 @@ export class AiGenerateTextController {
       };
     } finally {
       if (result) {
-        void this.aiUsageQuotaService.calculateAndBillUsage(
+        void this.aiUsageQuotaService.consumeAndRecordUsage(
           resolvedModelId,
           {
             usage: result.usage,

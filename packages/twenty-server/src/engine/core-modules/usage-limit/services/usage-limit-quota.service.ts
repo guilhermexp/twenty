@@ -1,7 +1,5 @@
-import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
@@ -19,20 +17,14 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
-import { CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
-import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
-import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
 import { type AnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/types/anchored-period-unit.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 import { type QuotaConsumptionRow } from 'src/engine/core-modules/usage-limit/types/quota-consumption-row.type';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
-import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type UsageLimitCounterScope } from 'src/engine/core-modules/usage-limit/types/usage-limit-counter-scope.type';
-import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
-import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { buildLimitWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-limit-warmed-entries.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
@@ -40,7 +32,6 @@ import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/bu
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { clampQuotaCost } from 'src/engine/core-modules/usage-limit/utils/clamp-quota-cost.util';
-import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { fromConsumeResultsToRemainings } from 'src/engine/core-modules/usage-limit/utils/from-consume-results-to-remainings.util';
@@ -54,10 +45,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 const QUOTA_WARM_LOCK_OPTIONS = { ms: 50, maxRetries: 20, ttl: 10_000 };
 
-type AllowanceSumRow = {
-  total: string | number | null;
-};
-
 type QuotaConsumeArgs = {
   workspaceId: string;
   resourceType: UsageResourceType;
@@ -66,10 +53,8 @@ type QuotaConsumeArgs = {
 };
 
 @Injectable()
-export class UsageLimitQuotaService implements OnModuleInit {
+export class UsageLimitQuotaService {
   private readonly logger = new Logger(UsageLimitQuotaService.name);
-
-  private creditAllowanceProvider: CreditAllowanceProvider | null = null;
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
@@ -78,26 +63,20 @@ export class UsageLimitQuotaService implements OnModuleInit {
     private readonly cacheLockService: CacheLockService,
     private readonly clickHouseService: ClickHouseService,
     private readonly usagePeriodService: UsagePeriodService,
-    private readonly discoveryService: DiscoveryService,
-    private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
   ) {}
-
-  onModuleInit() {
-    this.creditAllowanceProvider = findCreditAllowanceProvider(
-      this.discoveryService,
-    );
-  }
 
   async assertQuotaNotExhausted(args: QuotaConsumeArgs): Promise<void> {
     const exhaustedScopes =
       await this.findExhaustedScopesAdmittingOnFailure(args);
 
-    const exhaustedScope =
-      exhaustedScopes.find((scope) => scope.exhaustedKind === 'allowance') ??
-      exhaustedScopes[0];
+    const [exhaustedScope] = exhaustedScopes;
 
     if (isDefined(exhaustedScope)) {
-      this.throwQuotaExhausted(exhaustedScope);
+      throw new UsageLimitException(
+        `Usage limit reached for ${exhaustedScope.spenderType}`,
+        UsageLimitExceptionCode.QUOTA_EXHAUSTED,
+        { exhaustedScope },
+      );
     }
   }
 
@@ -109,10 +88,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
   }> {
     const clampedCost = clampQuotaCost(cost);
 
-    if (
-      clampedCost.creditsUsedMicro !== cost.creditsUsedMicro ||
-      clampedCost.quantity !== cost.quantity
-    ) {
+    if (clampedCost.quantity !== cost.quantity) {
       this.logger.error(
         `Refusing to consume invalid quota cost ${JSON.stringify(cost)} for workspace ${args.workspaceId}; treating it as 0`,
       );
@@ -124,43 +100,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
         cost: clampedCost,
       }),
     };
-  }
-
-  async dropAllowanceCounter(workspaceId: string): Promise<void> {
-    const period =
-      await this.creditAllowanceProvider?.getCreditAllowancePeriod(workspaceId);
-
-    if (!isDefined(period)) {
-      return;
-    }
-
-    await this.delUnderWarmLock({
-      workspaceId,
-      keys: [
-        buildAllowanceCounterKey({
-          workspaceId,
-          periodStart: period.periodStart,
-        }),
-      ],
-    });
-  }
-
-  // Intra-workspace counters are not debited while the entitlement is off, so
-  // a warm balance misses that usage; dropping them forces a ClickHouse rewarm.
-  async dropIntraWorkspaceLimitCounters(workspaceId: string): Promise<void> {
-    const limits = await this.findAllLimits(workspaceId);
-
-    const keys = buildIntraWorkspaceLimitCounterKeys({
-      workspaceId,
-      limits,
-      periodByUnit: this.getCurrentPeriodsByUnit(limits),
-    });
-
-    if (keys.length === 0) {
-      return;
-    }
-
-    await this.delUnderWarmLock({ workspaceId, keys });
   }
 
   async dropLimitCounter(usageLimit: UsageLimitCounterScope): Promise<void> {
@@ -192,27 +131,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
     });
   }
 
-  async getAllowanceRemainingMicro(
-    workspaceId: string,
-  ): Promise<number | null> {
-    try {
-      const allowanceCounter = await this.buildAllowanceCounter(workspaceId);
-
-      if (!isDefined(allowanceCounter)) {
-        return null;
-      }
-
-      const [remaining] = await this.readRemainings({
-        workspaceId,
-        counters: [allowanceCounter],
-      });
-
-      return remaining;
-    } catch (error) {
-      return this.admitOnFailure({ error, workspaceId, admitted: null });
-    }
-  }
-
   private async delUnderWarmLock({
     workspaceId,
     keys,
@@ -242,22 +160,11 @@ export class UsageLimitQuotaService implements OnModuleInit {
     }
   }
 
-  private async findAllLimits(workspaceId: string): Promise<FlatUsageLimit[]> {
-    const { usageLimits } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['usageLimits'],
-    );
-
-    return Object.values(usageLimits.byResourceType).flatMap(
-      (limits) => limits ?? [],
-    );
-  }
-
   private async findExhaustedScopesAdmittingOnFailure(
     args: QuotaConsumeArgs,
   ): Promise<ExhaustedScope[]> {
     try {
-      const counters = await this.buildCounters(args);
+      const counters = await this.buildLimitCounters(args);
 
       if (counters.length === 0) {
         return [];
@@ -268,7 +175,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
         counters,
       });
 
-      return await this.buildExhaustedScopes({
+      return this.buildExhaustedScopes({
         args,
         counters,
         remainings,
@@ -287,7 +194,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     ...args
   }: QuotaConsumeArgs & { cost: QuotaCost }): Promise<ExhaustedScope[]> {
     try {
-      const counters = await this.buildCounters(args);
+      const counters = await this.buildLimitCounters(args);
 
       if (counters.length === 0) {
         return [];
@@ -306,7 +213,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
 
       const remainings = fromConsumeResultsToRemainings(consumeResults);
 
-      return await this.buildExhaustedScopes({
+      return this.buildExhaustedScopes({
         args,
         counters,
         remainings,
@@ -320,54 +227,17 @@ export class UsageLimitQuotaService implements OnModuleInit {
     }
   }
 
-  private async buildExhaustedScopes({
+  private buildExhaustedScopes({
     args,
     counters,
     remainings,
   }: {
     args: QuotaConsumeArgs;
-    counters: QuotaCounter[];
+    counters: LimitQuotaCounter[];
     remainings: (number | null)[];
-  }): Promise<ExhaustedScope[]> {
-    const exhaustedCounters = findExhaustedCounters({ counters, remainings });
-
-    if (exhaustedCounters.length === 0) {
-      return [];
-    }
-
-    const allowance = exhaustedCounters.some(
-      (counter) => counter.kind === 'allowance',
-    )
-      ? ((await this.creditAllowanceProvider?.getCreditAllowance(
-          args.workspaceId,
-        )) ?? null)
-      : null;
-
-    return exhaustedCounters.map((counter) =>
-      buildQuotaExhaustedScope({
-        resourceType: args.resourceType,
-        counter,
-        allowance,
-      }),
-    );
-  }
-
-  private throwQuotaExhausted(exhaustedScope: ExhaustedScope): never {
-    if (exhaustedScope.exhaustedKind === 'allowance') {
-      throw new UsageLimitException(
-        'Credit allowance exhausted for this billing period',
-        UsageLimitExceptionCode.QUOTA_EXHAUSTED,
-        {
-          userFriendlyMessage: msg`Credit allowance exhausted for this billing period.`,
-          exhaustedScope,
-        },
-      );
-    }
-
-    throw new UsageLimitException(
-      `Usage limit reached for ${exhaustedScope.spenderType}`,
-      UsageLimitExceptionCode.QUOTA_EXHAUSTED,
-      { exhaustedScope },
+  }): ExhaustedScope[] {
+    return findExhaustedCounters({ counters, remainings }).map((counter) =>
+      buildQuotaExhaustedScope({ resourceType: args.resourceType, counter }),
     );
   }
 
@@ -392,17 +262,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
     );
 
     return admitted;
-  }
-
-  private async buildCounters(args: QuotaConsumeArgs): Promise<QuotaCounter[]> {
-    const [limitCounters, allowanceCounter] = await Promise.all([
-      this.buildLimitCounters(args),
-      this.buildAllowanceCounter(args.workspaceId),
-    ]);
-
-    return isDefined(allowanceCounter)
-      ? [...limitCounters, allowanceCounter]
-      : limitCounters;
   }
 
   private async buildLimitCounters({
@@ -439,37 +298,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
     });
   }
 
-  private async buildAllowanceCounter(
-    workspaceId: string,
-  ): Promise<AllowanceQuotaCounter | null> {
-    const creditAllowanceProvider = this.creditAllowanceProvider;
-
-    if (
-      !isDefined(creditAllowanceProvider) ||
-      !(await creditAllowanceProvider.isCreditAllowanceEnabled(workspaceId))
-    ) {
-      return null;
-    }
-
-    const period =
-      await creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
-
-    if (!isDefined(period)) {
-      return null;
-    }
-
-    return {
-      kind: 'allowance',
-      key: buildAllowanceCounterKey({
-        workspaceId,
-        periodStart: period.periodStart,
-      }),
-      meter: 'creditsUsedMicro',
-      periodStart: period.periodStart,
-      periodEnd: period.periodEnd,
-    };
-  }
-
   private getCurrentPeriodsByUnit(
     quotaLimits: FlatUsageLimit[],
   ): Partial<Record<PeriodUnit, UsagePeriod>> {
@@ -504,14 +332,9 @@ export class UsageLimitQuotaService implements OnModuleInit {
       ['usageLimits'],
     );
 
-    const quotaLimits = (usageLimits.byResourceType[resourceType] ?? []).filter(
+    return (usageLimits.byResourceType[resourceType] ?? []).filter(
       (limit) => limit.limitKind === 'quota',
     );
-
-    return this.usageLimitEntitlementService.findEnforceableLimits({
-      workspaceId,
-      limits: quotaLimits,
-    });
   }
 
   private async readRemainings({
@@ -519,7 +342,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     counters,
   }: {
     workspaceId: string;
-    counters: QuotaCounter[];
+    counters: LimitQuotaCounter[];
   }): Promise<(number | null)[]> {
     const remainings = await this.cacheStorage.mget<number>(
       counters.map((counter) => counter.key),
@@ -539,7 +362,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     counters,
   }: {
     workspaceId: string;
-    counters: QuotaCounter[];
+    counters: LimitQuotaCounter[];
   }): Promise<(number | null)[]> {
     return this.cacheLockService.withLock(
       async () => {
@@ -583,98 +406,18 @@ export class UsageLimitQuotaService implements OnModuleInit {
     coldCounters,
   }: {
     workspaceId: string;
-    coldCounters: QuotaCounter[];
+    coldCounters: LimitQuotaCounter[];
   }): Promise<{ key: string; value: number; ttl: number }[]> {
-    const coldLimitCounters = coldCounters.filter(
-      (counter): counter is LimitQuotaCounter => counter.kind === 'limit',
-    );
-    const coldAllowanceCounter = coldCounters.find(
-      (counter): counter is AllowanceQuotaCounter =>
-        counter.kind === 'allowance',
-    );
-
-    const now = Date.now();
-
-    const [rowsByPeriod, allowanceEntries] = await Promise.all([
-      this.fetchConsumptionRowsByPeriod({
-        workspaceId,
-        coldLimitCounters,
-      }),
-      this.buildAllowanceWarmedEntry({
-        workspaceId,
-        counter: coldAllowanceCounter,
-        now,
-      }),
-    ]);
-
-    return [
-      ...buildLimitWarmedEntries({ coldLimitCounters, rowsByPeriod, now }),
-      ...allowanceEntries,
-    ];
-  }
-
-  private async buildAllowanceWarmedEntry({
-    workspaceId,
-    counter,
-    now,
-  }: {
-    workspaceId: string;
-    counter: AllowanceQuotaCounter | undefined;
-    now: number;
-  }): Promise<{ key: string; value: number; ttl: number }[]> {
-    if (!isDefined(counter)) {
-      return [];
-    }
-
-    const ttl = counter.periodEnd.getTime() - now;
-
-    if (ttl <= 0) {
-      return [];
-    }
-
-    const allowance =
-      await this.creditAllowanceProvider?.getCreditAllowance(workspaceId);
-
-    if (
-      !isDefined(allowance) ||
-      allowance.periodStart.getTime() !== counter.periodStart.getTime()
-    ) {
-      return [];
-    }
-
-    const consumedMicro = await this.fetchAllowanceConsumedMicro({
+    const rowsByPeriod = await this.fetchConsumptionRowsByPeriod({
       workspaceId,
-      periodStart: counter.periodStart,
+      coldLimitCounters: coldCounters,
     });
 
-    return [
-      {
-        key: counter.key,
-        value: allowance.allowanceMicro - consumedMicro,
-        ttl,
-      },
-    ];
-  }
-
-  private async fetchAllowanceConsumedMicro({
-    workspaceId,
-    periodStart,
-  }: {
-    workspaceId: string;
-    periodStart: Date;
-  }): Promise<number> {
-    const rows = await this.clickHouseService.selectOrThrow<AllowanceSumRow>(
-      `SELECT sum(creditsUsedMicro) AS total
-       FROM usageEvent
-       WHERE workspaceId = {workspaceId:String}
-         AND periodStart = {periodStart:DateTime64(3)}`,
-      {
-        workspaceId,
-        periodStart: formatDateTimeForClickHouse(periodStart),
-      },
-    );
-
-    return Number(rows[0]?.total ?? 0);
+    return buildLimitWarmedEntries({
+      coldLimitCounters: coldCounters,
+      rowsByPeriod,
+      now: Date.now(),
+    });
   }
 
   private async fetchConsumptionRowsByPeriod({
@@ -714,7 +457,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
     return this.clickHouseService.selectOrThrow<QuotaConsumptionRow>(
       `SELECT operationType, userWorkspaceId, apiKeyId, applicationId, agentId,
               workflowId, logicFunctionId,
-              sum(creditsUsedMicro) AS creditsUsedMicro,
               sum(quantity) AS quantity
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}

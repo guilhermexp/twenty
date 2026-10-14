@@ -25,10 +25,8 @@ const baseExecutionResult: AgentExecutionResult = {
   } as AgentExecutionResult['usage'],
   cacheCreationTokens: 5,
   nativeWebSearchCallCount: 2,
-  hasNoMoreAvailableCredits: false,
   modelId: 'claude-sonnet-4',
   totalCostInDollars: 0.012,
-  creditsUsedMicro: 12_000,
   steps: [] as AgentExecutionResult['steps'],
 };
 
@@ -64,7 +62,6 @@ describe('buildAiAgentStepLog', () => {
     });
     expect(stepLog.details.cost).toEqual({
       totalCostInDollars: 0.012,
-      creditsUsedMicro: 12_000,
     });
     expect(stepLog.details.nativeWebSearchCallCount).toBe(2);
     expect(stepLog.details.toolCalls).toHaveLength(1);
@@ -78,7 +75,6 @@ describe('buildAiAgentStepLog', () => {
         usage: {} as AgentExecutionResult['usage'],
         cacheCreationTokens: 0,
         totalCostInDollars: undefined,
-        creditsUsedMicro: undefined,
         steps: undefined,
       },
       durationMs: 100,
@@ -92,7 +88,6 @@ describe('buildAiAgentStepLog', () => {
     expect(stepLog.details.usage.outputTokens).toBe(0);
     expect(stepLog.details.usage.totalTokens).toBe(0);
     expect(stepLog.details.cost.totalCostInDollars).toBe(0);
-    expect(stepLog.details.cost.creditsUsedMicro).toBe(0);
     expect(stepLog.details.toolCalls).toEqual([]);
   });
 });

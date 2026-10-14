@@ -15,7 +15,6 @@ const buildExhaustedScope = (
 ): ExhaustedScope => ({
   resourceType: UsageResourceType.API,
   limitKind: 'speed',
-  exhaustedKind: 'limit',
   spenderType: 'apiKey',
   spenderId: 'key-1',
   operationType: UsageOperationType.API_REQUEST,
@@ -56,7 +55,6 @@ describe('usageLimitToRestApiExceptionHandler', () => {
       error: 'RATE_LIMITED',
       messages: ['Rate limit exceeded for apiKey: 3 requests per 60s.'],
       limitKind: 'speed',
-      exhaustedKind: 'limit',
       scope: {
         spenderType: 'apiKey',
         spenderId: 'key-1',
@@ -109,41 +107,11 @@ describe('usageLimitToRestApiExceptionHandler', () => {
         statusCode: HttpStatus.TOO_MANY_REQUESTS,
         error: 'QUOTA_EXHAUSTED',
         limitKind: 'quota',
-        exhaustedKind: 'limit',
       }),
     );
     expect(error.getResponseHeaders()).toEqual(
       expect.objectContaining({ 'Retry-After': '12' }),
     );
-  });
-
-  it('answers 402 without retry headers when the credit allowance is exhausted', () => {
-    const error = catchThrown(
-      buildExhaustedScope({
-        resourceType: UsageResourceType.AI,
-        limitKind: 'quota',
-        exhaustedKind: 'allowance',
-        spenderType: 'workspace',
-        spenderId: null,
-        operationType: UsageOperationType.ALL,
-        periodCount: null,
-        periodUnit: null,
-      }),
-      {
-        message: 'Credit allowance exhausted for this billing period',
-        code: UsageLimitExceptionCode.QUOTA_EXHAUSTED,
-      },
-    );
-
-    expect(error.getStatus()).toBe(HttpStatus.PAYMENT_REQUIRED);
-    expect(error.getResponseBody()).toEqual(
-      expect.objectContaining({
-        statusCode: HttpStatus.PAYMENT_REQUIRED,
-        error: 'QUOTA_EXHAUSTED',
-        exhaustedKind: 'allowance',
-      }),
-    );
-    expect(error.getResponseHeaders()).toEqual({});
   });
 
   it('keeps the message readable for logs', () => {

@@ -15,9 +15,6 @@ export const buildUsageEventEnvelopes = (
     row: {
       timestamp: now,
       workspaceId,
-      periodStart: usageEvent.periodStart
-        ? formatDateTimeForClickHouse(usageEvent.periodStart)
-        : undefined,
       userWorkspaceId: usageEvent.spenders?.userWorkspaceId ?? '',
       apiKeyId: usageEvent.spenders?.apiKeyId ?? '',
       applicationId: usageEvent.spenders?.applicationId ?? '',
@@ -28,7 +25,8 @@ export const buildUsageEventEnvelopes = (
       operationType: usageEvent.operationType,
       quantity: usageEvent.quantity,
       unit: usageEvent.unit,
-      creditsUsedMicro: usageEvent.creditsUsedMicro,
+      // The ClickHouse column outlived credits; nothing computes them anymore.
+      creditsUsedMicro: 0,
       resourceId: usageEvent.resourceId ?? '',
       resourceContext: usageEvent.resourceContext ?? '',
       metadata: usageEvent.metadata ?? {},
