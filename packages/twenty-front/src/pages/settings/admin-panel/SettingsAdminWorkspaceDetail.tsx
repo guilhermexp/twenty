@@ -33,7 +33,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Avatar } from 'twenty-ui/data-display';
 import {
-  IconCreditCard,
   IconEyeShare,
   IconFlag,
   IconMessage,
@@ -233,7 +232,6 @@ export const SettingsAdminWorkspaceDetail = () => {
             )}
           />
         )}
-
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.MEMBERS && workspace && (
           <Section>

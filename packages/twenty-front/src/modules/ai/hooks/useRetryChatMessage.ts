@@ -10,10 +10,7 @@ import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
-import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useRetryChatMessage = () => {
   const apolloClient = useApolloClient();
@@ -50,7 +47,6 @@ export const useRetryChatMessage = () => {
         },
       });
 
-
       dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
     } catch (retryError) {
       store.set(isAwaitingFirstChunkAtom, false);
@@ -58,7 +54,6 @@ export const useRetryChatMessage = () => {
         errorAtom,
         retryError instanceof Error ? retryError : previousError,
       );
-
     }
   }, [apolloClient, store, modelIdForRequest]);
 

@@ -26,7 +26,6 @@ import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/curren
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { createStreamChunkSequencer } from '@/ai/utils/createStreamChunkSequencer';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -375,7 +374,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'credits-exhausted': {
-
           store.set(
             errorAtom,
             createAiChatCodedError(
