@@ -532,7 +532,6 @@ export class WorkspaceService {
 
     this.logger.log(`workspace ${id} cache flushed`);
 
-
     await this.workspaceRepository.softDelete({ id, deletedAt: IsNull() });
     await this.coreEntityCacheService.invalidate('workspaceEntity', id);
     await this.enqueueWorkspaceDeletionApplicationUninstall(id);
@@ -566,7 +565,6 @@ export class WorkspaceService {
           this.logger.log(`workspace ${workspace.id} user workspaces deleted`);
 
           this.logger.log(`workspace ${workspace.id} cache flushed`);
-
 
           await this.runPendingApplicationUninstallHooksBeforeHardDelete(
             workspace,
