@@ -55,7 +55,12 @@ export const results = {
       refreshToken: { token, expiresAt: 'expiresAt' },
     },
   },
-  signUp: { loginToken: { token, expiresAt: 'expiresAt' } },
+  signUp: {
+    tokens: {
+      accessOrWorkspaceAgnosticToken: { token, expiresAt: 'expiresAt' },
+      refreshToken: { token, expiresAt: 'expiresAt' },
+    },
+  },
   signUpInWorkspace: {
     loginToken: { token, expiresAt: 'expiresAt' },
     workspace: {
@@ -82,7 +87,6 @@ export const results = {
         avatarUrl: 'avatarUrl',
         locale: 'locale',
       },
-      availableWorkspaces: [],
       currentWorkspace: {
         id: 'id',
         displayName: 'displayName',

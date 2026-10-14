@@ -1,18 +1,15 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
-import { SettingsWorkspaceDomainCard } from '@/settings/domains/components/SettingsWorkspaceDomainCard';
 import { SettingsLogs } from '@/settings/event-logs/components/SettingsLogs';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsSecuritySettings } from '@/settings/security/components/SettingsSecuritySettings';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconHistory, IconKey, IconSettings } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
@@ -26,10 +23,6 @@ const GENERAL_TAB_LOGS = 'logs';
 
 export const SettingsGeneral = () => {
   const { t } = useLingui();
-
-  const isMultiWorkspaceEnabled = useAtomStateValue(
-    isMultiWorkspaceEnabledState,
-  );
 
   const hasSecurityPermission = useHasPermissionFlag(
     PermissionFlagType.SECURITY,
@@ -65,15 +58,6 @@ export const SettingsGeneral = () => {
           <H2Title title={t`Name`} description={t`Name of your workspace`} />
           <NameField />
         </Section>
-        {isMultiWorkspaceEnabled && (
-          <Section>
-            <H2Title
-              title={t`Workspace domain`}
-              description={t`Edit your subdomain name or set a custom domain.`}
-            />
-            <SettingsWorkspaceDomainCard />
-          </Section>
-        )}
         <Section>
           <DeleteWorkspace />
         </Section>

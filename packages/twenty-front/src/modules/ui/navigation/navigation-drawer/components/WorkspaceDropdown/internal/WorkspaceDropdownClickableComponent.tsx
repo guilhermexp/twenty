@@ -4,7 +4,7 @@ import {
   StyledIconChevronDown,
   StyledLabel,
   StyledLabelWrapper,
-} from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspacesDropdownStyles';
+} from '@/ui/navigation/navigation-drawer/components/WorkspaceDropdown/internal/WorkspaceDropdownStyles';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
@@ -14,15 +14,15 @@ import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/data-display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
-type MultiWorkspaceDropdownClickableComponentProps = {
+type WorkspaceDropdownClickableComponentProps = {
   disabled?: boolean;
   shouldHideLabel?: boolean;
 };
 
-export const MultiWorkspaceDropdownClickableComponent = ({
+export const WorkspaceDropdownClickableComponent = ({
   disabled,
   shouldHideLabel = false,
-}: MultiWorkspaceDropdownClickableComponentProps) => {
+}: WorkspaceDropdownClickableComponentProps) => {
   const { theme } = useContext(ThemeContext);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 

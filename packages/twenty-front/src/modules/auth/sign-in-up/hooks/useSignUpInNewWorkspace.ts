@@ -1,10 +1,6 @@
 import { useAuth } from '@/auth/hooks/useAuth';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { AppPath } from 'twenty-shared/types';
 import { useMutation } from '@apollo/client/react';
 import {
   SignUpInNewWorkspaceDocument,
@@ -14,11 +10,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
 
 export const useSignUpInNewWorkspace = () => {
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { getAuthTokensFromLoginToken } = useAuth();
-  const isMultiWorkspaceEnabled = useAtomStateValue(
-    isMultiWorkspaceEnabledState,
-  );
   const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
@@ -31,16 +23,14 @@ export const useSignUpInNewWorkspace = () => {
 
   const createWorkspace = async ({
     displayName,
-    subdomain,
     logo,
   }: {
     displayName?: string;
-    subdomain?: string;
     logo?: File;
   } = {}): Promise<boolean> => {
     try {
       const { data } = await signUpInNewWorkspaceMutation({
-        variables: { input: { displayName, subdomain } },
+        variables: { input: { displayName } },
       });
       assertIsDefinedOrThrow(data?.signUpInNewWorkspace);
 
@@ -65,18 +55,8 @@ export const useSignUpInNewWorkspace = () => {
         }
       }
 
-      const loginToken = data.signUpInNewWorkspace.loginToken.token;
-
-      if (!isMultiWorkspaceEnabled) {
-        await getAuthTokensFromLoginToken(loginToken);
-        return true;
-      }
-
-      await redirectToWorkspaceDomain(
-        data.signUpInNewWorkspace.workspace.workspaceUrls.subdomainUrl,
-        AppPath.Verify,
-        { loginToken },
-        '_self',
+      await getAuthTokensFromLoginToken(
+        data.signUpInNewWorkspace.loginToken.token,
       );
 
       return true;

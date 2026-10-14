@@ -15,7 +15,6 @@ export type CurrentWorkspace = Pick<
   | 'activationStatus'
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
-  | 'workspaceDiscoverability'
   | 'isGoogleAuthEnabled'
   | 'isGoogleAuthBypassEnabled'
   | 'isMicrosoftAuthEnabled'

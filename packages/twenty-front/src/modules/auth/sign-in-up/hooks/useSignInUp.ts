@@ -15,7 +15,6 @@ import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
-import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isErrorLike } from '@apollo/client/errors';
 import { useLingui } from '@lingui/react/macro';
@@ -34,8 +33,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useAtomState(signInUpModeState);
-  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
+  // No workspace resolves until the instance's only workspace is created.
+  const isGlobalScope = !isDefined(workspacePublicData);
   const { isCaptchaReady } = useCaptcha();
   const setLastAuthenticatedMethod = useSetAtomState(
     lastAuthenticatedMethodState,
@@ -135,7 +135,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         if (
           !isInviteMode &&
           signInUpMode === SignInUpMode.SignIn &&
-          isOnAWorkspace
+          !isGlobalScope
         ) {
           return await signInWithCredentialsInWorkspace(
             data.email.toLowerCase().trim(),
@@ -147,7 +147,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         if (
           !isInviteMode &&
           signInUpMode === SignInUpMode.SignIn &&
-          !isOnAWorkspace
+          isGlobalScope
         ) {
           return await signInWithCredentials(
             data.email.toLowerCase().trim(),
@@ -159,7 +159,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         if (
           !isInviteMode &&
           signInUpMode === SignInUpMode.SignUp &&
-          (!isOnAWorkspace || !isDefined(workspacePublicData))
+          isGlobalScope
         ) {
           return await signUpWithCredentials(
             data.email.toLowerCase().trim(),
@@ -200,8 +200,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       workspacePersonalInviteToken,
       enqueueErrorSnackBar,
       buildSearchParamsFromUrlSyncedStates,
-      isOnAWorkspace,
-      workspacePublicData,
+      isGlobalScope,
       setLastAuthenticatedMethod,
       t,
     ],

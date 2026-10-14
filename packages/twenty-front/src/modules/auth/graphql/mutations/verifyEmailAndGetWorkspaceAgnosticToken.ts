@@ -11,9 +11,6 @@ export const GET_WORKSPACE_AGNOSTIC_TOKEN_FROM_EMAIL_VERIFICATION_TOKEN = gql`
       email: $email
       captchaToken: $captchaToken
     ) {
-      availableWorkspaces {
-        ...AvailableWorkspacesFragment
-      }
       tokens {
         ...AuthTokenPairFragment
       }

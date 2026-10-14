@@ -3,7 +3,6 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { IconTrash } from 'twenty-ui/icon';
@@ -22,12 +21,10 @@ export const DeleteWorkspace = () => {
   const { openModal } = useModal();
 
   const { signOut } = useAuth();
-  const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
 
   const deleteWorkspace = async () => {
     await deleteCurrentWorkspace();
     await signOut();
-    redirectToDefaultDomain();
   };
 
   return (

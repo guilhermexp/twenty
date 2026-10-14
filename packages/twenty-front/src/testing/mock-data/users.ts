@@ -11,7 +11,6 @@ import {
   type User,
   type Workspace,
   WorkspaceActivationStatus,
-  WorkspaceDiscoverability,
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated-metadata/graphql';
@@ -27,7 +26,6 @@ type MockedUser = Pick<
   | '__typename'
   | 'onboardingStatus'
   | 'userVars'
-  | 'availableWorkspaces'
   | 'hasPassword'
 > & {
   workspaceMember: WorkspaceMember | null;
@@ -53,7 +51,6 @@ export const mockCurrentWorkspace = {
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
   isPublicInviteLinkEnabled: true,
-  workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
   isGoogleAuthEnabled: true,
   isPasswordAuthEnabled: true,
@@ -134,10 +131,6 @@ export const mockedUserData: MockedUser = {
   workspaces: [{ workspace: mockCurrentWorkspace }],
   workspaceMembers: [mockedWorkspaceMemberData],
   onboardingStatus: OnboardingStatus.COMPLETED,
-  availableWorkspaces: {
-    availableWorkspacesForSignIn: [],
-    availableWorkspacesForSignUp: [],
-  },
   userVars: {},
 };
 
@@ -197,9 +190,5 @@ export const mockedOnboardingUserData = (
     workspaces: [{ workspace: mockCurrentWorkspace }],
     onboardingStatus: onboardingStatus || null,
     userVars: {},
-    availableWorkspaces: {
-      availableWorkspacesForSignIn: [],
-      availableWorkspacesForSignUp: [],
-    },
   };
 };

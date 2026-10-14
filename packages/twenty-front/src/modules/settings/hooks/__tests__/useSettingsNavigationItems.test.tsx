@@ -62,12 +62,6 @@ jest.mock('@/settings/roles/hooks/usePermissionFlagMap', () => ({
   usePermissionFlagMap: jest.fn(),
 }));
 
-jest.mock('@/domain-manager/hooks/useRedirectToWorkspaceDomain', () => ({
-  useRedirectToWorkspaceDomain: jest.fn().mockImplementation(() => ({
-    redirectToWorkspaceDomain: jest.fn(),
-  })),
-}));
-
 describe('useSettingsNavigationItems', () => {
   beforeEach(() => {
     resetJotaiStore();

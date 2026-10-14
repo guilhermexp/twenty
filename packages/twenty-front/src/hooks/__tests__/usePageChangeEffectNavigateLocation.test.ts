@@ -10,7 +10,6 @@ import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
 
 import { OnboardingStatus, PageLayoutType } from '~/generated-metadata/graphql';
 
-import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -54,13 +53,6 @@ jest.mock('@/navigation/hooks/useDefaultHomePagePath');
 jest.mocked(useDefaultHomePagePath).mockReturnValue({
   defaultHomePagePath,
 });
-
-jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace');
-const setupMockIsOnAWorkspace = (isOnAWorkspace: boolean) => {
-  jest.mocked(useIsCurrentLocationOnAWorkspace).mockReturnValue({
-    isOnAWorkspace,
-  });
-};
 
 jest.mock('@apollo/client/react');
 const setupMockUseQuery = (result?: { data?: unknown; loading?: boolean }) => {
@@ -124,7 +116,6 @@ const testCases: {
   isWorkspaceSuspended: boolean;
   onboardingStatus: OnboardingStatus | undefined;
   res: string | undefined;
-  isOnAWorkspace?: boolean;
   objectNamePluralFromParams?: string;
   objectNamePluralFromMetadata?: string;
   returnToPath?: string;
@@ -388,10 +379,6 @@ const testCases: {
   { loc: AppPath.InviteTeam, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenAiChatAfterOnboarding: true, res: getAppPath(AppPath.AiChat, { threadId: null }) },
   { loc: AppPath.InviteTeam, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenAiChatAfterOnboarding: false, res: defaultHomePagePath },
   { loc: AppPath.SignInUp, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenAiChatAfterOnboarding: true, returnToPath: '/objects/tasks', res: '/objects/tasks' },
-
-  // isOnAWorkspace:false — on default domain, don't redirect to returnToPath or defaultHomePagePath from auth pages
-  { loc: AppPath.Verify, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
-  { loc: AppPath.SignInUp, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
 ];
 
 describe('usePageChangeEffectNavigateLocation', () => {
@@ -402,7 +389,6 @@ describe('usePageChangeEffectNavigateLocation', () => {
       onboardingStatus,
       isWorkspaceSuspended,
       isLogged,
-      isOnAWorkspace,
       objectNamePluralFromParams,
       objectNamePluralFromMetadata,
       returnToPath,
@@ -416,7 +402,6 @@ describe('usePageChangeEffectNavigateLocation', () => {
       setupMockOnboardingStatus(onboardingStatus);
       setupMockIsWorkspaceActivationStatusEqualsTo(isWorkspaceSuspended);
       setupMockIsLogged(isLogged);
-      setupMockIsOnAWorkspace(isOnAWorkspace ?? true);
       setupMockUseQuery(useQueryResult);
       setupMockUseLocation(loc, objectNamePluralFromParams, pageLayoutId);
       setupMockState(
@@ -449,7 +434,6 @@ describe('usePageChangeEffectNavigateLocation', () => {
           ].length +
           ['returnToPath:verify', 'returnToPath:signInUp', 'returnToPath:index']
             .length +
-          ['notOnWorkspace:verify', 'notOnWorkspace:signInUp'].length +
           [
             'openAiChatAfterOnboarding:inviteTeamCompleted',
             'openAiChatAfterOnboardingDisabled:inviteTeamCompleted',
@@ -468,7 +452,6 @@ describe('usePageChangeEffectNavigateLocation — authenticated with no current 
       setupMockOnboardingStatus(undefined);
       setupMockIsWorkspaceActivationStatusEqualsTo(false);
       setupMockIsLogged(true);
-      setupMockIsOnAWorkspace(true);
       setupMockUseQuery();
       setupMockUseLocation(loc);
       setupMockState(undefined, undefined, null);

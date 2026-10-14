@@ -51,24 +51,6 @@ jest.mock('@/auth/sign-in-up/hooks/useSignUpInNewWorkspace', () => ({
   })),
 }));
 
-jest.mock('@/domain-manager/hooks/useRedirectToWorkspaceDomain', () => ({
-  useRedirectToWorkspaceDomain: jest.fn().mockImplementation(() => ({
-    redirectToWorkspaceDomain: jest.fn(),
-  })),
-}));
-
-jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace', () => ({
-  useIsCurrentLocationOnAWorkspace: jest.fn().mockImplementation(() => ({
-    isOnAWorkspace: true,
-  })),
-}));
-
-jest.mock('@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain', () => ({
-  useLastAuthenticatedWorkspaceDomain: jest.fn().mockImplementation(() => ({
-    setLastAuthenticateWorkspaceDomain: jest.fn(),
-  })),
-}));
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={Object.values(mocks)}>
     <MemoryRouter>

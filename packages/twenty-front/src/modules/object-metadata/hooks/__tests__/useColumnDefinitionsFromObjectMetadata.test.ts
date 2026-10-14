@@ -9,10 +9,7 @@ import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tes
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import {
-  WorkspaceActivationStatus,
-  WorkspaceDiscoverability,
-} from '~/generated-metadata/graphql';
+import { WorkspaceActivationStatus } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -35,7 +32,6 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       activationStatus: WorkspaceActivationStatus.ACTIVE,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
-      workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
       isGoogleAuthEnabled: true,
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,

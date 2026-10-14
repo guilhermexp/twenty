@@ -4,29 +4,27 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OPEN_RECORD_IN_OPTIONS } from '@/ui/navigation/navigation-drawer/constants/OpenRecordInOptions';
-import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
+import { workspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/workspaceDropdownState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { OpenRecordIn } from 'twenty-shared/types';
 import { IconCheck, IconChevronLeft } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
-export const MultiWorkspaceDropdownOpenRecordInComponents = () => {
+export const WorkspaceDropdownOpenRecordInComponents = () => {
   const { t } = useLingui();
 
   const { openRecordInPreference, setOpenRecordInPreference } =
     useOpenRecordInPreference();
 
-  const setMultiWorkspaceDropdown = useSetAtomState(
-    multiWorkspaceDropdownState,
-  );
+  const setWorkspaceDropdown = useSetAtomState(workspaceDropdownState);
 
   return (
     <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
-            onClick={() => setMultiWorkspaceDropdown('default')}
+            onClick={() => setWorkspaceDropdown('default')}
             Icon={IconChevronLeft}
           />
         }

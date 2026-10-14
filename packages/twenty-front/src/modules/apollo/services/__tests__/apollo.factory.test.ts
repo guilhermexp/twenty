@@ -8,10 +8,7 @@ import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
 } from 'twenty-shared/constants';
-import {
-  WorkspaceActivationStatus,
-  WorkspaceDiscoverability,
-} from '~/generated-metadata/graphql';
+import { WorkspaceActivationStatus } from '~/generated-metadata/graphql';
 
 jest.mock('~/config', () => ({
   REACT_APP_SERVER_BASE_URL: 'http://localhost:3000',
@@ -59,7 +56,6 @@ const mockWorkspace = {
   activationStatus: WorkspaceActivationStatus.ACTIVE,
   workspaceMembersCount: 0,
   isPublicInviteLinkEnabled: false,
-  workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
   isGoogleAuthEnabled: false,
   isMicrosoftAuthEnabled: false,
   isPasswordAuthEnabled: false,

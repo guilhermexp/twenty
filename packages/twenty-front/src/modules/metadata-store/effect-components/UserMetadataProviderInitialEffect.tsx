@@ -1,6 +1,5 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersState';
@@ -38,7 +37,6 @@ export const UserMetadataProviderInitialEffect = () => {
   const setCurrentUser = useSetAtomState(currentUserState);
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
   const setCurrentUserWorkspace = useSetAtomState(currentUserWorkspaceState);
-  const setAvailableWorkspaces = useSetAtomState(availableWorkspacesState);
   const setCurrentWorkspaceMember = useSetAtomState(
     currentWorkspaceMemberState,
   );
@@ -121,12 +119,8 @@ export const UserMetadataProviderInitialEffect = () => {
       });
     }
 
-    const {
-      workspaceMember,
-      workspaceMembers,
-      deletedWorkspaceMembers,
-      availableWorkspaces,
-    } = userQueryData.currentUser;
+    const { workspaceMember, workspaceMembers, deletedWorkspaceMembers } =
+      userQueryData.currentUser;
 
     const affectDefaultValuesOnEmptyWorkspaceMemberFields = (
       workspaceMember: WorkspaceMember,
@@ -163,10 +157,6 @@ export const UserMetadataProviderInitialEffect = () => {
       setCurrentWorkspaceDeletedMembers(deletedWorkspaceMembers);
     }
 
-    if (isDefined(availableWorkspaces)) {
-      setAvailableWorkspaces(availableWorkspaces);
-    }
-
     setIsCurrentUserLoaded(true);
     setIsInitialized(true);
   }, [
@@ -177,7 +167,6 @@ export const UserMetadataProviderInitialEffect = () => {
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspaceMembers,
-    setAvailableWorkspaces,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     initializeFormatPreferences,

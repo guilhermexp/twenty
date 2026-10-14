@@ -215,12 +215,6 @@ const SettingsWorkspaceUnsubscribe = lazy(() =>
   ),
 );
 
-const SettingsSubdomainPage = lazy(() =>
-  import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
-    default: module.SettingsSubdomainPage,
-  })),
-);
-
 const SettingsApiWebhooks = lazy(() =>
   import('~/pages/settings/api-webhooks/SettingsApiWebhooks').then(
     (module) => ({
@@ -726,10 +720,6 @@ const createSettingsRouteElements = ({
         element={<SettingsWorkspaceUnsubscribe />}
       />
       <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
-      <Route
-        path={SettingsPath.Subdomain}
-        element={<SettingsSubdomainPage />}
-      />
     </Route>
     <Route
       element={

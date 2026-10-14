@@ -2,7 +2,7 @@ import { MobileHomeAiChatSection } from '@/ai/components/MobileHomeAiChatSection
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
+import { WorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/WorkspaceDropdown/WorkspaceDropdownButton';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { styled } from '@linaria/react';
@@ -41,7 +41,7 @@ export const MobileHomePage = () => {
   return (
     <StyledContainer>
       <NavigationDrawerFixedContent>
-        <MultiWorkspaceDropdownButton />
+        <WorkspaceDropdownButton />
       </NavigationDrawerFixedContent>
 
       <NavigationDrawerScrollableContent>

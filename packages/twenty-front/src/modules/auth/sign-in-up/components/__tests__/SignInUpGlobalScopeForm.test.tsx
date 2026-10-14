@@ -1,4 +1,3 @@
-import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -18,29 +17,8 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
-const buildWorkspaceUrlMock = jest.fn();
-const signOutMock = jest.fn();
-const createWorkspaceMock = jest.fn();
 const handleResetPasswordMock = jest.fn();
 const resetPasswordClickMock = jest.fn();
-
-jest.mock('@/auth/hooks/useAuth', () => ({
-  useAuth: () => ({
-    signOut: signOutMock,
-  }),
-}));
-
-jest.mock('@/domain-manager/hooks/useBuildWorkspaceUrl', () => ({
-  useBuildWorkspaceUrl: () => ({
-    buildWorkspaceUrl: buildWorkspaceUrlMock,
-  }),
-}));
-
-jest.mock('@/auth/sign-in-up/hooks/useSignUpInNewWorkspace', () => ({
-  useSignUpInNewWorkspace: () => ({
-    createWorkspace: createWorkspaceMock,
-  }),
-}));
 
 jest.mock('@/auth/sign-in-up/hooks/useSignInUpForm', () => ({
   useSignInUpForm: () => ({
@@ -94,15 +72,13 @@ describe('SignInUpGlobalScopeForm', () => {
     });
 
     render(
-      <MockedProvider mocks={[]}>
-        <JotaiProvider store={jotaiStore}>
-          <ThemeProvider colorScheme="light">
-            <I18nProvider i18n={i18n}>
-              <SignInUpGlobalScopeForm />
-            </I18nProvider>
-          </ThemeProvider>
-        </JotaiProvider>
-      </MockedProvider>,
+      <JotaiProvider store={jotaiStore}>
+        <ThemeProvider colorScheme="light">
+          <I18nProvider i18n={i18n}>
+            <SignInUpGlobalScopeForm />
+          </I18nProvider>
+        </ThemeProvider>
+      </JotaiProvider>,
     );
 
     const forgotPasswordLink = screen.getByText('Forgot your password?');

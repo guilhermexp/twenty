@@ -10,7 +10,6 @@ export const UPDATE_WORKSPACE = gql`
       displayName
       logo
       isPublicInviteLinkEnabled
-      workspaceDiscoverability
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled
       isPasswordAuthEnabled

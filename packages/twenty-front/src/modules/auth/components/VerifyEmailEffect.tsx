@@ -1,9 +1,9 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -39,10 +39,13 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
   const verifyEmailRedirectPath = searchParams.get('nextPath');
 
   const navigate = useNavigateApp();
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { verifyLoginToken } = useVerifyLogin();
-  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
+  const { error: workspacePublicDataError } =
+    useGetPublicWorkspaceDataByDomain();
+  const isWorkspaceResolved =
+    isDefined(workspacePublicData) || isDefined(workspacePublicDataError);
 
   const { t } = useLingui();
   useEffect(() => {
@@ -65,7 +68,8 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
       };
 
       try {
-        if (!isOnAWorkspace) {
+        // The first account is verified before the only workspace exists.
+        if (!isDefined(workspacePublicData)) {
           await verifyEmailAndGetWorkspaceAgnosticToken(
             emailVerificationToken,
             email,
@@ -76,19 +80,12 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
           return navigate(AppPath.SignInUp);
         }
 
-        const { loginToken, workspaceUrls } = await verifyEmailAndGetLoginToken(
+        const { loginToken } = await verifyEmailAndGetLoginToken(
           emailVerificationToken,
           email,
         );
 
         enqueueSuccessSnackBar(successSnackbarParams);
-
-        const workspaceUrl = workspaceUrls.subdomainUrl;
-        if (workspaceUrl.slice(0, -1) !== window.location.origin) {
-          return await redirectToWorkspaceDomain(workspaceUrl, AppPath.Verify, {
-            loginToken: loginToken.token,
-          });
-        }
 
         if (isDefined(verifyEmailRedirectPath)) {
           setVerifyEmailRedirectPath(verifyEmailRedirectPath);
@@ -112,15 +109,15 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
       }
     };
 
-    if (!clientConfigApiStatus.isLoadedOnce) {
+    if (!clientConfigApiStatus.isLoadedOnce || !isWorkspaceResolved) {
       return;
     }
 
     verifyEmailToken();
 
-    // Verify email only needs to run once at mount
+    // Verify email only needs to run once, after the workspace lookup settles
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [clientConfigApiStatus.isLoadedOnce]);
+  }, [clientConfigApiStatus.isLoadedOnce, isWorkspaceResolved]);
 
   return <></>;
 };

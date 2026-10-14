@@ -15,9 +15,6 @@ export const SIGN_UP = gql`
       locale: $locale
       verifyEmailRedirectPath: $verifyEmailRedirectPath
     ) {
-      availableWorkspaces {
-        ...AvailableWorkspacesFragment
-      }
       tokens {
         ...AuthTokenPairFragment
       }

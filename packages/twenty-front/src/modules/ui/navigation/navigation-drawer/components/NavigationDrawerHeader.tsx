@@ -6,7 +6,7 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
-import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
+import { WorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/WorkspaceDropdown/WorkspaceDropdownButton';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -78,7 +78,7 @@ export const NavigationDrawerHeader = ({
   return (
     <StyledContainer isExpanded={isExpanded}>
       <StyledWorkspaceDropdownContainer>
-        <MultiWorkspaceDropdownButton />
+        <WorkspaceDropdownButton />
       </StyledWorkspaceDropdownContainer>
       <StyledRightActions isExpanded={isExpanded}>
         {!isMobile && (

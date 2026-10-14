@@ -1,7 +1,6 @@
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@apollo/client/react';
 import { isErrorLike } from '@apollo/client/errors';
 import { AppPath } from 'twenty-shared/types';
 
@@ -15,7 +14,6 @@ import {
   REACT_APP_DEV_AUTO_LOGIN_PASSWORD,
   REACT_APP_PRIVATE_MODE,
 } from '~/config';
-import { SignInDocument } from '~/generated-metadata/graphql';
 
 type PrivateModeAutoLoginEffectProps = {
   onError: () => void;
@@ -25,8 +23,7 @@ export const PrivateModeAutoLoginEffect = ({
   onError,
 }: PrivateModeAutoLoginEffectProps) => {
   const isLogged = useIsLogged();
-  const { getAuthTokensFromLoginToken } = useAuth();
-  const [signIn] = useMutation(SignInDocument);
+  const { signInWithCredentialsInWorkspace } = useAuth();
   const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigate();
   const store = useStore();
@@ -51,24 +48,8 @@ export const PrivateModeAutoLoginEffect = ({
 
     store.set(hasAttemptedPrivateModeAutoLoginState.atom, true);
 
-    void signIn({
-      variables: { email, password },
-    })
-      .then(async ({ data, error }) => {
-        if (error) {
-          throw error;
-        }
-
-        const availableWorkspaces =
-          data?.signIn.availableWorkspaces.availableWorkspacesForSignIn ?? [];
-
-        const workspace = availableWorkspaces[0];
-
-        if (!workspace?.loginToken) {
-          throw new Error('No dev workspace login token');
-        }
-
-        await getAuthTokensFromLoginToken(workspace.loginToken);
+    void signInWithCredentialsInWorkspace(email, password)
+      .then(() => {
         navigate(AppPath.Index, { replace: true });
       })
       .catch((error: unknown) => {
@@ -89,9 +70,8 @@ export const PrivateModeAutoLoginEffect = ({
     isLogged,
     navigate,
     onError,
-    signIn,
+    signInWithCredentialsInWorkspace,
     store,
-    getAuthTokensFromLoginToken,
   ]);
 
   return null;

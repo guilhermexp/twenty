@@ -3,7 +3,6 @@ import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreatio
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
-import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -35,7 +34,6 @@ const readReturnToPathFromUrlSearchParams = (): string | null => {
 export const usePageChangeEffectNavigateLocation = () => {
   const isLogged = useIsLogged();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const onboardingStatus = useOnboardingStatus();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
@@ -86,7 +84,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     : defaultHomePagePath;
 
   if (
-    (!isLogged || !isOnAWorkspace || !isDefined(currentWorkspace)) &&
+    (!isLogged || !isDefined(currentWorkspace)) &&
     !someMatchingLocationOf([
       ...ONGOING_USER_CREATION_PATHS,
       AppPath.ResetPassword,
@@ -157,8 +155,7 @@ export const usePageChangeEffectNavigateLocation = () => {
       ...ONGOING_USER_CREATION_PATHS,
     ]) &&
     !isMatchingLocation(location, AppPath.ResetPassword) &&
-    isLogged &&
-    isOnAWorkspace
+    isLogged
   ) {
     return resolvedReturnToPath ?? onboardingCompletedPath;
   }

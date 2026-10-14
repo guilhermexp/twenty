@@ -8,6 +8,7 @@ import { AppPath } from 'twenty-shared/types';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { VerifyEmail } from '@/auth/components/VerifyEmail';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import {
   jotaiStore,
@@ -19,11 +20,10 @@ const navigateMock = jest.fn();
 const verifyEmailAndGetWorkspaceAgnosticTokenMock = jest.fn();
 const verifyEmailAndGetLoginTokenMock = jest.fn();
 const verifyLoginTokenMock = jest.fn();
-const redirectToWorkspaceDomainMock = jest.fn();
 const enqueueSuccessSnackBarMock = jest.fn();
 const enqueueErrorSnackBarMock = jest.fn();
 
-let isOnAWorkspaceValue = false;
+let workspacePublicDataErrorValue: Error | undefined;
 
 jest.mock('@/auth/hooks/useAuth', () => ({
   useAuth: () => ({
@@ -37,15 +37,9 @@ jest.mock('@/auth/hooks/useVerifyLogin', () => ({
   useVerifyLogin: () => ({ verifyLoginToken: verifyLoginTokenMock }),
 }));
 
-jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace', () => ({
-  useIsCurrentLocationOnAWorkspace: () => ({
-    isOnAWorkspace: isOnAWorkspaceValue,
-  }),
-}));
-
-jest.mock('@/domain-manager/hooks/useRedirectToWorkspaceDomain', () => ({
-  useRedirectToWorkspaceDomain: () => ({
-    redirectToWorkspaceDomain: redirectToWorkspaceDomainMock,
+jest.mock('@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain', () => ({
+  useGetPublicWorkspaceDataByDomain: () => ({
+    error: workspacePublicDataErrorValue,
   }),
 }));
 
@@ -94,7 +88,7 @@ describe('VerifyEmail', () => {
     jest.clearAllMocks();
     localStorage.clear();
     resetJotaiStore();
-    isOnAWorkspaceValue = false;
+    workspacePublicDataErrorValue = new Error('Workspace not found');
     // The verification effect is gated on the client config having loaded.
     jotaiStore.set(clientConfigApiStatusState.atom, {
       isLoadedOnce: true,
@@ -104,7 +98,7 @@ describe('VerifyEmail', () => {
     });
   });
 
-  it('navigates to the SignInUp page after a successful workspace-agnostic verification on the central domain', async () => {
+  it('navigates to the SignInUp page after a successful workspace-agnostic verification when no workspace exists', async () => {
     verifyEmailAndGetWorkspaceAgnosticTokenMock.mockResolvedValue(undefined);
 
     renderVerifyEmail(VERIFY_EMAIL_URL);
@@ -137,28 +131,21 @@ describe('VerifyEmail', () => {
     expect(navigateMock).not.toHaveBeenCalledWith(AppPath.SignInUp);
   });
 
-  it('keeps the workspace-scoped verification path untouched when already on a workspace', async () => {
-    isOnAWorkspaceValue = true;
-    verifyEmailAndGetLoginTokenMock.mockResolvedValue({
-      loginToken: { token: 'login-token' },
-      workspaceUrls: { subdomainUrl: 'https://foo.twenty.com/' },
+  it('exchanges the login token in place when the workspace exists', async () => {
+    workspacePublicDataErrorValue = undefined;
+    jotaiStore.set(workspacePublicDataState.atom, {
+      id: 'workspace-id',
+      displayName: 'Acme',
+      logo: null,
+      workspaceUrls: { subdomainUrl: `${window.location.origin}/` },
+      authProviders: {
+        google: false,
+        magicLink: false,
+        microsoft: false,
+        password: true,
+        sso: [],
+      },
     });
-
-    renderVerifyEmail(VERIFY_EMAIL_URL);
-
-    await waitFor(() => {
-      expect(verifyEmailAndGetLoginTokenMock).toHaveBeenCalledWith(
-        'valid-token',
-        'user@example.com',
-      );
-    });
-
-    expect(verifyEmailAndGetWorkspaceAgnosticTokenMock).not.toHaveBeenCalled();
-    expect(navigateMock).not.toHaveBeenCalledWith(AppPath.SignInUp);
-  });
-
-  it('exchanges the login token without redirecting when already on the workspace origin', async () => {
-    isOnAWorkspaceValue = true;
     verifyEmailAndGetLoginTokenMock.mockResolvedValue({
       loginToken: { token: 'login-token' },
       workspaceUrls: { subdomainUrl: `${window.location.origin}/` },
@@ -169,6 +156,11 @@ describe('VerifyEmail', () => {
     await waitFor(() => {
       expect(verifyLoginTokenMock).toHaveBeenCalledWith('login-token');
     });
-    expect(redirectToWorkspaceDomainMock).not.toHaveBeenCalled();
+    expect(verifyEmailAndGetLoginTokenMock).toHaveBeenCalledWith(
+      'valid-token',
+      'user@example.com',
+    );
+    expect(verifyEmailAndGetWorkspaceAgnosticTokenMock).not.toHaveBeenCalled();
+    expect(navigateMock).not.toHaveBeenCalledWith(AppPath.SignInUp);
   });
 });

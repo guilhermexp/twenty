@@ -19,8 +19,6 @@ export type ClientConfig = {
   isCompanyEnrichmentEnabled: boolean;
   canManageFeatureFlags: boolean;
   captcha: Captcha;
-  defaultSubdomain?: string;
-  frontDomain: string;
   publicFunctionDomain?: string | null;
   isAttachmentPreviewEnabled: boolean;
   isConfigVariablesInDbEnabled: boolean;
@@ -29,7 +27,6 @@ export type ClientConfig = {
   isGoogleMessagingEnabled: boolean;
   isMicrosoftCalendarEnabled: boolean;
   isMicrosoftMessagingEnabled: boolean;
-  isMultiWorkspaceEnabled: boolean;
   isImapSmtpCaldavEnabled: boolean;
   isEmailingDomainInDemoMode: boolean;
   isClickHouseConfigured: boolean;

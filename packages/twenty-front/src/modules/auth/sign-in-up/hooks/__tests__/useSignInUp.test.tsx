@@ -20,10 +20,6 @@ import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
 jest.mock('@/auth/hooks/useAuth', () => ({ useAuth: jest.fn() }));
 
-jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace', () => ({
-  useIsCurrentLocationOnAWorkspace: () => ({ isOnAWorkspace: true }),
-}));
-
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
   useSnackBar: () => ({ enqueueErrorSnackBar: jest.fn() }),
 }));
@@ -47,10 +43,14 @@ jest.mock(
 
 const signUpWithCredentialsMock = jest.fn();
 const signUpWithCredentialsInWorkspaceMock = jest.fn();
+const signInWithCredentialsMock = jest.fn();
+const signInWithCredentialsInWorkspaceMock = jest.fn();
 
 (useAuth as jest.Mock).mockReturnValue({
   signUpWithCredentialsInWorkspace: signUpWithCredentialsInWorkspaceMock,
   signUpWithCredentials: signUpWithCredentialsMock,
+  signInWithCredentialsInWorkspace: signInWithCredentialsInWorkspaceMock,
+  signInWithCredentials: signInWithCredentialsMock,
   checkUserExists: { checkUserExistsQuery: jest.fn() },
 });
 
@@ -61,9 +61,12 @@ const credentials: Form = {
   captchaToken: '',
 };
 
-const renderUseSignInUp = (workspacePublicData: PublicWorkspaceData | null) => {
+const renderUseSignInUp = (
+  workspacePublicData: PublicWorkspaceData | null,
+  signInUpMode: SignInUpMode = SignInUpMode.SignUp,
+) => {
   jotaiStore.set(workspacePublicDataState.atom, workspacePublicData);
-  jotaiStore.set(signInUpModeState.atom, SignInUpMode.SignUp);
+  jotaiStore.set(signInUpModeState.atom, signInUpMode);
 
   return renderHook(() => useSignInUp({} as UseFormReturn<Form>), {
     wrapper: ({ children }) => (
@@ -112,5 +115,41 @@ describe('useSignInUp > submitCredentials > sign-up routing', () => {
     );
     expect(signUpWithCredentialsMock).toHaveBeenCalledTimes(1);
     expect(signUpWithCredentialsInWorkspaceMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('useSignInUp > submitCredentials > sign-in routing', () => {
+  beforeEach(() => {
+    resetJotaiStore();
+    jest.clearAllMocks();
+  });
+
+  it('signs in to the workspace when the location resolves one', async () => {
+    const { result } = renderUseSignInUp(
+      { id: 'workspace-id' } as PublicWorkspaceData,
+      SignInUpMode.SignIn,
+    );
+
+    await act(() => result.current.submitCredentials(credentials));
+
+    expect(signInWithCredentialsInWorkspaceMock).toHaveBeenCalledWith(
+      'someone@example.com',
+      'Passw0rd!',
+      'captcha-token',
+    );
+    expect(signInWithCredentialsMock).not.toHaveBeenCalled();
+  });
+
+  it('signs in without a workspace when none exists yet', async () => {
+    const { result } = renderUseSignInUp(null, SignInUpMode.SignIn);
+
+    await act(() => result.current.submitCredentials(credentials));
+
+    expect(signInWithCredentialsMock).toHaveBeenCalledWith(
+      'someone@example.com',
+      'Passw0rd!',
+      'captcha-token',
+    );
+    expect(signInWithCredentialsInWorkspaceMock).not.toHaveBeenCalled();
   });
 });

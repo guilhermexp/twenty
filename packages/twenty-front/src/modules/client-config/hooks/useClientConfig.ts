@@ -21,12 +21,11 @@ import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpC
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { publicFunctionDomainState } from '@/client-config/states/publicFunctionDomainState';
 import { useCallback } from 'react';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { getClientConfig } from '@/client-config/utils/getClientConfig';
@@ -44,15 +43,12 @@ type UseClientConfigResult = {
 
 export const useClientConfig = (): UseClientConfigResult => {
   const setIsAnalyticsEnabled = useSetAtomState(isAnalyticsEnabledState);
-  const setDomainConfiguration = useSetAtomState(domainConfigurationState);
+  const setPublicFunctionDomain = useSetAtomState(publicFunctionDomainState);
   const setAuthProviders = useSetAtomState(authProvidersState);
   const setAiModels = useSetAtomState(aiModelsState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetAtomState(
     isDeveloperDefaultSignInPrefilledState,
-  );
-  const setIsMultiWorkspaceEnabled = useSetAtomState(
-    isMultiWorkspaceEnabledState,
   );
   const setIsEmailVerificationRequired = useSetAtomState(
     isEmailVerificationRequiredState,
@@ -162,7 +158,6 @@ export const useClientConfig = (): UseClientConfigResult => {
       setAiModels(clientConfig.aiModels ?? []);
       setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
-      setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);
       setIsEmailVerificationRequired(clientConfig.isEmailVerificationRequired);
       setSentryConfig({
         dsn: clientConfig?.sentry?.dsn,
@@ -177,11 +172,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       });
 
       setApiConfig(clientConfig?.api);
-      setDomainConfiguration({
-        defaultSubdomain: clientConfig?.defaultSubdomain,
-        frontDomain: clientConfig?.frontDomain,
-        publicFunctionDomain: clientConfig?.publicFunctionDomain,
-      });
+      setPublicFunctionDomain(clientConfig?.publicFunctionDomain);
       setCanManageFeatureFlags(clientConfig?.canManageFeatureFlags);
       setLabPublicFeatureFlags(clientConfig?.publicFeatureFlags);
       setIsMicrosoftMessagingEnabled(clientConfig?.isMicrosoftMessagingEnabled);
@@ -235,7 +226,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setCanManageFeatureFlags,
     setCaptcha,
     setClientConfigApiStatus,
-    setDomainConfiguration,
+    setPublicFunctionDomain,
     setIsGoogleCalendarEnabled,
     setIsGoogleMessagingEnabled,
     setIsAnalyticsEnabled,
@@ -246,7 +237,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsDeveloperDefaultSignInPrefilled,
     setIsEmailVerificationRequired,
     setIsImapSmtpCaldavEnabled,
-    setIsMultiWorkspaceEnabled,
     setIsEmailingDomainInDemoMode,
     setIsClickHouseConfigured,
     setIsDDLLocked,

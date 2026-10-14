@@ -1,3 +1,4 @@
+import { useAuth } from '@/auth/hooks/useAuth';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
@@ -20,10 +21,7 @@ import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { SignInUpWorkspaceCreationForm } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
-import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
-import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { useMemo, useState } from 'react';
 import { REACT_APP_DEV_AUTO_LOGIN, REACT_APP_PRIVATE_MODE } from '~/config';
 
@@ -72,43 +70,26 @@ export const SignInUp = () => {
     !hasPrivateModeAutoLoginFailed;
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
-  const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
-  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { loading: getPublicWorkspaceDataLoading } =
     useGetPublicWorkspaceDataByDomain();
-  const isMultiWorkspaceEnabled = useAtomStateValue(
-    isMultiWorkspaceEnabledState,
-  );
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
     useWorkspaceFromInviteHash();
+  const { signOut } = useAuth();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const onClickOnLogo = () => {
     setSignInUpStep(SignInUpStep.Init);
   };
 
-  const onBackFromWorkspaceCreation = () => {
-    if (searchParams.has('action')) {
-      const nextSearchParams = new URLSearchParams(searchParams);
-      nextSearchParams.delete('action');
-      setSearchParams(nextSearchParams, { replace: true });
-    }
-
-    setSignInUpStep(SignInUpStep.WorkspaceSelection);
-  };
-
-  const isGlobalScope = isDefaultDomain && isMultiWorkspaceEnabled;
+  // No workspace resolves until the instance's only workspace is created.
+  const isGlobalScope = !isDefined(workspacePublicData);
 
   const title = useMemo(() => {
     if (isDefined(workspaceInviteHash)) {
       const workspaceName = workspaceFromInviteHash?.displayName ?? '';
       return t`Join ${workspaceName} team`;
-    }
-
-    if (signInUpStep === SignInUpStep.WorkspaceSelection) {
-      return t`Choose a Workspace`;
     }
 
     if (signInUpStep === SignInUpStep.WorkspaceCreation) {
@@ -152,27 +133,11 @@ export const SignInUp = () => {
       );
     }
 
-    // The workspace creation form is shared by both multi-workspace and
-    // single-workspace self-host, so it must render regardless of domain or
-    // workspace scope.
     if (signInUpStep === SignInUpStep.WorkspaceCreation) {
       return <SignInUpWorkspaceCreationForm />;
     }
 
-    if (isDefaultDomain && isMultiWorkspaceEnabled) {
-      return (
-        <>
-          <SignInUpSsoExchangeTokenEffect />
-          <SignInUpGlobalScopeFormEffect />
-          <SignInUpGlobalScopeForm />
-        </>
-      );
-    }
-
-    if (
-      isOnAWorkspace &&
-      signInUpStep === SignInUpStep.SsoIdentityProviderSelection
-    ) {
+    if (signInUpStep === SignInUpStep.SsoIdentityProviderSelection) {
       return <SignInUpSsoIdentityProviderSelection />;
     }
 
@@ -184,7 +149,7 @@ export const SignInUp = () => {
       return <SignInUpTOTPVerification />;
     }
 
-    if (isDefined(workspacePublicData) && isOnAWorkspace) {
+    if (!isGlobalScope) {
       return (
         <>
           <SignInUpWorkspaceScopeFormEffect />
@@ -202,18 +167,13 @@ export const SignInUp = () => {
     );
   }, [
     clientConfigApiStatus.isLoadedOnce,
-    isDefaultDomain,
-    isMultiWorkspaceEnabled,
-    isOnAWorkspace,
+    isGlobalScope,
     getPublicWorkspaceDataLoading,
     signInUpStep,
-    workspacePublicData,
   ]);
 
   return signInUpStep === SignInUpStep.WorkspaceCreation ? (
-    <OnboardingLayout
-      onBack={!isCreatingWorkspace ? onBackFromWorkspaceCreation : undefined}
-    >
+    <OnboardingLayout onBack={!isCreatingWorkspace ? signOut : undefined}>
       <StyledOnboardingStepPage>{signInUpForm}</StyledOnboardingStepPage>
     </OnboardingLayout>
   ) : (

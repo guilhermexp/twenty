@@ -4,7 +4,6 @@ import { CaptchaDriverType } from '~/generated-metadata/graphql';
 export const mockedClientConfig: ClientConfig = {
   aiModels: [],
   signInPrefilled: true,
-  isMultiWorkspaceEnabled: false,
   isEmailVerificationRequired: false,
   authProviders: {
     google: true,
@@ -13,8 +12,6 @@ export const mockedClientConfig: ClientConfig = {
     microsoft: false,
     sso: [],
   },
-  frontDomain: 'localhost',
-  defaultSubdomain: 'app',
   analyticsEnabled: true,
   sentry: {
     dsn: 'MOCKED_DSN',

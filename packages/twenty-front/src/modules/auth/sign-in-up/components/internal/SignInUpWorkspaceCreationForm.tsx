@@ -1,11 +1,7 @@
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
-import { useWorkspaceSubdomainField } from '@/auth/sign-in-up/hooks/useWorkspaceSubdomainField';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -13,12 +9,14 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useRef, useState } from 'react';
+import { useApolloClient } from '@apollo/client/react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Button, LightIconButton, MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { GetWorkspaceCreationDefaultsDocument } from '~/generated-metadata/graphql';
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -76,71 +74,15 @@ const StyledHiddenFileInput = styled.input`
   display: none;
 `;
 
-const StyledSubdomainSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
-`;
-
-const StyledAlternativesBox = styled.div`
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledAlternativesLabel = styled.span`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  padding-bottom: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledAlternativeRows = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledAlternativeRow = styled.button`
-  align-items: center;
-  background: transparent;
-  border: none;
-  color: ${themeCssVariables.color.green};
-  cursor: pointer;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  gap: ${themeCssVariables.spacing[1]};
-  padding: 2px 0;
-  text-align: left;
-`;
-
-const StyledAvailabilityDotBox = styled.div`
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledAvailabilityDot = styled.div`
-  background-color: ${themeCssVariables.color.green};
-  border-radius: 50%;
-  box-shadow: 0 0 0 3px ${themeCssVariables.color.green5};
-  corner-shape: round;
-  flex-shrink: 0;
-  height: 6px;
-  width: 6px;
-`;
-
 export const SignInUpWorkspaceCreationForm = () => {
   const { t } = useLingui();
   const { createWorkspace } = useSignUpInNewWorkspace();
-  const { frontDomain } = useAtomStateValue(domainConfigurationState);
-  const isMultiWorkspaceEnabled = useAtomStateValue(
-    isMultiWorkspaceEnabledState,
+  const apolloClient = useApolloClient();
+
+  const [workspaceName, setWorkspaceName] = useState(
+    () =>
+      apolloClient.readQuery({ query: GetWorkspaceCreationDefaultsDocument })
+        ?.getWorkspaceCreationDefaults.displayName ?? '',
   );
 
   const isCreatingWorkspace = useAtomStateValue(isCreatingWorkspaceState);
@@ -151,24 +93,7 @@ export const SignInUpWorkspaceCreationForm = () => {
   );
   const hiddenFileInputRef = useRef<HTMLInputElement>(null);
 
-  const {
-    workspaceName,
-    subdomain,
-    status,
-    errorMessage,
-    suggestions,
-    isAvailable,
-    handleWorkspaceNameChange,
-    handleSubdomainChange,
-    applySuggestionValue,
-  } = useWorkspaceSubdomainField({
-    isSubdomainEnabled: isMultiWorkspaceEnabled,
-  });
-
-  const isContinueDisabled =
-    workspaceName.trim() === '' ||
-    isCreatingWorkspace ||
-    (isMultiWorkspaceEnabled && !isAvailable);
+  const isContinueDisabled = workspaceName.trim() === '' || isCreatingWorkspace;
 
   const openFilePicker = () => {
     hiddenFileInputRef.current?.click();
@@ -206,7 +131,6 @@ export const SignInUpWorkspaceCreationForm = () => {
 
     const isWorkspaceCreated = await createWorkspace({
       displayName: workspaceName.trim(),
-      ...(isMultiWorkspaceEnabled ? { subdomain } : {}),
       logo,
     });
 
@@ -224,15 +148,6 @@ export const SignInUpWorkspaceCreationForm = () => {
       handleSubmit();
     }
   };
-
-  const subdomainError =
-    status === 'invalid'
-      ? errorMessage
-      : status === 'unavailable'
-        ? t`This address is already taken`
-        : status === 'error'
-          ? t`Couldn't check availability. Please try again.`
-          : undefined;
 
   return (
     <StyledContentContainer>
@@ -295,55 +210,13 @@ export const SignInUpWorkspaceCreationForm = () => {
             label={t`Name`}
             value={workspaceName}
             placeholder={t`Workspace name`}
-            onChange={handleWorkspaceNameChange}
+            onChange={setWorkspaceName}
             onKeyDown={handleKeyDown}
             fullWidth
           />
         </OnboardingStepAnimatedItem>
-        {isMultiWorkspaceEnabled && (
-          <OnboardingStepAnimatedItem index={4}>
-            <StyledSubdomainSection>
-              <TextInput
-                label={t`Subdomain`}
-                value={subdomain}
-                placeholder={t`apple`}
-                onChange={handleSubdomainChange}
-                onKeyDown={handleKeyDown}
-                rightAdornment={
-                  isNonEmptyString(frontDomain) ? `.${frontDomain}` : undefined
-                }
-                error={subdomainError}
-                noErrorHelper={
-                  status === 'unavailable' || !isDefined(subdomainError)
-                }
-                fullWidth
-              />
-              <OnboardingAnimatedReveal isVisible={status === 'unavailable'}>
-                <StyledAlternativesBox>
-                  <StyledAlternativesLabel>
-                    {t`Subdomain already in use, here are some alternatives:`}
-                  </StyledAlternativesLabel>
-                  <StyledAlternativeRows>
-                    {suggestions.map((alternative) => (
-                      <StyledAlternativeRow
-                        key={alternative}
-                        type="button"
-                        onClick={() => applySuggestionValue(alternative)}
-                      >
-                        <StyledAvailabilityDotBox>
-                          <StyledAvailabilityDot />
-                        </StyledAvailabilityDotBox>
-                        {alternative}
-                      </StyledAlternativeRow>
-                    ))}
-                  </StyledAlternativeRows>
-                </StyledAlternativesBox>
-              </OnboardingAnimatedReveal>
-            </StyledSubdomainSection>
-          </OnboardingStepAnimatedItem>
-        )}
       </StyledFormSection>
-      <OnboardingStepAnimatedItem index={isMultiWorkspaceEnabled ? 5 : 4}>
+      <OnboardingStepAnimatedItem index={4}>
         <MainButton
           title={t`Create workspace`}
           onClick={handleSubmit}

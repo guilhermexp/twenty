@@ -15,10 +15,7 @@ const mockClientConfig = {
     sso: [],
   },
   signInPrefilled: false,
-  isMultiWorkspaceEnabled: true,
   isEmailVerificationRequired: false,
-  defaultSubdomain: 'app',
-  frontDomain: 'localhost',
   sentry: {
     environment: 'development',
     release: '1.0.0',

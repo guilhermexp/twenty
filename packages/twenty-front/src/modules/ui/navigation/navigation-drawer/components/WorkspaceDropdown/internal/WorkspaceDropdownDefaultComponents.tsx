@@ -1,69 +1,44 @@
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
-import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
+import { WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/WorkspaceDropdownId';
 import { OPEN_RECORD_IN_OPTIONS } from '@/ui/navigation/navigation-drawer/constants/OpenRecordInOptions';
-import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
+import { workspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/workspaceDropdownState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import {
   IconDotsVertical,
   IconLogout,
-  IconPlus,
   IconSettings,
-  IconSwitchHorizontal,
   IconUserPlus,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
-import {
-  MenuItem,
-  MenuItemSelectAvatar,
-  UndecoratedLink,
-} from 'twenty-ui/navigation';
+import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-export const MultiWorkspaceDropdownDefaultComponents = () => {
+export const WorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const isMultiWorkspaceEnabled = useAtomStateValue(
-    isMultiWorkspaceEnabledState,
-  );
   const { t } = useLingui();
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
-  const availableWorkspacesCount =
-    countAvailableWorkspaces(availableWorkspaces);
-  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
-  const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const { closeDropdown } = useCloseDropdown();
   const { signOut } = useAuth();
   const { colorScheme, colorSchemeList } = useColorScheme();
 
-  const setMultiWorkspaceDropdown = useSetAtomState(
-    multiWorkspaceDropdownState,
-  );
+  const setWorkspaceDropdown = useSetAtomState(workspaceDropdownState);
 
   const { openRecordInPreference } = useOpenRecordInPreference();
   const navigateSettings = useNavigateSettings();
@@ -72,19 +47,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const canDisplaySidePanel = !isMobile;
 
   const handleSettings = () => {
-    closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
+    closeDropdown(WORKSPACE_DROPDOWN_ID);
     navigateSettings(SettingsPath.ProfilePage);
-  };
-
-  const handleChange = async (availableWorkspace: AvailableWorkspace) => {
-    redirectToWorkspaceDomain(availableWorkspace.workspaceUrls.subdomainUrl);
-  };
-
-  const createWorkspace = () => {
-    redirectToDefaultDomain({
-      pathname: AppPath.SignInUp,
-      searchParams: { action: 'create-new-workspace' },
-    });
   };
 
   return (
@@ -111,17 +75,10 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                 accent="tertiary"
               />
             }
-            dropdownId="multi-workspace-dropdown-context-menu"
+            dropdownId="workspace-dropdown-context-menu"
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>
-                  {isMultiWorkspaceEnabled && (
-                    <MenuItem
-                      LeftIcon={IconPlus}
-                      text={t`Create Workspace`}
-                      onClick={createWorkspace}
-                    />
-                  )}
                   <MenuItem
                     LeftIcon={IconLogout}
                     text={t`Log out`}
@@ -135,52 +92,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       >
         {currentWorkspace?.displayName}
       </DropdownMenuHeader>
-      {availableWorkspacesCount > 1 && (
-        <>
-          <DropdownMenuItemsContainer>
-            {[
-              ...availableWorkspaces.availableWorkspacesForSignIn,
-              ...availableWorkspaces.availableWorkspacesForSignUp,
-            ]
-              .filter(({ id }) => id !== currentWorkspace?.id)
-              .slice(0, 3)
-              .map((availableWorkspace) => (
-                <UndecoratedLink
-                  key={availableWorkspace.id}
-                  to={buildWorkspaceUrl(
-                    availableWorkspace.workspaceUrls.subdomainUrl,
-                  )}
-                  onClick={(event) => {
-                    event?.preventDefault();
-                    handleChange(availableWorkspace);
-                  }}
-                >
-                  <MenuItemSelectAvatar
-                    text={availableWorkspace.displayName ?? t`(No name)`}
-                    avatar={
-                      <Avatar
-                        placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={getAbsoluteImageUrl(
-                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                        )}
-                      />
-                    }
-                    selected={false}
-                  />
-                </UndecoratedLink>
-              ))}
-            {availableWorkspacesCount > 4 && (
-              <MenuItem
-                LeftIcon={IconSwitchHorizontal}
-                text={t`Other workspaces`}
-                onClick={() => setMultiWorkspaceDropdown('workspaces-list')}
-                hasSubMenu={true}
-              />
-            )}
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-        </>
-      )}
       <DropdownMenuItemsContainer>
         {/* Desktop reaches settings from the drawer's mode switcher, which
             mobile does not render, so the workspace menu is where it lives. */}
@@ -196,7 +107,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           text={t`Theme`}
           contextualText={colorScheme}
           hasSubMenu={true}
-          onClick={() => setMultiWorkspaceDropdown('themes')}
+          onClick={() => setWorkspaceDropdown('themes')}
         />
         {canDisplaySidePanel && (
           <MenuItem
@@ -206,13 +117,13 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
               OPEN_RECORD_IN_OPTIONS[openRecordInPreference].label,
             )}
             hasSubMenu={true}
-            onClick={() => setMultiWorkspaceDropdown('open-record-in')}
+            onClick={() => setWorkspaceDropdown('open-record-in')}
           />
         )}
         <UndecoratedLink
           to={`${getSettingsPath(SettingsPath.WorkspaceMembersPage)}#invite`}
           onClick={() => {
-            closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
+            closeDropdown(WORKSPACE_DROPDOWN_ID);
           }}
         >
           <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
