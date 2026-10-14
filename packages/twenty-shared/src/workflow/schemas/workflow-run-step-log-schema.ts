@@ -29,7 +29,6 @@ const aiAgentStepLogDetailsSchema = z.object({
   }),
   cost: z.object({
     totalCostInDollars: z.number(),
-    creditsUsedMicro: z.number(),
   }),
   nativeWebSearchCallCount: z.number(),
   toolCalls: z.array(aiToolCallLogSchema),

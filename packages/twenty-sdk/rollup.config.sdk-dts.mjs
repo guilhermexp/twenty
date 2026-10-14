@@ -31,12 +31,6 @@ export default [
     plugins,
   },
   {
-    input: 'src/sdk/billing/index.ts',
-    output: { file: 'dist/billing/index.d.ts', format: 'es' },
-    external,
-    plugins,
-  },
-  {
     input: 'src/sdk/logic-function/index.ts',
     output: { file: 'dist/logic-function/index.d.ts', format: 'es' },
     external,

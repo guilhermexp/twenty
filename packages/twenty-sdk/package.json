@@ -23,11 +23,6 @@
     "development"
   ],
   "exports": {
-    "./billing": {
-      "types": "./dist/billing/index.d.ts",
-      "import": "./dist/billing/index.mjs",
-      "require": "./dist/billing/index.cjs"
-    },
     "./define": {
       "types": "./dist/define/index.d.ts",
       "import": "./dist/define/index.mjs",
@@ -112,9 +107,6 @@
   },
   "typesVersions": {
     "*": {
-      "billing": [
-        "dist/billing/index.d.ts"
-      ],
       "define": [
         "dist/define/index.d.ts"
       ],

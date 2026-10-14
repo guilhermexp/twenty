@@ -9,8 +9,6 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_SELF_HOST_CAPABILITIES_SETUP:
     '/developers/self-host/capabilities/setup',
   GETTING_STARTED_INTRODUCTION: '/getting-started/introduction',
-  USER_GUIDE_BILLING_CAPABILITIES_CREDITS:
-    '/user-guide/billing/capabilities/credits',
 } as const;
 
 export type DocumentationPath =

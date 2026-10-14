@@ -7,5 +7,4 @@ export type AgentChatSubscriptionEvent =
   | { type: 'queue-updated' }
   | { type: 'question-answered' }
   | { type: 'stream-error'; code: string; message: string }
-  | { type: 'credits-exhausted' }
   | { type: 'keepalive' };

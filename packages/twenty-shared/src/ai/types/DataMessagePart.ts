@@ -70,9 +70,6 @@ export type DataMessagePart = {
       agentPromptTokens?: number;
       agentCompletionTokens?: number;
       agentTotalTokens?: number;
-      routingCostInCredits?: number;
-      agentCostInCredits?: number;
-      totalCostInCredits?: number;
       planReasoning?: string;
       totalSteps?: number;
       steps?: Array<{
