@@ -7,7 +7,7 @@ The upgrade process relies on two types of commands:
 
 Both are registered via decorators and automatically discovered by the upgrade pipeline.
 
-This fork has independent versioning and does not sync release or upgrade history from upstream. Add new commands only under the current fork version directory; never renumber existing versions.
+This fork has independent versioning and does not sync release or upgrade history from upstream. The current fork release is identified by `TWENTY_CURRENT_VERSION`; its directory is the only place for new upgrade commands. The fork does not import or replay upstream release numbering.
 
 ## Instance Commands
 
