@@ -20,7 +20,7 @@ const innerServerStart = async (
   options: ServerStartOptions = {},
 ): Promise<CommandResult<ServerStartResult>> => {
   const { onProgress, test: isTest } = options;
-  const defaultPort = isTest ? 2021 : 2020;
+  const defaultPort = isTest ? 2021 : 3000;
   const existingUrl = await detectLocalServer(options.port ?? defaultPort);
 
   if (existingUrl === null) {

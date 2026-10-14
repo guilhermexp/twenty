@@ -139,7 +139,7 @@ const innerAppDevOnce = async (
           '  Start this repository:\n' +
           '    yarn start\n\n' +
           '  Or check the configured local server:\n' +
-          '    yarn twenty docker:status',
+          '    yarn twenty server:status',
       },
     };
   }

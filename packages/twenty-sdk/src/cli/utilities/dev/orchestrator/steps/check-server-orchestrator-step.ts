@@ -56,7 +56,7 @@ export class CheckServerOrchestratorStep {
               '  Start this repository:\n' +
               '    yarn start\n\n' +
               '  Or check the configured local server:\n' +
-              '    yarn twenty docker:status\n\n' +
+              '    yarn twenty server:status\n\n' +
               '  Waiting for server...',
             status: 'error',
           },

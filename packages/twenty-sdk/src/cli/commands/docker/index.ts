@@ -7,7 +7,7 @@ const startAction = async (
   _version: string | undefined,
   options: { port?: string; test?: boolean },
 ) => {
-  const defaultPort = options.test ? 2021 : 2020;
+  const defaultPort = options.test ? 2021 : 3000;
   const port = options.port ? parseInt(options.port, 10) : defaultPort;
 
   if (Number.isNaN(port) || port < 1 || port > 65535) {
@@ -28,7 +28,7 @@ const startAction = async (
 };
 
 const statusAction = async (options: { test?: boolean }) => {
-  const defaultPort = options.test ? 2021 : 2020;
+  const defaultPort = options.test ? 2021 : 3000;
   const url = await detectLocalServer(defaultPort);
 
   if (url === null) {
@@ -43,14 +43,14 @@ const statusAction = async (options: { test?: boolean }) => {
 
 export const registerServerCommands = (program: Command): void => {
   program
-    .command('docker:start [version]')
+    .command('server:start [version]')
     .description('Connect the SDK to a locally running fork server')
     .option('-p, --port <port>', 'HTTP port')
     .option('--test', 'Use the separate test server on port 2021')
     .action(startAction);
 
   program
-    .command('docker:status')
+    .command('server:status')
     .description('Show the local fork server status')
     .option('--test', 'Check the test server')
     .action(statusAction);
@@ -75,7 +75,7 @@ export const registerServerCommands = (program: Command): void => {
         version: string | undefined,
         options: { port?: string; test?: boolean },
       ) => {
-        deprecate('start', 'docker:start');
+        deprecate('start', 'server:start');
         await startAction(version, options);
       },
     );
@@ -84,7 +84,7 @@ export const registerServerCommands = (program: Command): void => {
     .command('status')
     .option('--test', 'Check the test server')
     .action(async (options: { test?: boolean }) => {
-      deprecate('status', 'docker:status');
+      deprecate('status', 'server:status');
       await statusAction(options);
     });
 };
