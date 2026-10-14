@@ -81,10 +81,6 @@ export const targetObjectWritePermissions = createExpressionOnlyPlaceholder(
   'targetObjectWritePermissions',
 ) as CommandMenuContextApi['targetObjectWritePermissions'];
 
-export const canImpersonate = createExpressionOnlyPlaceholder(
-  'canImpersonate',
-) as CommandMenuContextApi['canImpersonate'];
-
 export const canAccessFullAdminPanel = createExpressionOnlyPlaceholder(
   'canAccessFullAdminPanel',
 ) as CommandMenuContextApi['canAccessFullAdminPanel'];

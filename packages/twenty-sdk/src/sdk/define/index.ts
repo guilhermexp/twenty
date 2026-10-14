@@ -41,7 +41,6 @@ export type { TimelineActivityTypeManifest } from 'twenty-shared/application';
 
 export {
   canAccessFullAdminPanel,
-  canImpersonate,
   every,
   everyDefined,
   everyEquals,

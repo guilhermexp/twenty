@@ -8,7 +8,6 @@ export const SystemPermissionFlag = {
   DATA_MODEL: 'f0c08013-3c9a-5489-bd45-a641fe5f085d',
   SECURITY: '4a8b6016-1d3d-5c94-bbe8-a74c5f32335a',
   WORKFLOWS: '6189e7bd-4051-5752-b6b1-5f31358fbaf1',
-  IMPERSONATE: 'dd2274d1-bbd5-551d-bcf2-3147539cef11',
   SSO_BYPASS: '2e9cfdc0-4669-58ab-b241-b6c3c14d96df',
   APPLICATIONS: '9faa55f7-2606-566b-9e1d-aefbedbd0136',
   LAYOUTS: '458d1ee5-ba12-5f4e-9d17-6f8c11fcd7fd',

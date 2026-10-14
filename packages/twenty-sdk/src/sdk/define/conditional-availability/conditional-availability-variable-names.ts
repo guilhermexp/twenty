@@ -12,7 +12,6 @@ export const CONDITIONAL_AVAILABILITY_VARIABLE_NAMES = [
   'featureFlags',
   'targetObjectReadPermissions',
   'targetObjectWritePermissions',
-  'canImpersonate',
   'canAccessFullAdminPanel',
   'objectMetadataItem',
   'objectMetadataLabel',
