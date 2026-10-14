@@ -23,6 +23,7 @@ services:
     build:
       context: ../../..
       dockerfile: packages/twenty-docker/twenty/Dockerfile
+      target: twenty
     image: twenty:local
     environment:
       NODE_PORT: "3000"
@@ -42,6 +43,7 @@ services:
     build:
       context: ../../..
       dockerfile: packages/twenty-docker/twenty/Dockerfile
+      target: twenty
     image: twenty:local
     command: yarn worker:prod
     environment:

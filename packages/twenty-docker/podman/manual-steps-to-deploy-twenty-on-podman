@@ -12,6 +12,7 @@ fi
 source "$script_dir/.env"
 
 podman build \
+  --target twenty \
   --tag twenty:local \
   --file "$repo_root/packages/twenty-docker/twenty/Dockerfile" \
   "$repo_root"
