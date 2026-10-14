@@ -1255,31 +1255,6 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
   },
   {
     "__typename": "CommandMenuItem",
-    "id": "2b6a2222-7bb5-4d11-a12c-90b880aa46a9",
-    "applicationId": "0be210aa-685b-4c31-9a2a-010b44eacaf5",
-    "workflowVersionId": null,
-    "frontComponentId": null,
-    "engineComponentKey": "NAVIGATION",
-    "position": 56,
-    "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": "/settings/domains"
-    },
-    "hotKeys": null,
-    "conditionalAvailabilityExpression": "permissionFlags.WORKSPACE",
-    "availabilityType": "GLOBAL",
-    "availabilityObjectMetadataId": null,
-    "pageLayoutId": null,
-    "isActive": true,
-    "frontComponent": null,
-    "label": "Go to Domains Settings",
-    "icon": "IconWorld",
-    "shortLabel": "Domains",
-    "navigationTargetObjectMetadataId": null
-  },
-  {
-    "__typename": "CommandMenuItem",
     "id": "91468a95-3a90-4842-8c2a-ac30b31e03f2",
     "applicationId": "0be210aa-685b-4c31-9a2a-010b44eacaf5",
     "workflowVersionId": null,
@@ -1417,7 +1392,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
       "path": "/settings/admin-panel"
     },
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "canImpersonate or canAccessFullAdminPanel",
+    "conditionalAvailabilityExpression": "canAccessFullAdminPanel",
     "availabilityType": "GLOBAL",
     "availabilityObjectMetadataId": null,
     "pageLayoutId": null,
@@ -1426,31 +1401,6 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "label": "Go to Admin Panel Settings",
     "icon": "IconServer",
     "shortLabel": "Admin Panel",
-    "navigationTargetObjectMetadataId": null
-  },
-  {
-    "__typename": "CommandMenuItem",
-    "id": "554f9ae5-9be4-44ad-b062-26d479a96942",
-    "applicationId": "0be210aa-685b-4c31-9a2a-010b44eacaf5",
-    "workflowVersionId": null,
-    "frontComponentId": null,
-    "engineComponentKey": "NAVIGATION",
-    "position": 63,
-    "isPinned": false,
-    "payload": {
-      "__typename": "PathCommandMenuItemPayload",
-      "path": "/settings/community"
-    },
-    "hotKeys": null,
-    "conditionalAvailabilityExpression": null,
-    "availabilityType": "GLOBAL",
-    "availabilityObjectMetadataId": null,
-    "pageLayoutId": null,
-    "isActive": true,
-    "frontComponent": null,
-    "label": "Go to Community Settings",
-    "icon": "IconUsers",
-    "shortLabel": "Community",
     "navigationTargetObjectMetadataId": null
   },
   {
