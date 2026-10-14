@@ -8,7 +8,6 @@ import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error
 import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.const';
 import { MCP_EXCLUDED_TOOL_NAMES } from 'src/engine/api/mcp/constants/mcp-excluded-tool-names.const';
 import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
-import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-open-world-read-only-tool-annotations.const';
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
 import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
@@ -30,7 +29,6 @@ import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
-import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createLearnToolsTool,
@@ -61,29 +59,6 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 type McpAnnotatedTool = ToolSet[string] & {
   annotations: McpToolAnnotations;
 };
-
-const MCP_PRELOADED_TOOL_ANNOTATIONS: Record<string, McpToolAnnotations> = {
-  search_help_center: MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-};
-
-const annotatePreloadedMcpTools = (toolSet: ToolSet): ToolSet =>
-  Object.fromEntries(
-    Object.entries(toolSet).map(([name, toolDefinition]) => {
-      const annotations = MCP_PRELOADED_TOOL_ANNOTATIONS[name];
-
-      if (!isDefined(annotations)) {
-        throw new Error(`Missing MCP annotations for preloaded tool "${name}"`);
-      }
-
-      return [
-        name,
-        {
-          ...toolDefinition,
-          annotations,
-        } as McpAnnotatedTool,
-      ];
-    }),
-  );
 
 @Injectable()
 export class McpProtocolService {
@@ -216,13 +191,7 @@ export class McpProtocolService {
       actorContext,
     };
 
-    const preloadedTools = await this.toolRegistry.getToolsByName(
-      COMMON_PRELOAD_TOOLS,
-      toolContext,
-    );
-
     return {
-      ...annotatePreloadedMcpTools(preloadedTools),
       [GET_TOOL_CATALOG_TOOL_NAME]: {
         ...createGetToolCatalogTool(this.toolRegistry, workspace.id, roleId, {
           userId: options?.userId,

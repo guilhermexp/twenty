@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
@@ -93,10 +92,7 @@ export class SystemPromptBuilderService {
       });
     }
 
-    const toolSection = buildToolCatalogSection(
-      toolCatalog,
-      COMMON_PRELOAD_TOOLS,
-    );
+    const toolSection = buildToolCatalogSection(toolCatalog, []);
 
     sections.push({
       title: 'Tool Catalog',
