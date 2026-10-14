@@ -121,7 +121,6 @@ describe('useAuth', () => {
     await act(async () => {
       await result.current.signInWithGoogle({
         workspaceInviteHash: 'workspaceInviteHash',
-        action: 'join-workspace',
       });
     });
 
@@ -141,16 +140,14 @@ describe('useAuth', () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      await result.current.signInWithGoogle({
-        action: 'list-available-workspaces',
-      });
+      await result.current.signInWithGoogle({});
     });
 
     const calledWithUrl = redirectSpy.mock.calls[0]?.[0] as string;
     const parsed = new URL(calledWithUrl);
 
     expect(parsed.pathname).toBe('/auth/google');
-    expect(parsed.searchParams.get('action')).toBe('list-available-workspaces');
+    expect(parsed.searchParams.has('action')).toBe(false);
     expect(parsed.searchParams.get('returnToPath')).toBe(
       '/authorize?response_type=code&client_id=abc&state=xyz',
     );
@@ -162,9 +159,7 @@ describe('useAuth', () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      await result.current.signInWithGoogle({
-        action: 'list-available-workspaces',
-      });
+      await result.current.signInWithGoogle({});
     });
 
     const calledWithUrl = redirectSpy.mock.calls[0]?.[0] as string;

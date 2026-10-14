@@ -1,7 +1,6 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { type SocialSsoSignInUpActionType } from '@/auth/types/socialSsoSignInUp.type';
 
 export const useSignInWithGoogle = () => {
   const workspaceInviteHash = useParams().workspaceInviteHash;
@@ -12,11 +11,10 @@ export const useSignInWithGoogle = () => {
   const { signInWithGoogle } = useAuth();
 
   return {
-    signInWithGoogle: ({ action }: { action: SocialSsoSignInUpActionType }) =>
+    signInWithGoogle: () =>
       signInWithGoogle({
         workspaceInviteHash,
         workspacePersonalInviteToken,
-        action,
       }),
   };
 };

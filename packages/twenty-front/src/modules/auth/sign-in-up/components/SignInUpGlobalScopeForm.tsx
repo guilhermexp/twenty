@@ -33,15 +33,8 @@ export const SignInUpGlobalScopeForm = () => {
 
   return (
     <StyledOnboardingContentContainer>
-      {authProviders.google && (
-        <SignInUpWithGoogle action="list-available-workspaces" isGlobalScope />
-      )}
-      {authProviders.microsoft && (
-        <SignInUpWithMicrosoft
-          action="list-available-workspaces"
-          isGlobalScope
-        />
-      )}
+      {authProviders.google && <SignInUpWithGoogle isGlobalScope />}
+      {authProviders.microsoft && <SignInUpWithMicrosoft isGlobalScope />}
       {(authProviders.google || authProviders.microsoft) && (
         <HorizontalSeparator
           color={themeCssVariables.background.transparent.light}

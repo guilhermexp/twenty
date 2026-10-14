@@ -6,7 +6,6 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
-import { type SocialSsoSignInUpActionType } from '@/auth/types/socialSsoSignInUp.type';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconMicrosoft } from 'twenty-ui/icon';
@@ -19,10 +18,8 @@ import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SignInUpWithMicrosoft = ({
-  action,
   isGlobalScope,
 }: {
-  action: SocialSsoSignInUpActionType;
   isGlobalScope?: boolean;
 }) => {
   const { theme } = useContext(ThemeContext);
@@ -37,7 +34,7 @@ export const SignInUpWithMicrosoft = ({
 
   const handleClick = () => {
     setLastAuthenticatedMethod(AuthenticatedMethod.MICROSOFT);
-    signInWithMicrosoft({ action });
+    signInWithMicrosoft();
   };
 
   const isLastUsed = lastAuthenticatedMethod === AuthenticatedMethod.MICROSOFT;

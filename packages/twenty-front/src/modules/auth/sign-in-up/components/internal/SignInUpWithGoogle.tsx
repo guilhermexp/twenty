@@ -6,7 +6,6 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
-import { type SocialSsoSignInUpActionType } from '@/auth/types/socialSsoSignInUp.type';
 import { useLingui } from '@lingui/react/macro';
 import { memo, useContext } from 'react';
 import { IconGoogle } from 'twenty-ui/icon';
@@ -23,10 +22,8 @@ const GoogleIcon = memo(() => {
 });
 
 export const SignInUpWithGoogle = ({
-  action,
   isGlobalScope,
 }: {
-  action: SocialSsoSignInUpActionType;
   isGlobalScope?: boolean;
 }) => {
   const { t } = useLingui();
@@ -39,7 +36,7 @@ export const SignInUpWithGoogle = ({
 
   const handleClick = () => {
     setLastAuthenticatedMethod(AuthenticatedMethod.GOOGLE);
-    signInWithGoogle({ action });
+    signInWithGoogle();
   };
 
   const isLastUsed = lastAuthenticatedMethod === AuthenticatedMethod.GOOGLE;

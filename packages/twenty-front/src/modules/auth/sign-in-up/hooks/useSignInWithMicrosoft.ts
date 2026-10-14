@@ -1,7 +1,6 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { type SocialSsoSignInUpActionType } from '@/auth/types/socialSsoSignInUp.type';
 
 export const useSignInWithMicrosoft = () => {
   const workspaceInviteHash = useParams().workspaceInviteHash;
@@ -11,15 +10,10 @@ export const useSignInWithMicrosoft = () => {
 
   const { signInWithMicrosoft } = useAuth();
   return {
-    signInWithMicrosoft: ({
-      action,
-    }: {
-      action: SocialSsoSignInUpActionType;
-    }) =>
+    signInWithMicrosoft: () =>
       signInWithMicrosoft({
         workspaceInviteHash,
         workspacePersonalInviteToken,
-        action,
       }),
   };
 };

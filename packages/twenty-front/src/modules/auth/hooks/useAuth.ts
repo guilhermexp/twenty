@@ -454,7 +454,6 @@ export const useAuth = () => {
       params: {
         workspacePersonalInviteToken?: string;
         workspaceInviteHash?: string;
-        action?: string;
       },
     ) => {
       const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
@@ -466,10 +465,6 @@ export const useAuth = () => {
           'inviteToken',
           params.workspacePersonalInviteToken,
         );
-      }
-
-      if (isDefined(params.action)) {
-        url.searchParams.set('action', params.action);
       }
 
       if (isDefined(workspacePublicData)) {
@@ -491,7 +486,6 @@ export const useAuth = () => {
     (params: {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
-      action: string;
     }) => {
       redirect(buildRedirectUrl('/auth/google', params));
     },
@@ -502,7 +496,6 @@ export const useAuth = () => {
     (params: {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
-      action: string;
     }) => {
       redirect(buildRedirectUrl('/auth/microsoft', params));
     },
