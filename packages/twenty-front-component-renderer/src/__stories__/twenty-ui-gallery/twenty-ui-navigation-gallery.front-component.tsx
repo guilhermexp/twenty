@@ -3,7 +3,6 @@ import { IconHome, IconUser } from 'twenty-ui/icon';
 import {
   ClickToActionLink,
   ContactLink,
-  GithubVersionLink,
   LinkType,
   MenuItem,
   MenuItemAvatar,
@@ -48,10 +47,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'ContactLink',
     node: <ContactLink href="https://twenty.com">Contact</ContactLink>,
-  },
-  {
-    name: 'GithubVersionLink',
-    node: <GithubVersionLink version="v1.0.0" />,
   },
   {
     name: 'MenuItem',

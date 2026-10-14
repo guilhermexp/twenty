@@ -1,18 +1,12 @@
 <div align="center">
-  <a href="https://twenty.com">
-    <picture>
-      <img alt="Twenty logo" src="https://twenty.com/logo.svg" height="128">
-    </picture>
-  </a>
   <h1>Twenty SDK</h1>
 
 <a href="https://www.npmjs.com/package/twenty-sdk"><img alt="NPM version" src="https://img.shields.io/npm/v/twenty-sdk.svg?style=for-the-badge&labelColor=000000"></a>
-<a href="https://github.com/twentyhq/twenty/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/next.svg?style=for-the-badge&labelColor=000000"></a>
-<a href="https://discord.gg/cx5n4Jzs57"><img alt="Join the community on Discord" src="https://img.shields.io/badge/Join%20the%20community-blueviolet.svg?style=for-the-badge&logo=Twenty&labelColor=000000&logoWidth=20"></a>
+<a href="LICENSE"><img alt="License" src="https://img.shields.io/npm/l/next.svg?style=for-the-badge&labelColor=000000"></a>
 
 </div>
 
-A CLI and SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
+A CLI and SDK to develop, build, and publish applications that extend Twenty CRM.
 
 ## Quick start
 
@@ -25,12 +19,6 @@ yarn twenty dev
 ```
 
 ## Documentation
-
-Full documentation is available at **[docs.twenty.com/developers/extend/apps](https://docs.twenty.com/developers/extend/apps/getting-started)**:
-
-- [Getting Started](https://docs.twenty.com/developers/extend/apps/getting-started) — scaffolding, local server, authentication, dev mode
-- [Building Apps](https://docs.twenty.com/developers/extend/apps/building) — entity definitions, API clients, testing, CLI reference
-- [Publishing](https://docs.twenty.com/developers/extend/apps/publishing) — deploy, npm publish
 
 Guides in this repository:
 
@@ -70,9 +58,9 @@ The CLI stores credentials per remote in `~/.twenty/config.json`. Run `yarn twen
 
 ### Development setup
 
+From the repository root:
+
 ```bash
-git clone https://github.com/twentyhq/twenty.git
-cd twenty
 yarn install
 ```
 
@@ -93,8 +81,3 @@ npx nx run twenty-sdk:build
 ```bash
 npx nx run twenty-sdk:start -- <command>
 ```
-
-### Resources
-
-- See our [GitHub](https://github.com/twentyhq/twenty)
-- Join our [Discord](https://discord.gg/cx5n4Jzs57)

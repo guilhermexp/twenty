@@ -3,13 +3,6 @@
   "version": "1.0.0-alpha.1",
   "description": "Twenty's shared React UI component library.",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/twentyhq/twenty.git",
-    "directory": "packages/twenty-ui"
-  },
-  "homepage": "https://twenty.com",
-  "bugs": "https://github.com/twentyhq/twenty/issues",
   "keywords": [
     "twenty",
     "ui",

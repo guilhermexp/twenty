@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-ui/logo.png" width="136" height="136" alt="twenty-ui logo" />
+  <img src="logo.png" width="136" height="136" alt="twenty-ui logo" />
 </p>
 
 # twenty-ui
@@ -76,4 +76,4 @@ npx nx test twenty-ui                  # Run unit tests
 
 # License
 
-twenty-ui is released under the [MIT](https://github.com/twentyhq/twenty/blob/main/packages/twenty-ui/LICENSE) license.
+twenty-ui is released under the [MIT](LICENSE) license.
