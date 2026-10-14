@@ -14,16 +14,9 @@ export const SettingsDeviceSessionRowRightComponent = ({
 }) => {
   const { t } = useLingui();
 
-  return (
-    <>
-      {session.isImpersonating && (
-        <Status color="orange" text={t`Impersonation`} />
-      )}
-      {session.isCurrent ? (
-        <Status color="turquoise" text={t`This device`} />
-      ) : (
-        <SettingsDeviceSessionRowDropdownMenu userSessionId={session.id} />
-      )}
-    </>
+  return session.isCurrent ? (
+    <Status color="turquoise" text={t`This device`} />
+  ) : (
+    <SettingsDeviceSessionRowDropdownMenu userSessionId={session.id} />
   );
 };

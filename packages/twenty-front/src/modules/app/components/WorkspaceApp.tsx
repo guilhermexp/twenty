@@ -9,9 +9,7 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const WorkspaceApp = () => {
   const currentUser = useAtomStateValue(currentUserState);
 
-  const isAdminPageEnabled =
-    (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
-    false;
+  const isAdminPageEnabled = currentUser?.canAccessFullAdminPanel ?? false;
 
   const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,

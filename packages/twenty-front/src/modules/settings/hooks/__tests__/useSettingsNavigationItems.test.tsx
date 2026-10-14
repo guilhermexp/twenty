@@ -35,7 +35,6 @@ const mockCurrentUser = {
   id: 'fake-user-id',
   email: 'fake@email.com',
   canAccessFullAdminPanel: false,
-  canImpersonate: false,
   onboardingStatus: OnboardingStatus.COMPLETED,
   userVars: {},
   firstName: 'fake-first-name',

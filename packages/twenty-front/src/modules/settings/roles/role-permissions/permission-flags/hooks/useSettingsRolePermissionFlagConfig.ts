@@ -12,7 +12,6 @@ import {
   IconSettingsAutomation,
   IconShield,
   IconSparkles,
-  IconSpy,
   IconUsers,
 } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -106,15 +105,6 @@ export const useSettingsRolePermissionFlagConfig = ({
         name: t`SSO Bypass`,
         description: t`Enable bypass options`,
         Icon: IconShield,
-        isRelevantForAgents: false,
-        isRelevantForApiKeys: false,
-        isRelevantForUsers: true,
-      },
-      {
-        key: PermissionFlagType.IMPERSONATE,
-        name: t`Impersonate`,
-        description: t`Impersonate workspace users`,
-        Icon: IconSpy,
         isRelevantForAgents: false,
         isRelevantForApiKeys: false,
         isRelevantForUsers: true,

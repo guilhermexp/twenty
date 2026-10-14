@@ -1,7 +1,6 @@
 import { useParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client/react';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
@@ -16,7 +15,6 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsAdminServerAdminAccess } from '@/settings/admin-panel/components/SettingsAdminServerAdminAccess';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
-import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
@@ -28,7 +26,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   IconCalendar,
-  IconEyeShare,
   IconId,
   IconLock,
   IconMail,
@@ -36,18 +33,12 @@ import {
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/data-display';
 import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   type UserLookupAdminPanelQuery,
   UserLookupAdminPanelDocument,
 } from '~/generated-admin/graphql';
-
-const StyledButtonContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[3]};
-`;
 
 export const SettingsAdminUserDetail = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -68,7 +59,6 @@ export const SettingsAdminUserDetail = () => {
   const userLookupResult = userLookupData?.userLookupAdminPanel;
 
   const currentUser = useAtomStateValue(currentUserState);
-  const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
 
   const effectiveTabId = activeTabId || userLookupResult?.workspaces?.[0]?.id;
   const user = userLookupResult?.user;
@@ -192,30 +182,6 @@ export const SettingsAdminUserDetail = () => {
               <SettingsAdminWorkspaceContent
                 activeWorkspace={activeWorkspace}
               />
-              {currentUser?.canImpersonate &&
-                activeWorkspace &&
-                isDefined(user) &&
-                user.id !== currentUser.id && (
-                  <StyledButtonContainer>
-                    <Button
-                      Icon={IconEyeShare}
-                      variant="primary"
-                      accent="default"
-                      title={
-                        activeWorkspace.allowImpersonation === false
-                          ? t`Impersonation is disabled for this workspace`
-                          : t`Impersonate`
-                      }
-                      onClick={() =>
-                        handleImpersonate(user.id, activeWorkspace.id)
-                      }
-                      disabled={
-                        impersonatingUserId !== null ||
-                        activeWorkspace.allowImpersonation === false
-                      }
-                    />
-                  </StyledButtonContainer>
-                )}
             </Section>
           </>
         )}

@@ -9,7 +9,6 @@ export const UPDATE_WORKSPACE = gql`
       subdomain
       displayName
       logo
-      allowImpersonation
       isPublicInviteLinkEnabled
       workspaceDiscoverability
       isGoogleAuthEnabled

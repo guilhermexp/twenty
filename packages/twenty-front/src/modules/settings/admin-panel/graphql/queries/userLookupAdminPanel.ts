@@ -16,7 +16,6 @@ export const USER_LOOKUP_ADMIN_PANEL = gql`
         totalUsers
         activationStatus
         createdAt
-        allowImpersonation
         workspaceUrls {
           subdomainUrl
         }

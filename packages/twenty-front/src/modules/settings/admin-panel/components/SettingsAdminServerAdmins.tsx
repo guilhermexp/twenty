@@ -18,7 +18,7 @@ import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetServerAdminsDocument } from '~/generated-admin/graphql';
 
-const SERVER_ADMINS_GRID_TEMPLATE_COLUMNS = '1fr 2fr 1fr 36px';
+const SERVER_ADMINS_GRID_TEMPLATE_COLUMNS = '2fr 1fr 36px';
 
 const StyledEmptyState = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -52,7 +52,6 @@ export const SettingsAdminServerAdmins = () => {
           <TableRow gridTemplateColumns={SERVER_ADMINS_GRID_TEMPLATE_COLUMNS}>
             <TableHeader>{t`Administrator`}</TableHeader>
             <TableHeader>{t`Admin panel`}</TableHeader>
-            <TableHeader>{t`Impersonation`}</TableHeader>
             <TableHeader />
           </TableRow>
           <TableBody>
@@ -78,7 +77,6 @@ export const SettingsAdminServerAdmins = () => {
                   <TableCell>
                     {admin.canAccessFullAdminPanel ? t`Yes` : '—'}
                   </TableCell>
-                  <TableCell>{admin.canImpersonate ? t`Yes` : '—'}</TableCell>
                   <TableCell align="center">
                     <IconChevronRight
                       size={theme.icon.size.md}

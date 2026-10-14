@@ -18,7 +18,6 @@ export const USER_QUERY_FRAGMENT = gql`
     email
     hasPassword
     canAccessFullAdminPanel
-    canImpersonate
     onboardingStatus
     previousOnboardingStatus
     isWorkspaceCreator
@@ -34,7 +33,6 @@ export const USER_QUERY_FRAGMENT = gql`
     currentUserWorkspace {
       id
       permissionFlags
-      isImpersonating
       objectsPermissions {
         ...ObjectPermissionFragment
       }
@@ -49,7 +47,6 @@ export const USER_QUERY_FRAGMENT = gql`
       displayName
       logo
       inviteHash
-      allowImpersonation
       activationStatus
       isPublicInviteLinkEnabled
       workspaceDiscoverability

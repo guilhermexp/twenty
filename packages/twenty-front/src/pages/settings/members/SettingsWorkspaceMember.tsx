@@ -1,11 +1,9 @@
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -13,27 +11,19 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconInfoCircle, IconLock } from 'twenty-ui/icon';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { MemberInfosTab } from '@/settings/members/components/MemberInfosTab';
 import { MemberPermissionsTab } from '@/settings/members/components/MemberPermissionsTab';
 import { useWorkspaceMemberRoles } from '@/settings/members/hooks/useWorkspaceMemberRoles';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useMutation } from '@apollo/client/react';
-import {
-  DeleteUserWorkspaceDocument,
-  ImpersonateDocument,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { DeleteUserWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const SETTINGS_WORKSPACE_MEMBER_TABS = {
   COMPONENT_INSTANCE_ID: 'settings-workspace-member-tabs',
@@ -50,13 +40,6 @@ export const SettingsWorkspaceMember = () => {
   const navigateSettings = useNavigateSettings();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { openModal, closeModal } = useModal();
-  const currentUser = useAtomStateValue(currentUserState);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { startImpersonating } = useImpersonationSession();
-  const [impersonate] = useMutation(ImpersonateDocument);
-  const isImpersonating = useAtomStateValue(isImpersonatingState);
-  const canImpersonate =
-    useHasPermissionFlag(PermissionFlagType.IMPERSONATE) && !isImpersonating;
 
   const {
     roles,
@@ -136,43 +119,6 @@ export const SettingsWorkspaceMember = () => {
     }
   };
 
-  const handleImpersonate = async () => {
-    if (!member?.userId || !currentWorkspace?.id) {
-      enqueueErrorSnackBar({
-        message: t`Cannot impersonate selected user`,
-        options: { duration: 2000 },
-      });
-      return;
-    }
-
-    if (!isDefined(currentUser?.id) || member.userId === currentUser.id) {
-      enqueueErrorSnackBar({
-        message: t`You cannot impersonate your own account`,
-        options: { duration: 2000 },
-      });
-
-      return;
-    }
-
-    await impersonate({
-      variables: {
-        userId: member.userId,
-        workspaceId: currentWorkspace.id,
-      },
-      onCompleted: async (data) => {
-        const { loginToken } = data.impersonate;
-
-        await startImpersonating(loginToken.token);
-      },
-      onError: () => {
-        enqueueErrorSnackBar({
-          message: t`Cannot impersonate selected user`,
-          options: { duration: 2000 },
-        });
-      },
-    });
-  };
-
   const isLoading = loading || rolesLoading || !member;
 
   return (
@@ -216,14 +162,6 @@ export const SettingsWorkspaceMember = () => {
             {activeTabId === SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS && (
               <MemberInfosTab
                 member={member}
-                onImpersonate={
-                  canImpersonate &&
-                  isDefined(member.userId) &&
-                  isDefined(currentUser?.id) &&
-                  member.userId !== currentUser.id
-                    ? handleImpersonate
-                    : undefined
-                }
                 onNameChange={debouncedUpdateName}
                 onDelete={() => openModal(DELETE_MEMBER_MODAL_ID)}
               />

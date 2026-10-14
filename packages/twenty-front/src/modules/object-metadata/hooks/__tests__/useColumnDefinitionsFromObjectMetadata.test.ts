@@ -31,7 +31,6 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       installedApplications: [],
       id: '1',
       featureFlags: [],
-      allowImpersonation: false,
       subdomain: 'test',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
       metadataVersion: 1,

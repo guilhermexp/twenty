@@ -14,14 +14,13 @@ export const useSettingsAdminTabs = () => {
   const currentUser = useAtomStateValue(currentUserState);
 
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
-  const canImpersonate = currentUser?.canImpersonate;
 
   return [
     {
       id: SETTINGS_ADMIN_TABS.GENERAL,
       title: t`General`,
       Icon: IconSettings2,
-      disabled: !canAccessFullAdminPanel && !canImpersonate,
+      disabled: !canAccessFullAdminPanel,
     },
     {
       id: SETTINGS_ADMIN_TABS.APPS,

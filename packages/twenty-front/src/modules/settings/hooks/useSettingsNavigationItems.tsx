@@ -59,9 +59,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
 
   const isPrivateModeEnabled = REACT_APP_PRIVATE_MODE;
   const currentUser = useAtomStateValue(currentUserState);
-  const isAdminEnabled =
-    (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
-    false;
+  const isAdminEnabled = currentUser?.canAccessFullAdminPanel ?? false;
 
   const permissionMap = usePermissionFlagMap();
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(

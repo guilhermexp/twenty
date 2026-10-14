@@ -12,7 +12,6 @@ export const WORKSPACE_LOOKUP_ADMIN_PANEL = gql`
       workspaces {
         id
         name
-        allowImpersonation
         logo
         totalUsers
         activationStatus

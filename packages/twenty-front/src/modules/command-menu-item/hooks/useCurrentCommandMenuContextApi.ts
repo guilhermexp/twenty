@@ -157,7 +157,6 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   }
 
   const currentUser = useAtomStateValue(currentUserState);
-  const canImpersonate = currentUser?.canImpersonate === true;
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel === true;
 
   const targetObjectReadPermissions: Record<string, boolean> = {};
@@ -197,7 +196,6 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     permissionFlags,
     targetObjectReadPermissions,
     targetObjectWritePermissions,
-    canImpersonate,
     canAccessFullAdminPanel,
     objectMetadataItem: objectMetadataItem ?? {},
     objectMetadataLabel,

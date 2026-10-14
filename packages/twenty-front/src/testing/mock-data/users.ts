@@ -24,7 +24,6 @@ type MockedUser = Pick<
   | 'firstName'
   | 'lastName'
   | 'canAccessFullAdminPanel'
-  | 'canImpersonate'
   | '__typename'
   | 'onboardingStatus'
   | 'userVars'
@@ -55,7 +54,6 @@ export const mockCurrentWorkspace = {
   logo: workspaceLogoUrl,
   isPublicInviteLinkEnabled: true,
   workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
-  allowImpersonation: true,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
   isGoogleAuthEnabled: true,
   isPasswordAuthEnabled: true,
@@ -110,7 +108,6 @@ export const mockedUserData: MockedUser = {
   firstName: 'Charles',
   lastName: 'Test',
   canAccessFullAdminPanel: false,
-  canImpersonate: false,
   hasPassword: true,
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
@@ -178,7 +175,6 @@ export const mockedOnboardingUserData = (
     lastName: '',
     hasPassword: false,
     canAccessFullAdminPanel: false,
-    canImpersonate: false,
     workspaceMember: null,
     workspaceMembers: [],
     currentWorkspace: mockCurrentWorkspace,

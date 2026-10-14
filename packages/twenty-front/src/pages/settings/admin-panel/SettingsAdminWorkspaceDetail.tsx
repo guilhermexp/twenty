@@ -16,7 +16,6 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
 import { useAdminUpdateFeatureFlag } from '@/settings/admin-panel/hooks/useAdminUpdateFeatureFlag';
-import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -33,7 +32,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Avatar } from 'twenty-ui/data-display';
 import {
-  IconEyeShare,
   IconFlag,
   IconMessage,
   IconSettings2,
@@ -41,7 +39,7 @@ import {
 } from 'twenty-ui/icon';
 import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
-import { Button, Toggle } from 'twenty-ui/input';
+import { Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -76,7 +74,6 @@ export const SettingsAdminWorkspaceDetail = () => {
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const { updateFeatureFlagState } = useAdminUpdateFeatureFlag();
-  const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
   const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument, {
     client: apolloAdminClient,
     refetchQueries: [
@@ -101,10 +98,7 @@ export const SettingsAdminWorkspaceDetail = () => {
       {
         client: apolloAdminClient,
         variables: { workspaceId },
-        skip:
-          !workspaceId ||
-          !workspace?.allowImpersonation ||
-          effectiveTabId !== WORKSPACE_DETAIL_TAB_IDS.CHATS,
+        skip: !workspaceId || effectiveTabId !== WORKSPACE_DETAIL_TAB_IDS.CHATS,
       },
     );
   const { data: workspaceUpgradeStatusData } = useQuery(
@@ -153,7 +147,7 @@ export const SettingsAdminWorkspaceDetail = () => {
       title: t`Info`,
       Icon: IconSettings2,
     },
-    ...(currentUser?.canImpersonate
+    ...(currentUser?.canAccessFullAdminPanel
       ? [
           {
             id: WORKSPACE_DETAIL_TAB_IDS.MEMBERS,
@@ -171,15 +165,11 @@ export const SettingsAdminWorkspaceDetail = () => {
           },
         ]
       : []),
-    ...(workspace?.allowImpersonation
-      ? [
-          {
-            id: WORKSPACE_DETAIL_TAB_IDS.CHATS,
-            title: t`Chats`,
-            Icon: IconMessage,
-          },
-        ]
-      : []),
+    {
+      id: WORKSPACE_DETAIL_TAB_IDS.CHATS,
+      title: t`Chats`,
+      Icon: IconMessage,
+    },
   ];
 
   const workspaceName = workspace?.name || workspaceId || '';
@@ -238,10 +228,9 @@ export const SettingsAdminWorkspaceDetail = () => {
             <H2Title title={t`Members`} description={t`Workspace members`} />
             <Table>
               <TableBody>
-                <TableRow gridTemplateColumns="1fr 2fr 100px">
+                <TableRow gridTemplateColumns="1fr 2fr">
                   <TableHeader>{t`Name`}</TableHeader>
                   <TableHeader>{t`Email`}</TableHeader>
-                  <TableHeader align="right">{t`Actions`}</TableHeader>
                 </TableRow>
                 {workspace.users?.map((user) => {
                   const userId = user.id;
@@ -251,7 +240,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                   return (
                     <TableRow
                       key={userId}
-                      gridTemplateColumns="1fr 2fr 100px"
+                      gridTemplateColumns="1fr 2fr"
                       to={getSettingsPath(SettingsPath.AdminPanelUserDetail, {
                         userId,
                       })}
@@ -279,24 +268,6 @@ export const SettingsAdminWorkspaceDetail = () => {
                         />
                       </TableCell>
                       <TableCell>{user.email}</TableCell>
-                      <TableCell align="right">
-                        {workspace.allowImpersonation &&
-                          isDefined(currentUser?.id) &&
-                          userId !== currentUser.id && (
-                            <Button
-                              Icon={IconEyeShare}
-                              variant="secondary"
-                              size="small"
-                              title={t`Impersonate`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleImpersonate(userId, workspaceId!);
-                              }}
-                              disabled={impersonatingUserId === userId}
-                            />
-                          )}
-                      </TableCell>
                     </TableRow>
                   );
                 })}

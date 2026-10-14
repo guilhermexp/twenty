@@ -130,7 +130,6 @@ export const responseData = {
       lastName: 'User',
       email: 'test@example.com',
       canAccessFullAdminPanel: false,
-      canImpersonate: false,
       onboardingStatus: 'completed',
       workspaceMember: {
         id: 'test-workspace-member-id',
@@ -154,7 +153,6 @@ export const responseData = {
         displayName: 'Test Workspace',
         logo: null,
         inviteHash: 'test-hash',
-        allowImpersonation: false,
         activationStatus: 'active',
         isPublicInviteLinkEnabled: false,
         isGoogleAuthEnabled: true,

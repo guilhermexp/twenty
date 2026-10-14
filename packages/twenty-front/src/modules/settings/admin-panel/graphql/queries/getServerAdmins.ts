@@ -8,7 +8,6 @@ export const GET_SERVER_ADMINS = gql`
       firstName
       lastName
       canAccessFullAdminPanel
-      canImpersonate
     }
   }
 `;

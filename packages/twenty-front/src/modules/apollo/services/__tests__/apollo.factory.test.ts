@@ -56,7 +56,6 @@ const mockWorkspaceMember = {
 const mockWorkspace = {
   id: 'workspace-id',
   metadataVersion: 1,
-  allowImpersonation: false,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
   workspaceMembersCount: 0,
   isPublicInviteLinkEnabled: false,

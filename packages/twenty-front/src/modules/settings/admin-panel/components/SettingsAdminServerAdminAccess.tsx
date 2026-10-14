@@ -26,7 +26,6 @@ import {
 
 type ServerAdminAccessUpdate = {
   canAccessFullAdminPanel?: boolean;
-  canImpersonate?: boolean;
 };
 
 type PendingServerAdminChange = {
@@ -98,13 +97,10 @@ export const SettingsAdminServerAdminAccess = ({
   const currentAccess = serverAdmins.find((admin) => admin.id === userId);
   const canAccessFullAdminPanel =
     currentAccess?.canAccessFullAdminPanel ?? false;
-  const canImpersonate = currentAccess?.canImpersonate ?? false;
   const fullAdminCount = serverAdmins.filter(
     (admin) => admin.canAccessFullAdminPanel,
   ).length;
   const isLastFullAdmin = canAccessFullAdminPanel && fullAdminCount <= 1;
-  const hasAnyAccess = canAccessFullAdminPanel || canImpersonate;
-  const hasFullAccess = canAccessFullAdminPanel && canImpersonate;
 
   const requestChange = (change: PendingServerAdminChange) => {
     closeDropdown(dropdownId);
@@ -145,14 +141,9 @@ export const SettingsAdminServerAdminAccess = ({
   return (
     <>
       <StyledValue>
-        {hasAnyAccess ? (
+        {canAccessFullAdminPanel ? (
           <StyledChips>
-            {canAccessFullAdminPanel && (
-              <Status color="green" text={t`Admin panel`} weight="medium" />
-            )}
-            {canImpersonate && (
-              <Status color="blue" text={t`Impersonation`} weight="medium" />
-            )}
+            <Status color="green" text={t`Admin panel`} weight="medium" />
           </StyledChips>
         ) : (
           <StyledNoAccess>{t`No access`}</StyledNoAccess>
@@ -183,35 +174,6 @@ export const SettingsAdminServerAdminAccess = ({
                     })
                   }
                 />
-                <MenuItem
-                  text={
-                    canImpersonate
-                      ? t`Disable impersonation`
-                      : t`Enable impersonation`
-                  }
-                  onClick={() =>
-                    requestChange({
-                      description: t`impersonation`,
-                      isRevoking: canImpersonate,
-                      update: { canImpersonate: !canImpersonate },
-                    })
-                  }
-                />
-                {!hasFullAccess && (
-                  <MenuItem
-                    text={t`Grant full access`}
-                    onClick={() =>
-                      requestChange({
-                        description: t`full server access`,
-                        isRevoking: false,
-                        update: {
-                          canAccessFullAdminPanel: true,
-                          canImpersonate: true,
-                        },
-                      })
-                    }
-                  />
-                )}
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }

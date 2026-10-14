@@ -11,7 +11,6 @@ export type CurrentWorkspace = Pick<
   | 'inviteHash'
   | 'logo'
   | 'displayName'
-  | 'allowImpersonation'
   | 'featureFlags'
   | 'activationStatus'
   | 'workspaceMembersCount'

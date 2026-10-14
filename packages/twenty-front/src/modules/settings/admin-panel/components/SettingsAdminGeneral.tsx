@@ -56,7 +56,6 @@ export const SettingsAdminGeneral = () => {
 
   const currentUser = useAtomStateValue(currentUserState);
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
-  const canImpersonate = currentUser?.canImpersonate;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
 
   const { data: recentUsersData, loading: isLoadingUsers } = useQuery(
@@ -64,7 +63,7 @@ export const SettingsAdminGeneral = () => {
     {
       client: apolloAdminClient,
       variables: { searchTerm: debouncedUserSearchTerm },
-      skip: !canImpersonate && !canAccessFullAdminPanel,
+      skip: !canAccessFullAdminPanel,
     },
   );
 
@@ -73,7 +72,7 @@ export const SettingsAdminGeneral = () => {
     {
       client: apolloAdminClient,
       variables: { searchTerm: debouncedWorkspaceSearchTerm },
-      skip: !canImpersonate,
+      skip: !canAccessFullAdminPanel,
     },
   );
 
@@ -95,14 +94,14 @@ export const SettingsAdminGeneral = () => {
         </>
       )}
 
-      {(canImpersonate || canAccessFullAdminPanel) && (
+      {canAccessFullAdminPanel && (
         <Section>
           <H2Title
             title={t`Recent Users`}
             description={
               canManageFeatureFlags
-                ? t`Last 10 users created. Click to manage feature flags or impersonate.`
-                : t`Last 10 users created. Click to impersonate.`
+                ? t`Last 10 users created. Click to manage feature flags.`
+                : t`Last 10 users created. Click to view details.`
             }
           />
           <StyledSearchInputContainer>
@@ -197,7 +196,7 @@ export const SettingsAdminGeneral = () => {
         </Section>
       )}
 
-      {canImpersonate && (
+      {canAccessFullAdminPanel && (
         <Section>
           <H2Title
             title={t`Top Workspaces`}

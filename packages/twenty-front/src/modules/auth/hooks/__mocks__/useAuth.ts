@@ -72,7 +72,6 @@ export const results = {
       lastName: 'lastName',
       email: 'email',
       canAccessFullAdminPanel: false,
-      canImpersonate: 'canImpersonate',
       workspaceMember: {
         id: 'id',
         name: {
@@ -89,7 +88,6 @@ export const results = {
         displayName: 'displayName',
         logo: 'logo',
         inviteHash: 'inviteHash',
-        allowImpersonation: true,
         subscriptionStatus: 'subscriptionStatus',
         workspaceUrls: {
           subdomainUrl: 'https://twenty.com',
