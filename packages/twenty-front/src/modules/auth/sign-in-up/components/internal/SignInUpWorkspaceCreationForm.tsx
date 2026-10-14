@@ -294,7 +294,7 @@ export const SignInUpWorkspaceCreationForm = () => {
             autoFocus
             label={t`Name`}
             value={workspaceName}
-            placeholder={t`Apple`}
+            placeholder={t`Workspace name`}
             onChange={handleWorkspaceNameChange}
             onKeyDown={handleKeyDown}
             fullWidth
