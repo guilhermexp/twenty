@@ -34,7 +34,6 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
-import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TwoFactorAuthenticationModule } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.module';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -66,7 +65,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     MetricsModule,
     FeatureFlagModule,
     PermissionsModule,
-    SecureHttpClientModule,
     ApplicationRegistrationModule,
     UsageModule,
     KeyValuePairModule,

@@ -4,7 +4,6 @@ export const GET_VERSION_INFO = gql`
   query GetVersionInfo {
     versionInfo {
       currentVersion
-      latestVersion
     }
   }
 `;

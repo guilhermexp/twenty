@@ -2,7 +2,7 @@ import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/SettingsAdminVersionDisplay';
 import { t } from '@lingui/core/macro';
-import { IconCircleDot, IconVersions } from 'twenty-ui/icon';
+import { IconCircleDot } from 'twenty-ui/icon';
 import { useQuery } from '@apollo/client/react';
 import { GetVersionInfoDocument } from '~/generated-admin/graphql';
 
@@ -11,7 +11,7 @@ export const SettingsAdminVersionContainer = () => {
   const { data, loading } = useQuery(GetVersionInfoDocument, {
     client: apolloAdminClient,
   });
-  const { currentVersion, latestVersion } = data?.versionInfo ?? {};
+  const { currentVersion } = data?.versionInfo ?? {};
 
   const versionItems = [
     {
@@ -25,20 +25,7 @@ export const SettingsAdminVersionContainer = () => {
         />
       ),
     },
-    {
-      Icon: IconVersions,
-      label: t`Latest version`,
-      value: (
-        <SettingsAdminVersionDisplay
-          version={latestVersion}
-          loading={loading}
-          noVersionMessage={t`No latest version found`}
-        />
-      ),
-    },
   ];
 
-  return (
-    <SettingsTableCard rounded items={versionItems} gridAutoColumns="3fr 8fr" />
-  );
+  return <SettingsTableCard rounded items={versionItems} />;
 };
